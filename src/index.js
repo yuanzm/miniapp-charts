@@ -843,6 +843,14 @@ export default class LineChart extends ChartBase {
      * tooltip在触摸结束之后是否需要保留可以通过是否调用这个函数决定
      */
     touchEnd(e) {
+        /**
+         * ctx2本身是为了性能优化存在的，如果没有ctx2，
+         * 还是要把所用东西老老实实在ctx1上面绘制一遍
+         */
+        if ( this.ctx2 === this.ctx1 ) {
+            this.drawToCanvas();
+        }
+
         this.ctx2.draw();
     }
 
