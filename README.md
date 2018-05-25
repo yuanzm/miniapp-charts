@@ -73,15 +73,32 @@ LineChart构造函数接受三个参数，第一个参数为小程序canvas的Co
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
 | debug    | Boolean  | 是否开启调试模式，调试模式下面会打出一些调试信息，默认为false|
-| width    | Number   | canvas的宽度，因为小程序没有DOM，不能获取canvas的样式信息，需要手动传入 |
-| height   | Number   | 同width，需要手动传入 |
+| width    | Number   | canvas的宽度，因为小程序没有DOM，不能获取canvas的样式信息，需要手动传入, 默认为414 |
+| height   | Number   | 同width，需要手动传入，默认为200 |
 | padding  | Object   | canvas的绘图区域的padding，与canvas本身样式的padding无关|
 | maxCircleCount | Number | 如果单条线的点很少，每个点会带上一个小圆环，当最长线条的点数量大于maxCircleCount的时候，不绘制小圆环，默认为30 |
-|xAxisCount | Number | X轴标签的数量 |
+|xAxisCount | Number | X轴标签的数量(不包含原点标签)，默认为7 |
 |xAxis      | Object | X轴标签样式配置 |
 |xAxisLine  | Object | X中轴线样式配置 |
-|yAxisCount | Number | Y轴标签数，默认为4|
+|yAxisCount | Number | Y轴标签数(不包含原点标签)，默认为4|
 | yAxis     | Object | Y轴样式配置    |
 | yAxisLine | Object | Y轴中轴线样式配置 |
 |toolTip    | Object | tooltip样式配置  |
+
+## padding配置
+
+| keyName  | 类型     |  描述    |
+| left     | Number   | 左边距，默认为10 |
+| right    | Number   | 右边距，默认为10 |
+| top      | Number   | 上边距，默认为10 |
+| bottom   | Number   | 下边距，默认为5  |
+
+## xAxis配置
+
+| keyName  | 类型     |  描述    |
+| show     | Boolean  | 是否需要展示X轴标签，默认为true|
+| marginTop| Number   | X轴标签与X轴中轴线的间距，默认为10 |
+| color    | String   | X轴标签字体颜色，默认为#B8B8B8 |
+| fontSize | Number   | X轴标签字体大小，默认是11 |
+
 

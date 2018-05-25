@@ -1,11 +1,11 @@
 
 export default {
-    debug: true,
+    debug: false,
 
     /**
      * 默认的图表宽度
      */
-    width : 412,
+    width : 414,
 
     /**
      * 默认的图表高度
