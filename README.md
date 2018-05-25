@@ -65,3 +65,13 @@ Page({
 
 ```
 
+# LineChart参数解析
+LineChart构造函数接受三个参数，第一个参数为小程序canvas的Context，第二个参数cfg为配置对象
+组件完整的配置可见：[config.js](https://github.com/yuanzm/wxapp-line-chart/blob/master/src/config.js)
+| keyName  | 类型     |  描述    |
+|----------|----------| ---------|
+| debug    | Boolean  | 是否开启调试模式，调试模式下面会打出一些调试信息，默认为false|
+| width    | Number   | canvas的宽度，因为小程序没有DOM，不能获取canvas的样式信息，需要手动传入 |
+| height   | Number   | 同width，需要手动传入 |
+
+

@@ -78,7 +78,7 @@ export default class LineChart extends ChartBase {
 
         for ( let key in copyConfig ) {
             if ( cfg[key] !== undefined ) {
-                if ( typeof copyConfig[key] !== cfg[key] )
+                if ( typeof copyConfig[key] !== typeof cfg[key] )
                     throw new Error(`[LineChart] TypeMismatch：${key} must be type of ${ typeof copyConfig[key]}`);
 
                 // Object类型的extend而不是直接覆盖
