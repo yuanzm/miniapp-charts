@@ -96,6 +96,7 @@ LineChart构造函数接受三个参数，第一个参数为小程序canvas的Co
 ## padding配置
 
 | keyName  | 类型     |  描述    |
+|----------|----------| ---------|
 | left     | Number   | 左边距，默认为10 |
 | right    | Number   | 右边距，默认为10 |
 | top      | Number   | 上边距，默认为10 |
@@ -104,6 +105,7 @@ LineChart构造函数接受三个参数，第一个参数为小程序canvas的Co
 ## xAxis配置
 
 | keyName  | 类型     |  描述    |
+|----------|----------| ---------|
 | show     | Boolean  | 是否需要展示X轴标签，默认为true|
 | marginTop| Number   | X轴标签与X轴中轴线的间距，默认为10 |
 | color    | String   | X轴标签字体颜色，默认为#B8B8B8 |
