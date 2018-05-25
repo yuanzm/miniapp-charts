@@ -1,0 +1,28 @@
+{
+  "name": "wxapp-line-chart",
+  "version": "0.0.1",
+  "description": "chart",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npx webpack --config webpack.config.js --watch",
+    "build": "npx webpack --config webpack.config.js -p"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yuanzm/wxapp-line-chart.git"
+  },
+  "keywords": [
+    "chart"
+  ],
+  "author": "yuanzm",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yuanzm/wxapp-line-chart/issues"
+  },
+  "homepage": "https://github.com/yuanzm/wxapp-line-chart#readme",
+  "devDependencies": {
+    "webpack": "^4.8.3",
+    "webpack-cli": "^2.1.4"
+  }
+}

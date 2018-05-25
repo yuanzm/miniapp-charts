@@ -2,47 +2,8 @@
  * @author: zimyuan
  */
 
-/*
- * 判断JavaScript对象类型的函数
- * @param {}
- */
-function is(obj, type) {
-	let toString = Object.prototype.toString, undefined;
-
-	return (type === 'Null' && obj === null) ||
-		(type === "Undefined" && obj === undefined) ||
-		toString.call(obj).slice(8, -1) === type;
-};
-
-/*
- * 深拷贝函数
- * @param {Object} oldObj: 被拷贝的对象
- * @param {Object} newObj: 需要拷贝的对象
- * @ return {Object} newObj: 拷贝之后的对象
- */
-
-function deepCopy(oldObj, newObj = {}) {
-    for ( let key in oldObj ) {
- 		let copy = oldObj[key];
-
-        //如window.window === window，会陷入死循环，需要处理一下
- 		if ( oldObj === copy )
-            continue;
-
- 		if ( is(copy, "Object") ) {
- 			newObj[key] = deepCopy(copy, newObj[key] || {});
- 		}
-
-        else if ( is(copy, "Array") ) {
- 			newObj[key] = []
-			newObj[key] = deepCopy(copy, newObj[key] || []);
- 		}
-
-        else
- 			newObj[key] = copy;
- 	}
-
- 	return newObj;
+function deepCopy(obj) {
+    return JSON.parse(JSON.stringify(obj));
 }
 
 function isType (type, value) {
@@ -230,7 +191,6 @@ function changeUnit(value, fixed = 1) {
 }
 
 export {
-    is,
     isType,
     deepCopy,
     isPlainObject,
