@@ -746,8 +746,6 @@ export default class LineChart extends ChartBase {
 
             oneline.style = defaultStyle;
         });
-
-        console.log(this._datasets);
     }
 
     /**
@@ -791,6 +789,7 @@ export default class LineChart extends ChartBase {
 
         this.drawToCanvas();
 
+        this.ctx2.clearRect(0, 0, this._config.width, this._config.height);
         this.ctx1.draw();
 
         this.log('realDraw');
