@@ -724,8 +724,6 @@ export default class LineChart extends ChartBase {
         let datasets = data.datasets || [];
 
         this._datasets = datasets.filter((item) => item.points && item.points.length);
-        if ( !this._datasets.length )
-            return;
 
         this._datasets.forEach(( oneline ) => {
             let defaultStyle = deepCopy(this._config.lineStyle);
@@ -757,6 +755,9 @@ export default class LineChart extends ChartBase {
         // 原始调用者传入的数据
         this.initDataSets(data);
 
+        if ( !this._datasets.length )
+            return;
+
         // 为了绘制精确，首先要计算绘制的边界值，防止样式走位
         this.calBoundaryPoint();
 
@@ -786,6 +787,9 @@ export default class LineChart extends ChartBase {
         this._start = new Date();
 
         this.initData(data);
+
+        if ( !this._datasets.length )
+            return;
 
         this.drawToCanvas();
 
