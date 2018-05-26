@@ -61,7 +61,7 @@ export default {
      * X轴轴体的样式配置
      */
     xAxisLine: {
-        show      : true,
+        show      : false,
         centerShow: true,
         width     : 0.6,
         color     : '#C6C6C6',
@@ -101,7 +101,7 @@ export default {
         fontSize   : 11,
         color      : '#FFFFFF',
         fillColor  : 'rgba(136, 136, 136, 0.6)',
-        needCircle : true,
+        //needCircle : true,
         linePadding: 5,
 
         padding: {

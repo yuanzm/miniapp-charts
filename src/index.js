@@ -534,19 +534,17 @@ export default class LineChart extends ChartBase {
                       + style.fontSize
                       + index * (style.fontSize + style.linePadding) );
 
-            if ( style.needCircle ) {
-                let circle = {
-                    x          : baseX + style.padding.left + style.fontSize / 2,
-                    y          : word.y - style.fontSize / 2 + 1,
-                    strokeColor: word.line.style.lineColor,
-                    fillColor  : word.line.style.lineColor,
-                    r          : style.fontSize / 2,
-                }
-
-                this._render.toolTipData.circles.push(circle);
-
-                word.x += ( style.fontSize + 5);
+            let circle = {
+                x          : baseX + style.padding.left + style.fontSize / 2,
+                y          : word.y - style.fontSize / 2 + 1,
+                strokeColor: word.line.style.lineColor,
+                fillColor  : word.line.style.lineColor,
+                r          : style.fontSize / 2,
             }
+
+            this._render.toolTipData.circles.push(circle);
+
+            word.x += ( style.fontSize + 5);
         });
 
         title.x = words[0].x;

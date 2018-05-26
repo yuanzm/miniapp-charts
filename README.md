@@ -111,4 +111,46 @@ LineChart构造函数接受三个参数，第一个参数为小程序canvas的Co
 | color    | String   | X轴标签字体颜色，默认为#B8B8B8 |
 | fontSize | Number   | X轴标签字体大小，默认是11 |
 
+## xAxisLine配置
+
+| keyName  | 类型     |  描述    |
+|----------|----------| ---------|
+| show     | Boolean | 是否展示X轴标签对应的线条，默认为false |
+| centerShow | Boolean | 是否需要展示X轴的中轴线，默认为true |
+| width     | Number   | 线条的宽度，默认为0.6 |
+| color     | String    | 线条的颜色，默认为#C6C6C6 |
+| style     | String    | 线条的样式，默认为solid，可选的为dash |
+
+## yAxis配置
+
+| keyName  | 类型     |  描述    |
+|----------|----------| ---------|
+| show     | Boolean  | 是否需要展示Y轴标签，默认为true|
+| marginLeft | Number | Y轴标签与canvas左边缘的距离(不包含padding里面的设置），默认是0 |
+| marginRight | Number | Y轴变迁与Y轴中轴线的距离，默认为10 |
+| color     | String  | Y轴标签的字体颜色 |
+| fontSize  | Number   | Y轴标签的字体大小 |
+
+
+## yAxisLine配置
+
+| keyName  | 类型     |  描述    |
+|----------|----------| ---------|
+| show     | Boolean | 是否展示Y轴标签对应的线条，默认为true|
+| centerShow | Boolean | 是否需要展示X轴的中轴线，默认为false|
+| width     | Number   | 线条的宽度，默认为0.6 |
+| color     | String    | 线条的颜色，默认为#C6C6C6 |
+| style     | String    | 线条的样式，默认为solid，可选的为dash |
+
+## toolTip配置
+
+| keyName  | 类型     |  描述    |
+|----------|----------| ---------|
+| lineColor | Sring | toolTip中轴线的颜色，默认为#C6C6C6 |
+| lineWidth | Number | toolTip中轴线的宽度，默认为0.5    |
+| fontSize  | Number  | toolTip的字体大小，默认为11 |
+| color     | String  | toolTip的字体颜色，默认为#FFFFFF |
+| fillColor | String  | toolTip的背景颜色，默认为rgba(136, 136, 136, 0.6) |
+| linePadding | Number | 文案行间距，默认为5 |
+| padding     | Object | toolTip的padding，默认padding.left = 5, padding.right = 5,padding.top = 5, padding.bottom = 5 |
 
