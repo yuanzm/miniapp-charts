@@ -9,9 +9,6 @@ import {
  * 因为小程序和H5的绘图API并不是完全一致的，通过基础类来兼容是最合适的
  */
 export default class ChartBase {
-    constructor() {
-    }
-
     wordWidth(words, fontSize) {
         if ( words === undefined || words === null )
             return 0;

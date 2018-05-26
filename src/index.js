@@ -178,8 +178,6 @@ export default class LineChart extends ChartBase {
                         let circle = {
                             x          : temp.x,
                             y          : temp.y,
-                            st         : 0,
-                            ed         : 2 * Math.PI,
                             r          : cStyle.radius      || 2,
                             fillColor  : cStyle.fillColor   || '#FFFFFF',
                             strokeColor: style.lineColor,
@@ -799,8 +797,6 @@ export default class LineChart extends ChartBase {
 
         if ( this._config.debug )
             console.log(this._performance);
-
-        console.log(this._render);
     }
 
     /**
