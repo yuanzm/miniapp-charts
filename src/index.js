@@ -790,6 +790,8 @@ export default class LineChart extends ChartBase {
         this.drawToCanvas();
 
         this.ctx2.clearRect(0, 0, this._config.width, this._config.height);
+        this.ctx2.draw();
+
         this.ctx1.draw();
 
         this.log('realDraw');
