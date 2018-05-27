@@ -12,6 +12,8 @@ export default {
      */
     height: 200,
 
+    unit : '',
+
     /**
      * 图表内本身的padding
      */

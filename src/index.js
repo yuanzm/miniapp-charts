@@ -69,12 +69,12 @@ export default class LineChart extends ChartBase {
     /**
      * 获取本实例的配置
      */
-    getConfig(cfg) {
+    getConfig(cfg, sourceConfig) {
         if ( !isPlainObject(cfg) )
             throw new Error('options must be type of Object');
 
         // 所有的实例先深拷贝一份默认配置文件，避免不同实例之间的配置相互影响
-        let copyConfig = deepCopy(config);
+        let copyConfig = sourceConfig || deepCopy(config);
 
         for ( let key in copyConfig ) {
             if ( cfg[key] !== undefined ) {
@@ -347,7 +347,7 @@ export default class LineChart extends ChartBase {
 
         for( let i = 0; i < this._config.yAxisCount + 1; i++ ) {
             let word = {
-                text    : changeUnit(min + i * yDivider),
+                text    : changeUnit(min + i * yDivider) + this._config.unit,
                 color   : yAxis.color,
                 fontSize: yAxis.fontSize,
                 x       : leftStart,
@@ -591,7 +591,7 @@ export default class LineChart extends ChartBase {
 
             if ( curr ) {
                 let word = {
-                    text    : title + changeUnit(curr.y),
+                    text    : title + changeUnit(curr.y) + this._config.unit,
                     fontSize: style.fontSize,
                     color   : style.color,
                     x       : 0,
@@ -787,16 +787,16 @@ export default class LineChart extends ChartBase {
         this.log('initData');
     }
 
-
     /**
      * 实际的绘制函数
      */
-    draw(data) {
+    draw(data, cfg = {}) {
         this.ctx2.clearRect(0, 0, this._config.width, this._config.height);
         this.ctx2.draw();
 
         this._start = new Date();
 
+        this.getConfig(cfg, this._config);
         this.initData(data);
 
         if ( !this._datasets.length )
