@@ -110,6 +110,6 @@ export default {
             top   : 5,
             bottom: 5,
         },
-    }
+    },
 }
 

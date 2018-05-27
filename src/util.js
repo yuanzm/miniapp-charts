@@ -132,7 +132,7 @@ function getDataRangeAndStep(max, min, step) {
     for ( let i = 0; i < 20; i++ ) {
         //console.log( min + divider * step , originMax, max, );
         let temp = min + divider * step;
-        if ( temp >= max || temp - originMax >= round * 3 )
+        if ( temp >= max || temp - originMax >= round * 10 )
             break;
 
         divider += round;

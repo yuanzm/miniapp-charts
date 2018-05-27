@@ -190,7 +190,7 @@ export default class LineChart extends ChartBase {
                 }
             });
 
-            if ( _oneline.points.length > 1 ) {
+            if ( points.length > 1 ) {
                 // 为了能够实现闭合，增加的辅助点
                 _oneline.points.unshift(origin);
                 _oneline.points.push({
@@ -682,7 +682,7 @@ export default class LineChart extends ChartBase {
      */
     drawPoints() {
         this._render.pointData.forEach((oneline) => {
-            if ( oneline.points > 1 )
+            if ( oneline.points.length > 1 )
                 this.drawLongLineWithFill(this.ctx1, oneline.points, oneline.style);
         });
 
