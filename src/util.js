@@ -77,6 +77,14 @@ function roundForNumber(number, direction) {
  * 给定最大值最小值和区间个数，给出优化后的最大最小值和单step值
  */
 function getDataRangeAndStep(max, min, step) {
+    if ( max === min )
+        return {
+            max: max + 2,
+            min: ( min - 2 >= 0 ? min - 2 : 0 ),
+            divider: 1,
+            multiple: 1
+        }
+
     if ( max === 0 )
         return {
             max     : 4,

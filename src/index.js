@@ -190,14 +190,16 @@ export default class LineChart extends ChartBase {
                 }
             });
 
-            // 为了能够实现闭合，增加的辅助点
-            _oneline.points.unshift(origin);
-            _oneline.points.push({
-                x           : _oneline.points[_oneline.points.length - 1].x,
-                y           : leftBottom.y,
-            });
+            if ( _oneline.points.length > 1 ) {
+                // 为了能够实现闭合，增加的辅助点
+                _oneline.points.unshift(origin);
+                _oneline.points.push({
+                    x           : _oneline.points[_oneline.points.length - 1].x,
+                    y           : leftBottom.y,
+                });
 
-            pointData.push(_oneline);
+                pointData.push(_oneline);
+            }
         });
 
         this._render.circlePoints = circlePoints;
@@ -243,7 +245,11 @@ export default class LineChart extends ChartBase {
         let xAxisData   = [];
 
         // 计算X轴两个点之间的像素距离
-        data.unitX = ( rightBottom.x - leftBottom.x - this._render.yAxisWidth ) / (points.length - 1 );
+        let realWidth =  rightBottom.x - leftBottom.x - this._render.yAxisWidth;
+        let pointCount = (  points.length - 1 > 0
+                          ? points.length - 1
+                          : 1  );
+        data.unitX = realWidth  / pointCount;
 
         let xDivider  = parseInt(length / ( maxXPoint) );
         if ( xDivider === 0 )
@@ -405,6 +411,7 @@ export default class LineChart extends ChartBase {
             if ( points.length > maxYPoint ) {
                 maxYPoint   = points.length;
                 longestLine = oneline;
+                console.log(oneline);
             }
 
             max = Math.max(this.getMaxY(points), max);
@@ -675,7 +682,8 @@ export default class LineChart extends ChartBase {
      */
     drawPoints() {
         this._render.pointData.forEach((oneline) => {
-            this.drawLongLineWithFill(this.ctx1, oneline.points, oneline.style);
+            if ( oneline.points > 1 )
+                this.drawLongLineWithFill(this.ctx1, oneline.points, oneline.style);
         });
 
         this._render.circlePoints.forEach((point) => {
@@ -783,14 +791,14 @@ export default class LineChart extends ChartBase {
      * 实际的绘制函数
      */
     draw(data) {
+        this.ctx2.clearRect(0, 0, this._config.width, this._config.height);
+        this.ctx2.draw();
+
         this._start = new Date();
 
         this.initData(data);
 
         this.drawToCanvas();
-
-        this.ctx2.clearRect(0, 0, this._config.width, this._config.height);
-        this.ctx2.draw();
 
         this.ctx1.draw();
 
@@ -798,6 +806,8 @@ export default class LineChart extends ChartBase {
 
         if ( this._config.debug )
             console.log(this._performance);
+
+        console.log(this._render);
     }
 
     /**
