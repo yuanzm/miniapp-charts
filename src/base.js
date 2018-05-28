@@ -137,5 +137,10 @@ export default class ChartBase {
         ctx.fill();
         ctx.closePath();
     }
+
+    clear(ctx, width, height) {
+        ctx.clearRect(0, 0, width, height);
+        ctx.draw();
+    }
 }
 

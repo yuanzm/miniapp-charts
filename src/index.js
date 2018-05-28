@@ -345,9 +345,11 @@ export default class LineChart extends ChartBase {
         let leftStart   = this._boundary.leftTop.x + yAxis.marginLeft;
         let bottomStart = this._boundary.leftBottom.y
 
+        let changeFunc  = this._config.changeUnit || changeUnit;
+
         for( let i = 0; i < this._config.yAxisCount + 1; i++ ) {
             let word = {
-                text    : changeUnit(min + i * yDivider) + this._config.unit,
+                text    : changeFunc(min + i * yDivider) + this._config.unit,
                 color   : yAxis.color,
                 fontSize: yAxis.fontSize,
                 x       : leftStart,
@@ -411,17 +413,17 @@ export default class LineChart extends ChartBase {
             if ( points.length > maxYPoint ) {
                 maxYPoint   = points.length;
                 longestLine = oneline;
-                console.log(oneline);
             }
 
             max = Math.max(this.getMaxY(points), max);
             min = Math.min(this.getMinY(points), min);
         });
 
-        let range = getDataRangeAndStep(max, min, yAxisCount);
+        let formatFunc = this._config.formatY || getDataRangeAndStep;
+        let range = formatFunc(max, min, yAxisCount);
 
         this._render.min       = range.min;
-        this._render.yMultiple = range.multiple;
+        this._render.yMultiple = range.multiple || 1;
 
         return {
             max     : range.max,
@@ -581,6 +583,8 @@ export default class LineChart extends ChartBase {
 
         this._render.toolTipData.words = [];
 
+        let changeFunc  = this._config.changeUnit || changeUnit;
+
         this._datasets.forEach(( oneline ) => {
             let points = oneline.points;
             let curr   = points[pindex];
@@ -591,7 +595,7 @@ export default class LineChart extends ChartBase {
 
             if ( curr ) {
                 let word = {
-                    text    : title + changeUnit(curr.y) + this._config.unit,
+                    text    : title + changeFunc(curr.y) + this._config.unit,
                     fontSize: style.fontSize,
                     color   : style.color,
                     x       : 0,
@@ -791,10 +795,9 @@ export default class LineChart extends ChartBase {
      * 实际的绘制函数
      */
     draw(data, cfg = {}) {
-        this.ctx2.clearRect(0, 0, this._config.width, this._config.height);
-        this.ctx2.draw();
-
         this._start = new Date();
+
+        this.clear(this.ctx2, this._config.width, this._config.height);
 
         this.getConfig(cfg, this._config);
         this.initData(data);
@@ -810,8 +813,6 @@ export default class LineChart extends ChartBase {
 
         if ( this._config.debug )
             console.log(this._performance);
-
-        console.log(this._render);
     }
 
     /**
@@ -843,6 +844,10 @@ export default class LineChart extends ChartBase {
     touch(e) {
         clearTimeout(this._touchTimer);
 
+        /**
+         * 小程序的touch频率远远大于5ms/次，这里定5ms是因为在有ctx2的情况下足够完成tooltip绘制
+         * 保证触摸的丝滑体验。
+         */
         this._touchTimer = setTimeout(() => {
             this.touchHandler(e);
         }, 5);
@@ -861,12 +866,6 @@ export default class LineChart extends ChartBase {
         }
 
         this.ctx2.draw();
-    }
-
-    /**
-     * 尺寸变化的时候重新渲染
-     */
-    resize(width, height) {
     }
 }
 
