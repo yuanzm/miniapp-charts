@@ -98,7 +98,7 @@ function getDataRangeAndStep(max, min, step) {
 
     // 每一步的值小于1的情况，先放大100倍方便计算
     if (  ( max - min ) / step < 1 ) {
-        multiple = 100;
+        multiple = 10000;
         max *= multiple;
         min *= multiple;
     }
@@ -137,6 +137,8 @@ function getDataRangeAndStep(max, min, step) {
 
         divider += round;
     }
+
+    //console.log(9, max, min, divider);
 
     return {
         max    :( min + divider * step ) / multiple,

@@ -346,10 +346,13 @@ export default class LineChart extends ChartBase {
         let bottomStart = this._boundary.leftBottom.y
 
         let changeFunc  = this._config.changeUnit || changeUnit;
+        let toFixed     = (  max < 1
+                           ? 2
+                           : 1 );
 
         for( let i = 0; i < this._config.yAxisCount + 1; i++ ) {
             let word = {
-                text    : changeFunc(min + i * yDivider) + this._config.unit,
+                text    : changeFunc(min + i * yDivider, toFixed) + this._config.unit,
                 color   : yAxis.color,
                 fontSize: yAxis.fontSize,
                 x       : leftStart,
