@@ -819,6 +819,7 @@ export default class LineChart extends ChartBase {
      * 触摸事件处理，绘制tooltip
      */
     touchHandler(e) {
+        let start = new Date();
         /**
          * ctx2本身是为了性能优化存在的，如果没有ctx2，
          * 还是要把所用东西老老实实在ctx1上面绘制一遍
@@ -834,6 +835,8 @@ export default class LineChart extends ChartBase {
         this.drawToolTip();
 
         this.ctx2.draw();
+
+        //console.log(new Date() - start);
     }
 
     /**

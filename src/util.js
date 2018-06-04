@@ -129,7 +129,7 @@ function getDataRangeAndStep(max, min, step) {
     let round = getRoundForNumber(divider);
 
     //console.log(8, round)
-    for ( let i = 0; i < 20; i++ ) {
+    for ( let i = 0; i < 100; i++ ) {
         //console.log( min + divider * step , originMax, max, );
         let temp = min + divider * step;
         if ( temp >= max || temp - originMax >= round * 10 )
