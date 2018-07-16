@@ -2,7 +2,7 @@
 
 ## wxapp-line-chart
 
-A line chart component for wxapp
+小程序折线图组件
 
 ## 安装使用
 
@@ -83,7 +83,7 @@ LineChart构造函数接受三个参数，第一个参数为小程序canvas的Co
 | debug    | Boolean  | 是否开启调试模式，调试模式下面会打出一些调试信息，默认为false|
 | width    | Number   | canvas的宽度，因为小程序没有DOM，不能获取canvas的样式信息，需要手动传入, 默认为414 |
 | height   | Number   | 同width，需要手动传入，默认为200 |
-| unit     | String | Number| Y轴标签的单位，默认为'' |
+| unit     | String | Y轴标签的单位，默认为'' |
 | padding  | Object   | canvas的绘图区域的padding，与canvas本身样式的padding无关|
 | maxCircleCount | Number | 如果单条线的点很少，每个点会带上一个小圆环，当最长线条的点数量大于maxCircleCount的时候，不绘制小圆环，默认为30 |
 |xAxisCount | Number | X轴标签的数量(不包含原点标签)，默认为7 |
@@ -155,3 +155,19 @@ LineChart构造函数接受三个参数，第一个参数为小程序canvas的Co
 | linePadding | Number | 文案行间距，默认为5 |
 | padding     | Object | toolTip的padding，默认padding.left = 5, padding.right = 5,padding.top = 5, padding.bottom = 5 |
 
+## changeUnit
+单位转换函数，组件内置了默认的单位转换函数，如果想采用自己的函数替换即可。
+
+## formatY
+给定一组数据，Y轴标签的最大值最小值和每一步的值都是组件自动算出来的
+有些场景组件算出来的可能不满足需求，或者调用者就是想自定义Y轴标签的数据，
+因此提供自定义的formatY(max, min, yAxisCount)函数，调用者按要求返回数据给组件处理即可
+```
+@return {
+    max: 将原始的最大值处理之后的最大值
+    min: 将原始的最小值处理之后的最小值
+    divider: 每一步的值
+    multiple: 如果处理过程中发现divider是小于1的小数，需要将上面三个数值相对应放大一定倍数
+    似的divider是大于1的数值，同时将放大的倍数告知组件，默认为1
+}
+```
