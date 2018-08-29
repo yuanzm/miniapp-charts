@@ -1,6 +1,6 @@
 import {
     extend,
-} from './util.js';
+} from '../util.js';
 
 /**
  * 图表组件基础类，封装一些canvas画图的基本方法
