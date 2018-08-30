@@ -20,8 +20,7 @@ export default class RadarChart extends Base {
         super();
 
         this.chartType = 'radar';
-
-        this.ctx = ctx;
+        this.ctx       = ctx;
 
         // function in base/index.js
         this._config = this.getConfig(cfg, deepCopy(config));
@@ -38,7 +37,8 @@ export default class RadarChart extends Base {
         return {
             x: this._config.width / 2,
             y: this._config.height / 2,
-        }; }
+        };
+    }
 
     /**
      * 计算辐射状的线条角度数据
@@ -102,6 +102,36 @@ export default class RadarChart extends Base {
             lines.push(oneline);
         }
 
+        this._render.steps = steps;
+
+        return lines;
+    }
+
+    calDatasetsData(data) {
+        let datasets      = data.datasets || [];
+        let steps         = this._render.steps;
+        let angelLineData = this._render.angelLineData;
+        let center        = this._render.center;
+        let grid          = this._config.grid;
+        let lines         = [];
+
+        datasets.forEach((oneset) => {
+            let oneLinePoints = [];
+            oneset.data.forEach( (point, index) =>{
+                let angel   = angelLineData[index];
+                let percent = point / (grid.max - grid.min)
+
+                let x = center.x + ( angel.end.x - center.x ) * percent;
+                let y = center.y - ( center.y - angel.end.y) * percent;
+
+                oneLinePoints.push({ x, y });
+            });
+
+            oneLinePoints.push(oneLinePoints[0]);
+
+            lines.push(oneLinePoints);
+        });
+
         return lines;
     }
 
@@ -125,12 +155,11 @@ export default class RadarChart extends Base {
 
         this._render.radius = 170;
 
-        // function in base/index.js
-        // this.calBoundaryPoint();
-
         this._render.angelLineData = this.calAngleLineData();
 
         this._render.gridLineData  = this.calGridLineData();
+
+        this._render.datasetsData  = this.calDatasetsData(data);
 
         console.log(this._render)
     }
@@ -154,12 +183,23 @@ export default class RadarChart extends Base {
     }
 
     drawDataSets() {
+        this._render.datasetsData.forEach(line => {
+            this.drawLongLine(this.ctx, {
+                points: line,
+                color : '#7587db',
+            });
+            // 每条线画完之后手动fill一下
+            this.ctx.setFillStyle('rgba(117, 135, 219, 0.3)');
+            this.ctx.fill()
+        });
     }
 
     drawToCanvas() {
         this.drawAngelLine();
 
         this.drawGridLine();
+
+        this.drawDataSets();
 
         this.ctx.draw();
     }

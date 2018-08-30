@@ -74,8 +74,8 @@ export default class ChartBase {
         ctx.setLineWidth(line.width || 1);
         ctx.setStrokeStyle(line.color);
 
-        if ( line.isDash )
-            ctx.setLineDash([3], 3);
+        /*if ( line.isDash )
+            ctx.setLineDash([3], 3);*/
 
         ctx.moveTo(line.start.x, line.start.y);
         ctx.lineTo(line.end.x, line.end.y);
@@ -89,8 +89,8 @@ export default class ChartBase {
         ctx.setLineWidth(line.width || 1);
         ctx.setStrokeStyle(line.color);
 
-        if ( line.isDash )
-            ctx.setLineDash([3], 3);
+        /*if ( line.isDash )
+            ctx.setLineDash([3], 3);*/
 
         let points = line.points || [];
 

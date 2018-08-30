@@ -15,7 +15,7 @@ let radarConfig = {
         beginAtZero: true,
         min        : 0,
         max        : 100,
-        stepSize   : 25,
+        stepSize   : 20,
         fontSize   : 15,
         fontColor  : '#e3e3e3',
         width      : 1,
