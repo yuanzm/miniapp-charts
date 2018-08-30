@@ -17,12 +17,15 @@ let radarConfig = {
         max        : 100,
         stepSize   : 25,
         fontSize   : 15,
-        fontColor  : '#888888'
+        fontColor  : '#e3e3e3',
+        width      : 1,
+        color      : '#e3e3e3',
+        style      : 'dash',
     },
 
     // 从原点往外辐射线的样式
     radiationLineStyle: {
-        color: '#888888',
+        color: '#e3e3e3',
         style: 'dash',
     },
 

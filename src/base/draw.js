@@ -74,8 +74,34 @@ export default class ChartBase {
         ctx.setLineWidth(line.width || 1);
         ctx.setStrokeStyle(line.color);
 
+        if ( line.isDash )
+            ctx.setLineDash([3], 3);
+
         ctx.moveTo(line.start.x, line.start.y);
         ctx.lineTo(line.end.x, line.end.y);
+
+        ctx.stroke();
+        ctx.closePath();
+    }
+
+    drawLongLine(ctx, line) {
+        ctx.beginPath();
+        ctx.setLineWidth(line.width || 1);
+        ctx.setStrokeStyle(line.color);
+
+        if ( line.isDash )
+            ctx.setLineDash([3], 3);
+
+        let points = line.points || [];
+
+        for ( let index = 0; index < points.length; index++ ) {
+            let point = points[index];
+            if ( index === 0 )
+                ctx.moveTo(point.x, point.y);
+
+            else
+                ctx.lineTo(point.x, point.y);
+        };
 
         ctx.stroke();
         ctx.closePath();
