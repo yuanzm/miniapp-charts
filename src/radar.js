@@ -154,15 +154,16 @@ export default class RadarChart extends Base {
                 fontSize: style.fontSize,
             });
 
+            this.ctx.setFontSize(style.fontSize);
+            width = this.ctx.measureText(label).width;
+
             height = style.fontSize;
         }
 
         width  += ( style.margin.left + style.margin.right );
         height += ( style.margin.top  + style.margin.bottom );
 
-        console.log(width, height);
-
-        return { width, height };
+        return { width, height, style };
     }
 
     /**
@@ -226,13 +227,13 @@ export default class RadarChart extends Base {
      * 计算label数据
      */
     calLabelData() {
-        let labels        = this._render.labels;
         let angelLineData = this._render.angelLineData;
         let center        = this._render.center;
+        let style         = this._config.label;
 
-        labels.forEach((label, index) => {
+        return this._render.labels.map((label, index) => {
             let base              = angelLineData[index].end;
-            let { width, height } = this.calOneLabelSize(label);
+            let { width, height, style } = this.calOneLabelSize(label);
 
             let startX, startY;
 
@@ -240,7 +241,7 @@ export default class RadarChart extends Base {
                 startX = base.x - width / 2;
 
             else if ( base.x > center.x )
-                startX = base.x + width;
+                startX = base.x;
 
             else if ( base.x < center.x )
                 startX = base.x - width;
@@ -249,12 +250,19 @@ export default class RadarChart extends Base {
                 startY = base.y + height / 2;
 
             else if ( base.y < center.y )
-                startY = base.y - height;
+                startY = base.y;
 
             else
                 startY = base.y + height;
 
-            console.log(startX, startY);
+            return {
+                fontSize: style.fontSize,
+                color   : style.color,
+                text    : label,
+                x       : startX + style.margin.left,
+                y       : startY - style.margin.top,
+                isbottom: true
+            }
         });
     }
 
@@ -300,8 +308,7 @@ export default class RadarChart extends Base {
         this._render.angelLineData = this.calAngleLineData();
         this._render.gridLineData  = this.calGridLineData();
         this._render.datasetsData  = this.calDatasetsData(data);
-
-        this.calLabelData();
+        this._render.labelData     = this.calLabelData();
 
         console.log(this._render)
     }
@@ -326,6 +333,19 @@ export default class RadarChart extends Base {
             // 每条线画完之后手动fill一下
             this.ctx.setFillStyle('rgba(117, 135, 219, 0.3)');
             this.ctx.fill()
+        });
+
+        this._render.labelData.forEach(label => {
+            this.drawWord(this.ctx, label)
+        });
+
+        this.drawWord(this.ctx, {
+            text: 'jjjjj',
+            fontSize: 12,
+            color: '#000000',
+            x    : 0,
+            y    : 12,
+            isbottom: true,
         });
 
         this.ctx.draw();

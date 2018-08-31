@@ -6,26 +6,21 @@ Page({
 
         this.radarchart = new RadarChart(context,
             {
-                width : 400,
-                height: 400,
+                width : 250,
+                height: 250,
             }
         );
 
         this.radarchart.draw(
             {
-                labels  : ['输出', 'KDA', 'KDA', 'KDA', 'KDA'],
+                labels  : ['输出', 'KDA', 'KDA', 'KDA', 'KDA', '推进'],
                 datasets: [
                     {
-                        data: [50, 80, 75, 90, 100],
+                        data: [50, 80, 75, 90, 100, 67],
                     },
-                    {
-                        data: [60, 90, 55, 40, 100],
-                    }
                 ]
             },
             {
-                width : 400,
-                height: 400,
             }
         );
     }
