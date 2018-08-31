@@ -118,7 +118,7 @@ export default class LineChart extends ChartBase {
         };
 
         // 计算实际绘图区域的右上角信息
-        this._boundary.rightTop=  {
+        this._boundary.rightTop =  {
             x: _config.width - padding.right,
             y: padding.top
         };

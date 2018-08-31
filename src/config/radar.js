@@ -29,6 +29,17 @@ let radarConfig = {
         style: 'dash',
     },
 
+    label: {
+        color   : '#888888',
+        fontSize: 12,
+        margin: {
+            left  : 3,
+            right : 3,
+            top   : 0,
+            bottom: 0,
+        }
+    },
+
     gridLineStyle: {
         color: '#888888',
         style: 'line',

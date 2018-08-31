@@ -1,15 +1,12 @@
 /**
  * @author: zimyuan
- * @lase-edit-date: 2018-05-18
+ * @lase-edit-date: 2018-08-30
  */
 
 import {
     isType,
-    extend,
     deepCopy,
     changeUnit,
-    isPlainObject,
-    getDataRangeAndStep
 } from './util.js';
 
 import config  from './config/radar.js';
@@ -26,6 +23,8 @@ export default class RadarChart extends Base {
         this._config = this.getConfig(cfg, deepCopy(config));
 
         this._render.center = this.getCenterPoint();
+
+        this.calBoundaryPoint();
 
         console.log(this._render, this._config);
     }
@@ -53,9 +52,10 @@ export default class RadarChart extends Base {
         let baseY = center.y;
 
         let style = this._config.radiationLineStyle;
+        let startAngle = this._config.startAngle;
 
         return labels.map((item, index) => {
-            let rad = Math.PI * (oneAngel * index) / 180;
+            let rad = Math.PI * ( startAngle + oneAngel * index) / 180;
 
             let x = baseX + radius * Math.sin(rad);
             let y = baseY - radius * Math.cos(rad);
@@ -135,10 +135,127 @@ export default class RadarChart extends Base {
         return lines;
     }
 
+    calOneLabelSize(label) {
+        let style  = this._config.label;
+        let width  = 0;
+        let height = 0;
+
+        if ( isType('array', label ) ) {
+
+        }
+
+        // 不是数组，但是自带样式等配置
+        else if ( isType('object', label) ) {
+        }
+
+        else {
+            width = this.getWordWidth({
+                text    : label,
+                fontSize: style.fontSize,
+            });
+
+            height = style.fontSize;
+        }
+
+        width  += ( style.margin.left + style.margin.right );
+        height += ( style.margin.top  + style.margin.bottom );
+
+        console.log(width, height);
+
+        return { width, height };
+    }
+
+    /**
+     * 先假想一个半径值，雷达区域的边界点
+     */
+    calRadius() {
+        let { left, right, top, bottom } = this.calGridBoundary();
+
+        let min     = Math.min(this._config.width, this._config.height);
+        let labels  = this._render.labels;
+
+        let effectSize = Math.min(
+            min - this.calOneLabelSize(labels[left]).width - this.calOneLabelSize(labels[right]).width,
+            min - this.calOneLabelSize(labels[top]).height - this.calOneLabelSize(labels[bottom]).height,
+        );
+
+        return parseInt(effectSize / 2);
+    }
+
+    /**
+     * 计算雷达图的半径
+     * 为了最大化利用绘图面积，需要考虑多种因素来计算
+     * 1. 每一个点的label可以设置多行
+     * 2. 每一个label都是可以有样式设置的
+     * 3. 需要知道多行的label是都在最上面或者最下面
+     */
+    calGridBoundary() {
+        let radiusGuess = 100;
+        let center      = this._render.center;
+        let startAngle  = this._config.startAngle;
+        let oneAngel    = 360 / this._render.labels.length;
+        let temp        = [];
+
+        this._render.labels.forEach((label, index) => {
+            let rad = Math.PI * ( startAngle + oneAngel * index) / 180;
+
+            let x = center.x + radiusGuess * Math.sin(rad);
+            let y = center.y - radiusGuess * Math.cos(rad);
+
+            temp.push({ x, y, index });
+        });
+
+        temp.sort((a, b) => {
+            return a.x - b.x;
+        });
+
+        let left  = temp[0].index;
+        let right = temp[temp.length - 1].index;
+
+        temp.sort((a, b) => {
+            return a.y - b.y;
+        });
+
+        let top    = temp[0].index;
+        let bottom = temp[temp.length - 1].index;
+
+        return { left, right, top, bottom };
+    }
+
     /**
      * 计算label数据
      */
     calLabelData() {
+        let labels        = this._render.labels;
+        let angelLineData = this._render.angelLineData;
+        let center        = this._render.center;
+
+        labels.forEach((label, index) => {
+            let base              = angelLineData[index].end;
+            let { width, height } = this.calOneLabelSize(label);
+
+            let startX, startY;
+
+            if ( base.x === center.x )
+                startX = base.x - width / 2;
+
+            else if ( base.x > center.x )
+                startX = base.x + width;
+
+            else if ( base.x < center.x )
+                startX = base.x - width;
+
+            if ( base.y === center.y )
+                startY = base.y + height / 2;
+
+            else if ( base.y < center.y )
+                startY = base.y - height;
+
+            else
+                startY = base.y + height;
+
+            console.log(startX, startY);
+        });
     }
 
     /**
@@ -147,42 +264,60 @@ export default class RadarChart extends Base {
     calYAxisData() {
     }
 
+    calBoundaryPoint() {
+        let _config = this._config;
+        let padding = _config.padding;
+
+        this._boundary.leftTop = {
+            x: padding.left,
+            y: padding.top,
+        }
+
+        this._boundary.leftBottom = {
+            x: padding.left,
+            y: _config.height - padding.bottom,
+        }
+
+        this._boundary.rightTop = {
+            x: _config.width - padding.right,
+            y: padding.top,
+        }
+
+        this._boundary.rightBottom = {
+            x: _config.width - padding.right,
+            y: _config.height - padding.bottom,
+        }
+    }
+
     /**
      * 初始化所有数据
+     * @TODO: label参数校验
      */
     initData(data) {
-        this._render.labels = data.labels || [];
-
-        this._render.radius = 170;
-
+        this._datasets             = data.datasets || [];
+        this._render.labels        = data.labels || [];
+        this._render.radius        = this.calRadius();
         this._render.angelLineData = this.calAngleLineData();
-
         this._render.gridLineData  = this.calGridLineData();
-
         this._render.datasetsData  = this.calDatasetsData(data);
+
+        this.calLabelData();
 
         console.log(this._render)
     }
 
-    drawLabel() {
-    }
-
-    drawAngelLine() {
+    drawToCanvas() {
+        // 辐射状的线条
         this._render.angelLineData.forEach((line) => {
             this.drawLine(this.ctx, line);
         });
-    }
 
-    drawGridLine() {
+        // 网格线
         this._render.gridLineData.forEach((line, index) => {
             this.drawLongLine(this.ctx, line);
         });
-    }
 
-    drawYAxis() {
-    }
-
-    drawDataSets() {
+        // 区域数据
         this._render.datasetsData.forEach(line => {
             this.drawLongLine(this.ctx, {
                 points: line,
@@ -192,21 +327,12 @@ export default class RadarChart extends Base {
             this.ctx.setFillStyle('rgba(117, 135, 219, 0.3)');
             this.ctx.fill()
         });
-    }
-
-    drawToCanvas() {
-        this.drawAngelLine();
-
-        this.drawGridLine();
-
-        this.drawDataSets();
 
         this.ctx.draw();
     }
 
     draw(data) {
         this.initData(data);
-
         this.drawToCanvas();
     }
 }
