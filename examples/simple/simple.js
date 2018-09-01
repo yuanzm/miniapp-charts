@@ -8,6 +8,9 @@ Page({
             {
                 width : 250,
                 height: 250,
+                padding: {
+                    left: 5, right: 5, top:5, bottom: 5
+                }
             }
         );
 

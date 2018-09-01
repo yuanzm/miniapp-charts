@@ -23,10 +23,6 @@ export default class RadarChart extends Base {
         this._config = this.getConfig(cfg, deepCopy(config));
 
         this._render.center = this.getCenterPoint();
-
-        this.calBoundaryPoint();
-
-        console.log(this._render, this._config);
     }
 
     /**
@@ -155,6 +151,7 @@ export default class RadarChart extends Base {
             });
 
             this.ctx.setFontSize(style.fontSize);
+            this.ctx.font = 'normal normal 12px sans-serif';
             width = this.ctx.measureText(label).width;
 
             height = style.fontSize;
@@ -172,15 +169,23 @@ export default class RadarChart extends Base {
     calRadius() {
         let { left, right, top, bottom } = this.calGridBoundary();
 
-        let min     = Math.min(this._config.width, this._config.height);
+        let min     = Math.min(this._config.width, this._config.height) / 2
         let labels  = this._render.labels;
+        let padding = this._config.padding;
 
-        let effectSize = Math.min(
-            min - this.calOneLabelSize(labels[left]).width - this.calOneLabelSize(labels[right]).width,
-            min - this.calOneLabelSize(labels[top]).height - this.calOneLabelSize(labels[bottom]).height,
-        );
+        let leftMin   = min - this.calOneLabelSize(labels[left]).width  - padding.left;
+        let rightMin  = min - this.calOneLabelSize(labels[right]).width - padding.right;
+        let topMin    = min - this.calOneLabelSize(labels[top]).height  - padding.top;
+        let bottomMin = min - this.calOneLabelSize(labels[bottom]).height - padding.bottom;
 
-        return parseInt(effectSize / 2);
+        let effectSize = Math.min(leftMin, rightMin, topMin, bottomMin);
+        let max        = Math.max(leftMin, rightMin, topMin, bottomMin);
+
+        let tmp = Math.cos(Math.PI * 30  / 180);
+
+        return ( effectSize / tmp > max
+                ? max
+                : effectSize / tmp );
     }
 
     /**
@@ -197,24 +202,32 @@ export default class RadarChart extends Base {
         let oneAngel    = 360 / this._render.labels.length;
         let temp        = [];
 
+        let sizeData    = this._render.labelsSizeData;
+
         this._render.labels.forEach((label, index) => {
             let rad = Math.PI * ( startAngle + oneAngel * index) / 180;
 
             let x = center.x + radiusGuess * Math.sin(rad);
             let y = center.y - radiusGuess * Math.cos(rad);
 
-            temp.push({ x, y, index });
+            temp.push({ x, y, index, size: sizeData[index] });
         });
 
         temp.sort((a, b) => {
-            return a.x - b.x;
+            let v1 = parseFloat(parseFloat(a.x).toFixed(2));
+            let v2 = parseFloat(parseFloat(b.x).toFixed(2));
+
+            return v1 - v2 || a.size.width - b.size.width;
         });
 
         let left  = temp[0].index;
         let right = temp[temp.length - 1].index;
 
         temp.sort((a, b) => {
-            return a.y - b.y;
+            let v1 = parseFloat(parseFloat(a.y).toFixed(2));
+            let v2 = parseFloat(parseFloat(b.y).toFixed(2));
+
+            return v1 - v2 || a.size.height- b.size.height;
         });
 
         let top    = temp[0].index;
@@ -224,36 +237,50 @@ export default class RadarChart extends Base {
     }
 
     /**
+     * 计算所有label的尺寸
+     */
+    calLabelSize() {
+        return this._render.labels.map((label, index) => {
+            return this.calOneLabelSize(label);
+        });
+    }
+
+    /**
      * 计算label数据
      */
     calLabelData() {
-        let angelLineData = this._render.angelLineData;
-        let center        = this._render.center;
-        let style         = this._config.label;
+        let angelLineData  = this._render.angelLineData;
+        let center         = this._render.center;
+        let style          = this._config.label;
+        let labelsSizeData = this._render.labelsSizeData;
 
         return this._render.labels.map((label, index) => {
             let base              = angelLineData[index].end;
-            let { width, height, style } = this.calOneLabelSize(label);
+            let { width, height, style } = labelsSizeData[index];
+            let baseX   = parseInt(base.x);
+            let baseY   = parseInt(base.y);
+            let centerX = parseInt(center.x);
+            let centerY = parseInt(center.y);
 
             let startX, startY;
 
-            if ( base.x === center.x )
-                startX = base.x - width / 2;
+            if ( baseX === centerX )
+                startX = baseX - width / 2;
 
-            else if ( base.x > center.x )
-                startX = base.x;
+            else if ( baseX > centerX )
+                startX = baseX;
 
-            else if ( base.x < center.x )
-                startX = base.x - width;
+            else if ( baseX < centerX )
+                startX = baseX - width;
 
-            if ( base.y === center.y )
-                startY = base.y + height / 2;
+            if ( baseY === centerY )
+                startY = baseY + height / 2;
 
-            else if ( base.y < center.y )
-                startY = base.y;
+            else if ( baseY < centerY )
+                startY = baseY;
 
             else
-                startY = base.y + height;
+                startY = baseY + height;
 
             return {
                 fontSize: style.fontSize,
@@ -261,7 +288,9 @@ export default class RadarChart extends Base {
                 text    : label,
                 x       : startX + style.margin.left,
                 y       : startY - style.margin.top,
-                isbottom: true
+                isbottom: true,
+                width,
+                height,
             }
         });
     }
@@ -272,43 +301,20 @@ export default class RadarChart extends Base {
     calYAxisData() {
     }
 
-    calBoundaryPoint() {
-        let _config = this._config;
-        let padding = _config.padding;
-
-        this._boundary.leftTop = {
-            x: padding.left,
-            y: padding.top,
-        }
-
-        this._boundary.leftBottom = {
-            x: padding.left,
-            y: _config.height - padding.bottom,
-        }
-
-        this._boundary.rightTop = {
-            x: _config.width - padding.right,
-            y: padding.top,
-        }
-
-        this._boundary.rightBottom = {
-            x: _config.width - padding.right,
-            y: _config.height - padding.bottom,
-        }
-    }
-
     /**
      * 初始化所有数据
      * @TODO: label参数校验
      */
     initData(data) {
-        this._datasets             = data.datasets || [];
-        this._render.labels        = data.labels || [];
-        this._render.radius        = this.calRadius();
-        this._render.angelLineData = this.calAngleLineData();
-        this._render.gridLineData  = this.calGridLineData();
-        this._render.datasetsData  = this.calDatasetsData(data);
-        this._render.labelData     = this.calLabelData();
+        this._datasets              = data.datasets || [];
+        this._render.labels         = data.labels || [];
+        this._render.labelsSizeData = this.calLabelSize();
+        this._render.radius         = this.calRadius();
+       // this._render.radius        = 29;
+        this._render.angelLineData  = this.calAngleLineData();
+        this._render.gridLineData   = this.calGridLineData();
+        this._render.datasetsData   = this.calDatasetsData(data);
+        this._render.labelData      = this.calLabelData();
 
         console.log(this._render)
     }
@@ -337,15 +343,6 @@ export default class RadarChart extends Base {
 
         this._render.labelData.forEach(label => {
             this.drawWord(this.ctx, label)
-        });
-
-        this.drawWord(this.ctx, {
-            text: 'jjjjj',
-            fontSize: 12,
-            color: '#000000',
-            x    : 0,
-            y    : 12,
-            isbottom: true,
         });
 
         this.ctx.draw();

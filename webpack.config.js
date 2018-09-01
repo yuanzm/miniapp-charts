@@ -2,10 +2,14 @@
 const path = require('path');
 
 module.exports = {
-    entry : './src/index.js',
+    entry: {
+		index: "./src/index.js",
+		radar: "./src/radar.js",
+        main : "./src/main.js",
+	},
     output: {
-        filename: 'linechart.js',
-        path: path.resolve(__dirname, 'dist')
+        path    : path.resolve(__dirname, 'dist'),
+        filename: "[name].js"
     },
     mode: "development",
 };

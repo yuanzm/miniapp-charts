@@ -2,6 +2,7 @@
 import ChartBase from './draw.js';
 import {
     deepCopy,
+    extend,
     isPlainObject
 } from '../util.js';
 
