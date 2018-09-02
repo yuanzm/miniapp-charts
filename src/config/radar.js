@@ -11,8 +11,7 @@ let radarConfig = {
     },
 
     grid: {
-        display    : false,
-        beginAtZero: true,
+        display    : true,
         min        : 0,
         max        : 100,
         stepSize   : 20,
@@ -30,6 +29,7 @@ let radarConfig = {
     },
 
     label: {
+        display   : true,
         color   : '#888888',
         fontSize: 12,
         margin: {
@@ -38,11 +38,6 @@ let radarConfig = {
             top   : 3,
             bottom: 3,
         }
-    },
-
-    gridLineStyle: {
-        color: '#888888',
-        style: 'line',
     },
 
     // 单个雷达区域的配置

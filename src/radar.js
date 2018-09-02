@@ -412,6 +412,8 @@ export default class RadarChart extends Base {
         this._datasets              = data.datasets || [];
         this._render.labels         = data.labels || [];
 
+        this._config.startAngle     = this._config.startAngle % 360;
+
         // 数据的计算会有前后依赖关系，不可随意更改函数调用关系
         this._render.labelsSizeData = this.calLabelSize();
         this._render.radius         = this.calRadius();
@@ -422,7 +424,8 @@ export default class RadarChart extends Base {
         this._render.labelData      = this.calLabelData();
         this._render.pointData      = this.calPointData();
 
-        console.log(this._render);
+        if ( this._config.debug )
+            console.log('render data', this._render);
     }
 
     drawToCanvas() {
