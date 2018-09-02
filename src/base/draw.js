@@ -45,6 +45,8 @@ export default class ChartBase {
 
         ctx.beginPath();
 
+        console.log(this.ctx.font);
+
         if ( word.isbottom )
             ctx.setTextBaseline('bottom')
 

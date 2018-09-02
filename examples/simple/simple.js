@@ -8,6 +8,7 @@ Page({
             {
                 width : 250,
                 height: 250,
+                debug : true,
                 padding: {
                     left: 5, right: 5, top:5, bottom: 5
                 }
@@ -16,7 +17,13 @@ Page({
 
         this.radarchart.draw(
             {
-                labels  : ['KDA', ['输出', 'KDA'],'KDA', 'KDA', 'KDA', '推进'],
+                labels  : [
+                {
+                    text: 'KDA',
+                    color: 'red',
+                },
+                //'kda',
+                ['输出', 'KDA'],'KDA', 'KDA', 'KDA', '推进'],
                 datasets: [
                     {
                         data: [50, 80, 75, 90,  67, 77],

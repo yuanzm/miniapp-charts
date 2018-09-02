@@ -159,22 +159,26 @@ export default class RadarChart extends Base {
 
     calLabelSize() {
         let style  = this._config.label;
+        let labels = this._render.labels;
 
-        return this._render.labels.map((label, index) => {
+        return labels.map((label, index) => {
             let width  = 0;
             let height = 0;
+            let subSize;
 
             if ( isType('array', label ) ) {
-                label.forEach( (item) => {
-                    let subSize;
+                label.forEach( (item, lIndex) => {
 
                     // 本身就是一个完整的label配置
                     if ( isType('object', item) ) {
                         // 覆盖默认配置得到新的配置
-                        let itemConfig = this.getConfig(item, deepCopy(style));
+                        let newItem = this.getConfig(item, deepCopy(style));
 
-                        subSize  = this.calOneLabelSize(item.text, itemConfig);
+                        // 直接替换掉原始数据的值，方便后续使用
+                        newItem.text  = item.text;
+                        label[lIndex] = label;
 
+                        subSize  = this.calOneLabelSize(item.text, newItem);
                     }
 
                     else if ( isType('string', item) ) {
@@ -182,7 +186,7 @@ export default class RadarChart extends Base {
                     }
 
                     else
-                        subSize = {width: 0, height: 0};
+                        subSize = { width: 0, height: 0 };
 
                     width  = Math.max(subSize.width, width);
                     height += subSize.height;
@@ -191,9 +195,15 @@ export default class RadarChart extends Base {
 
             // 不是数组，但是自带样式等配置
             else if ( isType('object', label) ) {
-                let labelConfig = this.getConfig(label, deepCopy(style));
+                let newLabel = this.getConfig(label, deepCopy(style));
 
-                subSize  = this.calOneLabelSize(label.text || '', labelConfig);
+                newLabel.text = label.text || '';
+                labels[index] = newLabel;
+
+                subSize  = this.calOneLabelSize(label.text || '', newLabel);
+
+                width  = subSize.width;
+                height = subSize.height;
             }
 
             else {
@@ -244,7 +254,7 @@ export default class RadarChart extends Base {
         let maxR = arr[arr.length - 1].value
 
         let minAngel = this._config.startAngle + ( 360 / this._render.labels.length ) * arr[0].index;
-        let tmp = Math.cos(Math.PI * ( minAngel % 9 ) / 180);
+        let tmp = Math.cos(Math.PI * ( minAngel % 90 ) / 180);
 
         return (  minR / tmp > maxR
                 ? maxR
@@ -353,6 +363,7 @@ export default class RadarChart extends Base {
         this._render.labels.forEach((label, index) => {
             let pos = posData[index];
             if ( isType('string', label) ) {
+                console.log(pos);
                 result.push({
                     fontSize: style.fontSize,
                     color   : style.color,
@@ -375,6 +386,18 @@ export default class RadarChart extends Base {
                             isbottom: true,
                         });
                     }
+                });
+            }
+
+            else if ( isType('object', label) ) {
+                console.log(pos);
+                result.push({
+                    fontSize: label.fontSize,
+                    color   : label.color,
+                    text    : label.text,
+                    x       : pos.startX + label.margin.left,
+                    y       : pos.startY + ( label.fontSize +  label.margin.top ),
+                    isbottom: true,
                 });
             }
         });
@@ -461,12 +484,8 @@ export default class RadarChart extends Base {
     }
 
     draw(data) {
-        let start = new Date();
-
         this.initData(data);
         this.drawToCanvas();
-
-        console.log('render const', new Date() - start);
     }
 }
 
