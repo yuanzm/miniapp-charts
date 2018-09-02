@@ -16,10 +16,10 @@ Page({
 
         this.radarchart.draw(
             {
-                labels  : ['输出', 'KDA', 'KDA', 'KDA', 'KDA', '推进'],
+                labels  : ['KDA', ['输出', 'KDA'],'KDA', 'KDA', 'KDA', '推进','xxx'],
                 datasets: [
                     {
-                        data: [50, 80, 75, 90, 100, 67],
+                        data: [50, 80, 75, 90,  67, 0, 99],
                     },
                 ]
             },
