@@ -16,15 +16,13 @@ Page({
 
         this.radarchart.draw(
             {
-                labels  : ['KDA', ['输出', 'KDA'],'KDA', 'KDA', 'KDA', '推进','xxx', 'ggg', 'hhh'],
+                labels  : ['KDA', ['输出', 'KDA'],'KDA', 'KDA', 'KDA', '推进'],
                 datasets: [
                     {
-                        data: [50, 80, 75, 90,  67, 0, 99, 88, 77],
+                        data: [50, 80, 75, 90,  67, 77],
                     },
                 ]
             },
-            {
-            }
         );
     }
 });
