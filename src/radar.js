@@ -111,9 +111,14 @@ export default class RadarChart extends Base {
         let center        = this._render.center;
         let grid          = this._config.grid;
         let lines         = [];
+        let style         = this._config.datasetStyle;
 
         datasets.forEach((oneset) => {
-            let oneLinePoints = [];
+            let points = [];
+
+            let lineStyle = this.getConfig(oneset.style || {}, deepCopy(style));
+            oneset.style = lineStyle;
+
             oneset.data.forEach( (point, index) =>{
                 let angel   = angelLineData[index];
                 let percent = point / (grid.max - grid.min)
@@ -121,12 +126,19 @@ export default class RadarChart extends Base {
                 let x = center.x + ( angel.end.x - center.x ) * percent;
                 let y = center.y - ( center.y - angel.end.y) * percent;
 
-                oneLinePoints.push({ x, y });
+                points.push({ x, y });
             });
 
-            oneLinePoints.push(oneLinePoints[0]);
+            points.push(points[0]);
 
-            lines.push(oneLinePoints);
+            lines.push({
+                points,
+                style: lineStyle,
+                width: lineStyle.borderWidth,
+                color: lineStyle.borderColor,
+
+                backgroundColor: lineStyle.backgroundColor,
+            });
         });
 
         return lines;
@@ -232,7 +244,6 @@ export default class RadarChart extends Base {
         let maxR = arr[arr.length - 1].value
 
         let minAngel = this._config.startAngle + ( 360 / this._render.labels.length ) * arr[0].index;
-        console.log(minAngel);
         let tmp = Math.cos(Math.PI * ( minAngel % 9 ) / 180);
 
         return (  minR / tmp > maxR
@@ -371,6 +382,28 @@ export default class RadarChart extends Base {
         return result;
     }
 
+    calPointData() {
+        let circles = [];
+
+        this._datasets.forEach((dataset, index) => {
+            let points = this._render.datasetsData[index].points;
+            let style  = dataset.style || this._config.datasetStyle;
+
+            points.forEach((point) => {
+                circles.push({
+                    x          : point.x,
+                    y          : point.y,
+                    r          : style.pointRadius || 2,
+                    fillColor  : style.pointBackgroundColor || '#FFFFFF',
+                    strokeColor: style.pointBorderColor,
+                    lineWidth  : style.pointBorderWidth,
+                });
+            });
+        });
+
+        return circles;;
+    }
+
     /**
      * 初始化所有数据
      * @TODO: label参数校验
@@ -387,6 +420,7 @@ export default class RadarChart extends Base {
         this._render.datasetsData   = this.calDatasetsData(data);
         this._render.labelPosData   = this.calLabelPosData();
         this._render.labelData      = this.calLabelData();
+        this._render.pointData      = this.calPointData();
 
         console.log(this._render);
     }
@@ -404,18 +438,20 @@ export default class RadarChart extends Base {
 
         // 区域数据
         this._render.datasetsData.forEach(line => {
-            this.drawLongLine(this.ctx, {
-                points: line,
-                color : '#7587db',
-            });
+            this.drawLongLine(this.ctx, line);
 
             // 每条线画完之后手动fill一下
-            this.ctx.setFillStyle('rgba(117, 135, 219, 0.3)');
-            this.ctx.fill()
+            this.ctx.setFillStyle(line.backgroundColor);
+            this.ctx.fill();
         });
 
+        // 标签数据
         this._render.labelData.forEach(label => {
             this.drawWord(this.ctx, label)
+        });
+
+        this._render.pointData.forEach(point => {
+            this.drawCircle(this.ctx, point);
         });
 
         this.ctx.draw();
@@ -423,6 +459,7 @@ export default class RadarChart extends Base {
 
     draw(data) {
         let start = new Date();
+
         this.initData(data);
         this.drawToCanvas();
 

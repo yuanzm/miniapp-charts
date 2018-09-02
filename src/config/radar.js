@@ -46,15 +46,16 @@ let radarConfig = {
     },
 
     // 单个雷达区域的配置
-    lineStyle: {
+    datasetStyle: {
         label               : '',
         backgroundColor     : 'rgba(232, 245, 223, 0.7)',
         borderColor         : '#99d774',
-        borderWidth         : 1.5,
+        borderWidth         : 1,
+        pointShow           : true,
         pointBackgroundColor: '#8dd364',
         pointBorderColor    : '#8dd364',
-        pointBorderWidth    : 0,
-        pointRadius         : 1.8
+        pointBorderWidth    : 1,
+        pointRadius         : 1.5
     },
 
     // 雷达图的旋转角度
