@@ -45,7 +45,7 @@ Page({
 });
 ```
 
-## RadarChart构造参数
+## RadarChart构造函数
 ### RadarChart(context, [cfg])
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
@@ -93,6 +93,7 @@ Page({
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
 | display  | Boolean  |  是否展示从中心点往顶点辐射的线，默认为true|
+| width    | Number   | 线条宽度，默认是1          |
 | color    | String   | 线条的颜色，默认是#e3e3e3 |
 | style    | String   | 线条的样式，暂时只支持line和dash，默认为line|
 | dashPattern | Array | 线条为虚线的配置，详情可看[小程序文档](https://developers.weixin.qq.com/miniprogram/dev/api/canvas/set-line-dash.html)|
@@ -111,7 +112,7 @@ Page({
 |----------|----------| ---------|
 | backgroundColor | String | 区域背景颜色，默认为rgba(232, 245, 223, 0.7) |
 | borderColor| String | 区域边界颜色，默认为#99d774 |
-| borderWidth | Number | 区域边界线条宽度，默认是1 |
+| borderWidth | Number | 区域边界线条宽度，默认是2 |
 | pointShow   | Boolean | 每个雷达数据点是否需要圆圈展示，默认为true|
 | pointBackgroundColor | String | 数据点上圆圈的背景颜色，默认为#8dd364 |
 | pointBorderColor | String | 数据点上圆圈圆周线条颜色，默认为#8dd364 |

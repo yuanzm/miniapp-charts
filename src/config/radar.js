@@ -67,7 +67,7 @@ let radarConfig = {
         pointBackgroundColor: '#8dd364',
         pointBorderColor    : '#8dd364',
         pointBorderWidth    : 1,
-        pointRadius         : 1.5
+        pointRadius         : 2,
     },
 
     // 雷达图的旋转角度
