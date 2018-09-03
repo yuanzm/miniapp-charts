@@ -55,7 +55,7 @@ RadarChart构造函数接受两个参数，第一个参数为小程序canvas的C
 | width    | Number   | canvas的宽度，因为小程序没有DOM，不能获取canvas的样式信息，需要手动传入, 默认为250 |
 | height   | Number   | 同width，需要手动传入，默认为250 |
 | padding  | Object   | canvas的绘图区域的padding，与canvas本身样式的padding无关|
-| grid     | Object   | 是否展示底线的配置 |
+| grid     | Object   | 网状底线的配置 |
 | radiationLineStyle | Object | 从中心点往外辐射的线条配置|
 | label |  Object | 雷达标签文案配置 |
 | datasetStyle | Object | 单个雷达区域配置|
