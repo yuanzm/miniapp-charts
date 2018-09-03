@@ -1,4 +1,3 @@
-
 ## 小程序雷达图组件
 
 ## 安装使用
@@ -61,7 +60,7 @@ RadarChart构造函数接受两个参数，第一个参数为小程序canvas的C
 | datasetStyle | Object | 单个雷达区域配置|
 | startAngle | Number | 雷达图的默认旋转角度，默认是0|
 
-## padding配置详情
+### padding配置详情
 
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
@@ -70,7 +69,7 @@ RadarChart构造函数接受两个参数，第一个参数为小程序canvas的C
 | top      | Number   | 上边距，默认为10 |
 | bottom   | Number   | 下边距，默认为5  |
 
-## grid配置详情
+###  grid配置详情
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
 | display  | Boolean  |  是否展示网状底线，默认为true|
@@ -81,20 +80,22 @@ RadarChart构造函数接受两个参数，第一个参数为小程序canvas的C
 | color    | String   | 线条的颜色，默认是#e3e3e3 |
 | style    | String   | 线条的样式，暂时只支持line和dash，默认为line|
 
-## radiationLineStyle配置详情
+###  radiationLineStyle配置详情
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
+| display  | Boolean  |  是否展示网状底线，默认为true|
 | color    | String   | 线条的颜色，默认是#e3e3e3 |
 | style    | String   | 线条的样式，暂时只支持line和dash，默认为line|
 
-## label配置详情
+### label配置详情
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
+| display  | Boolean  |  是否展示网状底线，默认为true|
 | color    | String   | 文案的颜色，默认是#888888 |
 | fontSize | Number   | 文案的字体大小，默认是12 |
 | margin   | Object   | 文案的间距配置，默认margin.left,margin.right,margin.top,margin.bottom = 3 |
 
-## datasetStyle配置详情
+### datasetStyle配置详情
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
 | backgroundColor | String | 区域背景颜色，默认为rgba(232, 245, 223, 0.7) |
@@ -106,4 +107,17 @@ RadarChart构造函数接受两个参数，第一个参数为小程序canvas的C
 | pointBorderWidth | Number | 数据点上圆圈圆周线条的宽度，默认为1 |
 | pointRadius   | Number | 数据点上圆圈的半径，默认为2 |
 
+## RadarChart API
+
+### draw(data, [cfg])
+| keyName  | 类型     |  描述    |
+|----------|----------| ---------|
+| data     | Object   | 渲染雷达图需要的数据 |
+| cfg      | Object   | 组件配置，cfg每一项属性值会替换组件已有属性值 |
+
+#### data配置详情
+| keyName  | 类型     |  描述    |
+|----------|----------| ---------|
+| labels   | Array    | 雷达图顶点的标签数据，Array的每一项可以是String、Array和Object类型，具体配置下面会介绍|
+| datasets | Array    | Array的每一项为一个Object，这个Object本身是配置datasetStyle的结构，增加了一个Array类型的data属性，用于表示雷达图每个顶点的数据 |
 

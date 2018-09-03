@@ -5,9 +5,10 @@ import {
 
 let radarConfig = {
     // 有些雷达图会有Y轴，一般不展示，这里提供功能
+    // TODO
     yAxisLine: {
-        show  : false,
-        color : '#B8B8B8',
+        display: false,
+        color  : '#B8B8B8',
     },
 
     grid: {
@@ -15,8 +16,6 @@ let radarConfig = {
         min        : 0,
         max        : 100,
         stepSize   : 20,
-        fontSize   : 15,
-        fontColor  : '#e3e3e3',
         width      : 1,
         color      : '#e3e3e3',
         style      : 'dash',
@@ -24,8 +23,9 @@ let radarConfig = {
 
     // 从原点往外辐射线的样式
     radiationLineStyle: {
-        color: '#e3e3e3',
-        style: 'dash',
+        display: true,
+        color  : '#e3e3e3',
+        style  : 'dash',
     },
 
     label: {

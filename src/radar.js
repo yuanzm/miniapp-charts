@@ -73,7 +73,6 @@ export default class RadarChart extends Base {
         let grid   = this._config.grid;
         let center = this._render.center;
 
-        // TODO: steps的边缘情况
         let steps = parseInt( (grid.max - grid.min) / grid.stepSize );
 
         let lines = [];
@@ -362,8 +361,8 @@ export default class RadarChart extends Base {
         this._render.labels.forEach((label, index) => {
             let pos = posData[index];
             if ( isType('string', label) ) {
-                console.log(pos);
                 result.push({
+                    display : style.display,
                     fontSize: style.fontSize,
                     color   : style.color,
                     text    : label,
@@ -377,6 +376,7 @@ export default class RadarChart extends Base {
                 label.forEach(( item, index) => {
                     if ( isType('string', item ) ) {
                         result.push({
+                            display : style.display,
                             fontSize: style.fontSize,
                             color   : style.color,
                             text    : item,
@@ -389,8 +389,8 @@ export default class RadarChart extends Base {
             }
 
             else if ( isType('object', label) ) {
-                console.log(pos);
                 result.push({
+                    display : label.display,
                     fontSize: label.fontSize,
                     color   : label.color,
                     text    : label.text,
@@ -428,7 +428,6 @@ export default class RadarChart extends Base {
 
     /**
      * 初始化所有数据
-     * @TODO: label参数校验
      */
     initData(data) {
         this._datasets              = data.datasets || [];
@@ -452,14 +451,18 @@ export default class RadarChart extends Base {
 
     drawToCanvas() {
         // 辐射状的线条
-        this._render.angelLineData.forEach((line) => {
-            this.drawLine(this.ctx, line);
-        });
+        if ( this._config.radiationLineStyle.display ) {
+            this._render.angelLineData.forEach((line) => {
+                this.drawLine(this.ctx, line);
+            });
+        }
 
         // 网格线
-        this._render.gridLineData.forEach((line, index) => {
-            this.drawLongLine(this.ctx, line);
-        });
+        if ( this._config.grid.display ) {
+            this._render.gridLineData.forEach((line, index) => {
+                this.drawLongLine(this.ctx, line);
+            });
+        }
 
         // 区域数据
         this._render.datasetsData.forEach(line => {
@@ -472,7 +475,8 @@ export default class RadarChart extends Base {
 
         // 标签数据
         this._render.labelData.forEach(label => {
-            this.drawWord(this.ctx, label)
+            if ( label.display )
+                this.drawWord(this.ctx, label)
         });
 
         this._render.pointData.forEach(point => {
