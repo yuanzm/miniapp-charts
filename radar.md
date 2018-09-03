@@ -3,7 +3,7 @@
 ## 安装使用
 ```
 git clone https://github.com/yuanzm/miniapp-charts
-import RadrChart  from 'miniapp-charts';
+import RadrChart  from 'miniapp-charts/src/radar.js';
 ```
 ## 简单示例
 1. 在wxml添加canvas
@@ -61,9 +61,9 @@ Page({
 | width    | Number   | canvas的宽度，因为小程序没有DOM，不能获取canvas的样式信息，需要手动传入, 默认为250 |
 | height   | Number   | 同width，需要手动传入，默认为250 |
 | padding  | Object   | canvas的绘图区域的padding，与canvas本身样式的padding无关|
-| grid     | Object   | 网状底线的配置 |
+| grid     | Object   | 雷达图网状图和边界值等配置 |
 | radiationLineStyle | Object | 从中心点往外辐射的线条配置|
-| label |  Object | 雷达标签文案配置 |
+| label    |  Object | 雷达标签文案配置 |
 | datasetStyle | Object | 单个雷达区域配置|
 | startAngle | Number | 雷达图的旋转角度，默认是0|
 
@@ -71,19 +71,19 @@ Page({
 
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
-| left     | Number   | 左边距，默认为10 |
-| right    | Number   | 右边距，默认为10 |
-| top      | Number   | 上边距，默认为10 |
-| bottom   | Number   | 下边距，默认为5  |
+| left     | Number   | 左边距，默认为5 |
+| right    | Number   | 右边距，默认为5 |
+| top      | Number   | 上边距，默认为5 |
+| bottom   | Number   | 下边距，默认为5 |
 
 ###  grid配置详情
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
-| display  | Boolean  |  是否展示网状底线，默认为true|
+| display  | Boolean  | 是否展示网状底线，默认为true|
 | min      | Number   | 雷达图数据的最小值，默认是0 |
 | max      | Number   | 雷达图数据的最大是，默认是100 |
 | stepSize | Number   | 每一格的数据间距，默认是20 |
-| width    | Number   | 线条宽度，默认是1 |
+| width    | Number   | 线条宽度，默认是1          |
 | color    | String   | 线条的颜色，默认是#e3e3e3 |
 | style    | String   | 线条的样式，暂时只支持line和dash，默认为line|
 

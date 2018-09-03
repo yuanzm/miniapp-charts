@@ -4,6 +4,16 @@ import {
 } from '../util.js';
 
 let radarConfig = {
+    width : 250,
+    height: 250,
+
+    padding: {
+        left  : 5,
+        right : 5,
+        top   : 5,
+        bottom: 5
+    },
+
     // 有些雷达图会有Y轴，一般不展示，这里提供功能
     // TODO
     yAxisLine: {
@@ -18,14 +28,21 @@ let radarConfig = {
         stepSize   : 20,
         width      : 1,
         color      : '#e3e3e3',
-        style      : 'dash',
+        style      : 'line',
+
+        // 线条是虚线的默认配置
+        dashPattern: [3],
+        dashOffset : 0,
     },
 
     // 从原点往外辐射线的样式
     radiationLineStyle: {
-        display: true,
-        color  : '#e3e3e3',
-        style  : 'dash',
+        display    : true,
+        dashPattern: [3],
+        width      : 1,
+        dashOffset : 0,
+        color      : '#e3e3e3',
+        style      : 'line',
     },
 
     label: {
@@ -45,7 +62,7 @@ let radarConfig = {
         label               : '',
         backgroundColor     : 'rgba(232, 245, 223, 0.7)',
         borderColor         : '#99d774',
-        borderWidth         : 1,
+        borderWidth         : 2,
         pointShow           : true,
         pointBackgroundColor: '#8dd364',
         pointBorderColor    : '#8dd364',

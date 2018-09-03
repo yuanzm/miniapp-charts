@@ -45,8 +45,6 @@ export default class ChartBase {
 
         ctx.beginPath();
 
-        console.log(this.ctx.font);
-
         if ( word.isbottom )
             ctx.setTextBaseline('bottom')
 
@@ -78,14 +76,16 @@ export default class ChartBase {
         ctx.setLineWidth(line.width || 1);
         ctx.setStrokeStyle(line.color);
 
-        /*if ( line.isDash )
-            ctx.setLineDash([3], 3);*/
+        if ( line.isDash )
+            ctx.setLineDash(line.dashPattern, line.dashOffset);
 
         ctx.moveTo(line.start.x, line.start.y);
         ctx.lineTo(line.end.x, line.end.y);
 
         ctx.stroke();
         ctx.closePath();
+
+        ctx.setLineDash([0], 0);
     }
 
     drawLongLine(ctx, line) {
@@ -93,8 +93,8 @@ export default class ChartBase {
         ctx.setLineWidth(line.width || 1);
         ctx.setStrokeStyle(line.color);
 
-        /*if ( line.isDash )
-            ctx.setLineDash([3], 3);*/
+        if ( line.isDash )
+            ctx.setLineDash(line.dashPattern, line.dashOffset);
 
         let points = line.points || [];
 
@@ -107,8 +107,16 @@ export default class ChartBase {
                 ctx.lineTo(point.x, point.y);
         };
 
+        // 需要填充背景颜色要在stroke之前填充，否则边界线会发虚
+        if ( line.fill ) {
+            ctx.setFillStyle(line.fillColor);
+            ctx.fill();
+        }
+
         ctx.stroke();
         ctx.closePath();
+
+        ctx.setLineDash([0], 0);
     }
 
     /**

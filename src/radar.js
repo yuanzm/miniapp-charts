@@ -57,10 +57,13 @@ export default class RadarChart extends Base {
 
             return {
                 start: center,
-                end  : { x, y },
-                width: 1,
-                color: style.color,
-                isDash: true,
+                end        : { x, y },
+                width      : style.width,
+                color      : style.color,
+                isDash     : !!(  style.style === 'dash' ),
+                dashPattern: style.dashPattern,
+                dashOffset : style.dashOffset,
+
                 angel : startAngle + oneAngel * index
             };
         });
@@ -81,6 +84,9 @@ export default class RadarChart extends Base {
             let oneline = {
                 color : grid.color,
                 width : grid.width,
+                isDash: !!(grid.style == 'dash'),
+                dashPattern: grid.dashPattern,
+                dashOffset : grid.dashOffset,
                 points: [],
             }
 
@@ -134,8 +140,8 @@ export default class RadarChart extends Base {
                 style: lineStyle,
                 width: lineStyle.borderWidth,
                 color: lineStyle.borderColor,
-
-                backgroundColor: lineStyle.backgroundColor,
+                fill : true,
+                fillColor: lineStyle.backgroundColor,
             });
         });
 
@@ -445,8 +451,6 @@ export default class RadarChart extends Base {
         this._render.labelData      = this.calLabelData();
         this._render.pointData      = this.calPointData();
 
-        if ( this._config.debug )
-            console.log('render data', this._render);
     }
 
     drawToCanvas() {
@@ -467,10 +471,6 @@ export default class RadarChart extends Base {
         // 区域数据
         this._render.datasetsData.forEach(line => {
             this.drawLongLine(this.ctx, line);
-
-            // 每条线画完之后手动fill一下
-            this.ctx.setFillStyle(line.backgroundColor);
-            this.ctx.fill();
         });
 
         // 标签数据
@@ -487,10 +487,18 @@ export default class RadarChart extends Base {
     }
 
     draw(data, cfg = {}) {
+        this._start = new Date();
+
         this._config = this.getConfig(cfg, this._config);
 
         this.initData(data);
         this.drawToCanvas();
+
+        if ( this._config.debug ) {
+            console.log('time cost:', new Date() - this._start, 'ms');
+            console.log('render data:', this._render);
+            console.log('config:', this._config);
+        }
     }
 }
 
