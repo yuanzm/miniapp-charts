@@ -45,8 +45,15 @@ Page({
 });
 ```
 
-## RadarChart参数解析
-RadarChart构造函数接受两个参数，第一个参数为小程序canvas的Context，第二个参数cfg为组件配置对象，组件完整配置见[config/radar.js](https://github.com/yuanzm/miniapp-charts/blob/master/src/config/radar.js)，下面是详细配置介绍。
+## RadarChart构造参数
+### RadarChart(context, [cfg])
+| keyName  | 类型     |  描述    |
+|----------|----------| ---------|
+| Content  | Object   | 小程序canvas的Context |
+| cfg      | Object   | 组件配置对象，cfg的属性值会替换默认配置对应属性的值|
+
+## RadarChart默认配置详情
+组件完整配置见[config/radar.js](https://github.com/yuanzm/miniapp-charts/blob/master/src/config/radar.js)，下面是详细配置介绍。
 
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
@@ -58,7 +65,7 @@ RadarChart构造函数接受两个参数，第一个参数为小程序canvas的C
 | radiationLineStyle | Object | 从中心点往外辐射的线条配置|
 | label |  Object | 雷达标签文案配置 |
 | datasetStyle | Object | 单个雷达区域配置|
-| startAngle | Number | 雷达图的默认旋转角度，默认是0|
+| startAngle | Number | 雷达图的旋转角度，默认是0|
 
 ### padding配置详情
 
@@ -83,14 +90,14 @@ RadarChart构造函数接受两个参数，第一个参数为小程序canvas的C
 ###  radiationLineStyle配置详情
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
-| display  | Boolean  |  是否展示网状底线，默认为true|
+| display  | Boolean  |  是否展示从中心点往顶点辐射的线，默认为true|
 | color    | String   | 线条的颜色，默认是#e3e3e3 |
 | style    | String   | 线条的样式，暂时只支持line和dash，默认为line|
 
 ### label配置详情
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
-| display  | Boolean  |  是否展示网状底线，默认为true|
+| display  | Boolean  |  是否展示label，默认为true|
 | color    | String   | 文案的颜色，默认是#888888 |
 | fontSize | Number   | 文案的字体大小，默认是12 |
 | margin   | Object   | 文案的间距配置，默认margin.left,margin.right,margin.top,margin.bottom = 3 |
