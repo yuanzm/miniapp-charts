@@ -1,8 +1,5 @@
 <canvas
     canvas-id="radar"
     style="width:250px;height:250px;margin: 0; border: solid 1px #444"
-    bindtouchstart="bindtouchstart"
-    bindtouchmove="bindtouchmove"
-    bindtouchend="bindtouchend"
 />
 

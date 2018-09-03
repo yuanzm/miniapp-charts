@@ -19,8 +19,7 @@ export default class RadarChart extends Base {
         this.chartType = 'radar';
         this.ctx       = ctx;
 
-        // function in base/index.js
-        this._config = this.getConfig(cfg, deepCopy(config));
+        this._config        = this.getConfig(cfg, deepCopy(config));
 
         this._render.center = this.getCenterPoint();
     }
@@ -483,7 +482,9 @@ export default class RadarChart extends Base {
         this.ctx.draw();
     }
 
-    draw(data) {
+    draw(data, cfg = {}) {
+        this._config = this.getConfig(cfg, this._config);
+
         this.initData(data);
         this.drawToCanvas();
     }

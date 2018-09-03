@@ -11,16 +11,13 @@ import RadrChart  from 'miniapp-charts';
 ```
 <canvas
     canvas-id="radar"
-    style="width:250px;height:250px;margin: 0; border: solid 1px #444"
-    bindtouchstart="bindtouchstart"
-    bindtouchmove="bindtouchmove"
-    bindtouchend="bindtouchend"
+    style="width:250px;height:250px;"
 />
 ```
 2. 在js里面实例化组件
 ```
 
-import RadarChart from '../../src/radar.js';
+import RadarChart from 'miniapp-charts/src/radar.js';
 Page({
     onLoad() {
         let context = wx.createCanvasContext('radar');
