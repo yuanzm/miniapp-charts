@@ -86,6 +86,8 @@ Page({
 | width    | Number   | 线条宽度，默认是1          |
 | color    | String   | 线条的颜色，默认是#e3e3e3 |
 | style    | String   | 线条的样式，暂时只支持line和dash，默认为line|
+| dashPattern | Array | 线条为虚线的配置，详情可看[小程序文档](https://developers.weixin.qq.com/miniprogram/dev/api/canvas/set-line-dash.html)|
+| dashOffset  | Number | 线条为虚线的配置，详情可看[小程序文档](https://developers.weixin.qq.com/miniprogram/dev/api/canvas/set-line-dash.html)|
 
 ###  radiationLineStyle配置详情
 | keyName  | 类型     |  描述    |
@@ -93,6 +95,8 @@ Page({
 | display  | Boolean  |  是否展示从中心点往顶点辐射的线，默认为true|
 | color    | String   | 线条的颜色，默认是#e3e3e3 |
 | style    | String   | 线条的样式，暂时只支持line和dash，默认为line|
+| dashPattern | Array | 线条为虚线的配置，详情可看[小程序文档](https://developers.weixin.qq.com/miniprogram/dev/api/canvas/set-line-dash.html)|
+| dashOffset  | Number | 线条为虚线的配置，详情可看[小程序文档](https://developers.weixin.qq.com/miniprogram/dev/api/canvas/set-line-dash.html)|
 
 ### label配置详情
 | keyName  | 类型     |  描述    |
