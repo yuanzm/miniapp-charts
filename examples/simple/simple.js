@@ -6,27 +6,34 @@ Page({
 
         this.radarchart = new RadarChart(context,
             {
-                width : 250,
-                height: 250,
+                width : 200,
+                height: 200,
                 debug : true,
                 padding: {
                     left: 5, right: 5, top:5, bottom: 5
+                },
+                grid    : {
+                    stepSize: 25,
+                    color : '#c8c8c8',
+                },
+                datasetStyle: {
+                    borderWidth: 1.5,
+                    pointRadius: 1.5
+
+                },
+                label: {
+                    fontSize: 10,
+                    color   : '#676768',
                 }
             }
         );
 
         this.radarchart.draw(
             {
-                labels  : [
-                {
-                    text: 'KDA',
-                    color: 'red',
-                },
-                //'kda',
-                ['输出', 'KDA'],'KDA', 'KDA', 'KDA', '推进'],
+                labels  : ['输出', 'KDA', '发育', '团战', '生存'],
                 datasets: [
                     {
-                        data: [50, 80, 75, 90,  67, 77],
+                        data: [71, 65, 67, 63, 72],
                     },
                 ]
             },

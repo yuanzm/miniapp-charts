@@ -258,7 +258,7 @@ export default class RadarChart extends Base {
         let maxR = arr[arr.length - 1].value
 
         let minAngel = this._config.startAngle + ( 360 / this._render.labels.length ) * arr[0].index;
-        let tmp = Math.cos(Math.PI * ( minAngel % 90 ) / 180);
+        let tmp = Math.cos(Math.PI * ( minAngel % 45 ) / 180);
 
         return (  minR / tmp > maxR
                 ? maxR
