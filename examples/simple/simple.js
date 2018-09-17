@@ -1,5 +1,7 @@
 
 import RadarChart from '../../src/radar.js';
+import LineChart  from '../../src/linechart.js';
+
 Page({
     onLoad() {
         let context = wx.createCanvasContext('radar');
@@ -40,6 +42,49 @@ Page({
             {
             }
         );
+
+        this.renderLineChart();
+    },
+
+    renderLineChart() {
+        let linechart = new LineChart(
+            wx.createCanvasContext('linechart1'),
+            {
+                height: 200,
+            },
+            //wx.createCanvasContext('canvas2'),
+        );
+
+        this.linechart = linechart;
+
+        let points = [];
+        for ( let i = 0; i < 108;i++) {
+            points.push({
+                x: i + 1,
+                y: Math.ceil(Math.random()*30),
+            });
+        }
+
+        linechart.draw({
+            datasets: [
+                {
+                    points  : points,
+                    lineName: 'test',
+                },
+            ]
+        });
+    },
+
+    bindtouchstart(e) {
+        this.linechart.touch(e);
+    },
+
+    bindtouchmove(e) {
+        this.linechart.touch(e);
+    },
+
+    bindtouchend(e) {
+        this.linechart.touchEnd(e);
     }
 });
 

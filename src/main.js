@@ -1,4 +1,4 @@
-import LineChart from './index.js';
+import LineChart from './linechart.js';
 import RadarChart from './radar.js'
 
 export {

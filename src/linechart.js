@@ -12,7 +12,7 @@ import {
     getDataRangeAndStep
 } from './util.js';
 
-import config    from './config.js';
+import config    from './config/linechart.js';
 import ChartBase from './base.js';
 
 /**
