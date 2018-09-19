@@ -108,7 +108,7 @@ export default class RadarChart extends Base {
         return lines;
     }
 
-    calDatasetsData(animationPercent) {
+    calDatasetsData(animationPercent = 1) {
         let datasets      = this._datasets;
         let steps         = this._render.steps;
         let angelLineData = this._render.angelLineData;
@@ -474,15 +474,15 @@ export default class RadarChart extends Base {
                 this.drawWord(this.ctx, label)
         });
 
-        // 区域数据
-        this._render.datasetsData.forEach(line => {
-            this.drawLongLine(this.ctx, line);
-        });
-
         if ( this._config.animation ) {
             this._render.datasetsData   = this.calDatasetsData(percent);
             this._render.pointData      = this.calPointData();
         }
+
+        // 区域数据
+        this._render.datasetsData.forEach(line => {
+            this.drawLongLine(this.ctx, line);
+        });
 
         this._render.pointData.forEach(point => {
             this.drawCircle(this.ctx, point);

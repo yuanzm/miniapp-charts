@@ -66,6 +66,9 @@ Page({
 | label    |  Object | 雷达标签文案配置 |
 | datasetStyle | Object | 单个雷达区域配置|
 | startAngle | Number | 雷达图的旋转角度，默认是0|
+| animation  | Boolean | 是否开启动画，默认为true|
+| animationStep  | Number| 动画执行的步骤, 默认为50|
+| animationEasing | String| 动画的缓动函数, 所有配置见[easing.js](https://github.com/yuanzm/miniapp-charts/blob/master/src/base/easing.js)|
 
 ### padding配置详情
 
