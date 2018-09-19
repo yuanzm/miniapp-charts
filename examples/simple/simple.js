@@ -33,8 +33,7 @@ Page({
         this.radarchart.draw(
             {
                 labels  : ['输出', 'KDA', '发育', '团战', '生存'],
-                datasets: [
-                    {
+                datasets: [ {
                         data: [71, 65, 67, 63, 72],
                     },
                 ]
@@ -73,6 +72,7 @@ Page({
                 },
             ]
         });
+
     },
 
     bindtouchstart(e) {

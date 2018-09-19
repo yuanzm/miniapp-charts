@@ -6,6 +6,8 @@ import {
     isPlainObject
 } from '../util.js';
 
+import animationOptions from './easing.js';
+
 export default class Base extends ChartBase {
     constructor() {
         super();
@@ -41,6 +43,51 @@ export default class Base extends ChartBase {
         }
 
         return sourceConfig;
+    }
+
+    requestAnimFrame(callback) {
+        if ( typeof requestAnimationFrame !== 'undefined' ) {
+            requestAnimationFrame(callback);
+        }
+
+        else {
+            setTimeout(callback, 1000 / 60);
+        }
+    }
+
+    animationLopp(config, draw) {
+        let animationCount = 1 / ( config.animationStep || 1 );
+        let easingFunction = animationOptions[config.animationEasing];
+
+        // 动画完成的百分比
+        let percentComplete = (  config.animation
+                               ? 0
+                               : 1  );
+
+        let animationFrame = () => {
+            let easeAdjustedAnimationPercent = (  config.animation
+                                                ? easingFunction(percentComplete)
+                                                : 1  );
+
+            if ( easeAdjustedAnimationPercent > 1 )
+                easeAdjustedAnimationPercent = 1;
+
+            draw.call(this, easeAdjustedAnimationPercent);
+        }
+
+        let animationLoop = () => {
+            percentComplete += animationCount;
+
+            animationFrame();
+
+            if ( percentComplete <= 1 )
+                this.requestAnimFrame(animationLoop);
+
+            else
+                config.onAnimationComplete && config.onAnimationComplete();
+        }
+
+        this.requestAnimFrame(animationLoop);
     }
 }
 

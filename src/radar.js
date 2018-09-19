@@ -108,8 +108,8 @@ export default class RadarChart extends Base {
         return lines;
     }
 
-    calDatasetsData(data) {
-        let datasets      = data.datasets || [];
+    calDatasetsData(animationPercent) {
+        let datasets      = this._datasets;
         let steps         = this._render.steps;
         let angelLineData = this._render.angelLineData;
         let center        = this._render.center;
@@ -125,7 +125,7 @@ export default class RadarChart extends Base {
 
             oneset.data.forEach( (point, index) =>{
                 let angel   = angelLineData[index];
-                let percent = point / (grid.max - grid.min)
+                let percent = ( point * animationPercent ) / (grid.max - grid.min)
 
                 let x = center.x + ( angel.end.x - center.x ) * percent;
                 let y = center.y - ( center.y - angel.end.y) * percent;
@@ -446,14 +446,14 @@ export default class RadarChart extends Base {
         this._render.radius         = this.calRadius();
         this._render.angelLineData  = this.calAngleLineData();
         this._render.gridLineData   = this.calGridLineData();
-        this._render.datasetsData   = this.calDatasetsData(data);
         this._render.labelPosData   = this.calLabelPosData();
         this._render.labelData      = this.calLabelData();
-        this._render.pointData      = this.calPointData();
 
+        this._render.datasetsData   = this.calDatasetsData();
+        this._render.pointData      = this.calPointData();
     }
 
-    drawToCanvas() {
+    drawToCanvas(percent) {
         // 辐射状的线条
         if ( this._config.radiationLineStyle.display ) {
             this._render.angelLineData.forEach((line) => {
@@ -468,16 +468,21 @@ export default class RadarChart extends Base {
             });
         }
 
-        // 区域数据
-        this._render.datasetsData.forEach(line => {
-            this.drawLongLine(this.ctx, line);
-        });
-
         // 标签数据
         this._render.labelData.forEach(label => {
             if ( label.display )
                 this.drawWord(this.ctx, label)
         });
+
+        // 区域数据
+        this._render.datasetsData.forEach(line => {
+            this.drawLongLine(this.ctx, line);
+        });
+
+        if ( this._config.animation ) {
+            this._render.datasetsData   = this.calDatasetsData(percent);
+            this._render.pointData      = this.calPointData();
+        }
 
         this._render.pointData.forEach(point => {
             this.drawCircle(this.ctx, point);
@@ -492,7 +497,13 @@ export default class RadarChart extends Base {
         this._config = this.getConfig(cfg, this._config);
 
         this.initData(data);
-        this.drawToCanvas();
+
+        this.animationLopp(
+            this._config,
+            this.drawToCanvas
+        );
+
+        //this.drawToCanvas();
 
         if ( this._config.debug ) {
             console.log('time cost:', new Date() - this._start, 'ms');

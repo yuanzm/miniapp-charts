@@ -7,6 +7,10 @@ let radarConfig = {
     width : 250,
     height: 250,
 
+    animation      : true,
+    animationStep  : 50,
+    animationEasing: 'linear',
+
     padding: {
         left  : 5,
         right : 5,

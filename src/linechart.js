@@ -13,12 +13,12 @@ import {
 } from './util.js';
 
 import config    from './config/linechart.js';
-import ChartBase from './base.js';
+import Base      from './base/index.js';
 
 /**
  * 小程序折线图绘制组件
  */
-export default class LineChart extends ChartBase {
+export default class LineChart extends Base {
     /**
      * @param { CanvasContext } ctx1: 小程序的绘图上下文
      * @param { CanvasContext } ctx2: 小程序的绘图上下文
