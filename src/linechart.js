@@ -801,6 +801,7 @@ export default class LineChart extends Base {
     draw(data, cfg = {}) {
         this._start = new Date();
 
+        this.clear(this.ctx1, this._config.width, this._config.height);
         this.clear(this.ctx2, this._config.width, this._config.height);
 
         this.getConfig(cfg, this._config);
