@@ -795,13 +795,18 @@ export default class LineChart extends Base {
         this.log('initData');
     }
 
+    clear() {
+        this.clear(this.ctx1, this._config.width, this._config.height);
+        this.clear(this.ctx2, this._config.width, this._config.height);
+    }
+
     /**
      * 实际的绘制函数
      */
     draw(data, cfg = {}) {
         this._start = new Date();
 
-        this.clear(this.ctx1, this._config.width, this._config.height);
+        // this.clear(this.ctx1, this._config.width, this._config.height);
         this.clear(this.ctx2, this._config.width, this._config.height);
 
         this.getConfig(cfg, this._config);
