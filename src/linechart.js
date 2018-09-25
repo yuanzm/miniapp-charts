@@ -796,8 +796,8 @@ export default class LineChart extends Base {
     }
 
     clear() {
-        this.clear(this.ctx1, this._config.width, this._config.height);
-        this.clear(this.ctx2, this._config.width, this._config.height);
+        this.clearCanvas(this.ctx1, this._config.width, this._config.height);
+        this.clearCanvas(this.ctx2, this._config.width, this._config.height);
     }
 
     /**
