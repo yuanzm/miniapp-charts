@@ -340,14 +340,14 @@ export default class LineChart extends Base {
         // 计算Y轴上两个点之间的像素值
         let unitY = (  (  this._boundary.leftBottom.y
                         - this._boundary.leftTop.y  )
-                     / ( yDivider * this._render.yMultiple  * this._config.yAxisCount + 1 )
+                     / ( yDivider * this._render.yMultiple  * this._config.yAxisCount )
                     );
 
         let leftStart   = this._boundary.leftTop.x + yAxis.marginLeft;
         let bottomStart = this._boundary.leftBottom.y
 
         let changeFunc  = this._config.changeUnit || changeUnit;
-        let toFixed     = (  max < 1
+        let toFixed     = (  ( max < 1 || max > 1e7 )
                            ? 2
                            : 1 );
 
@@ -427,6 +427,7 @@ export default class LineChart extends Base {
         let range = formatFunc(max, min, yAxisCount);
 
         this._render.min       = range.min;
+        this._render.max       = range.max;
         this._render.yMultiple = range.multiple || 1;
 
         return {
@@ -588,6 +589,9 @@ export default class LineChart extends Base {
         this._render.toolTipData.words = [];
 
         let changeFunc  = this._config.changeUnit || changeUnit;
+        let toFixed     = (  ( this._render.max < 1 || this._render > 1e7 )
+                           ? 2
+                           : 1 );
 
         this._datasets.forEach(( oneline ) => {
             let points = oneline.points;
@@ -599,7 +603,7 @@ export default class LineChart extends Base {
 
             if ( curr ) {
                 let word = {
-                    text    : title + changeFunc(curr.y) + this._config.unit,
+                    text    : title + changeFunc(curr.y, toFixed) + this._config.unit,
                     fontSize: style.fontSize,
                     color   : style.color,
                     x       : 0,
