@@ -26,7 +26,7 @@ Page({
                 label: {
                     fontSize: 10,
                     color   : '#676768',
-                }
+                },
             }
         );
 
@@ -46,7 +46,7 @@ Page({
     },
 
     renderLineChart() {
-        let linechart = new LineChart(
+        /*let linechart = new LineChart(
             wx.createCanvasContext('linechart1'),
             {
                 height: 200,
@@ -68,6 +68,45 @@ Page({
             datasets: [
                 {
                     points  : points,
+                    lineName: 'test',
+                },
+            ]
+        });*/
+        let linechart = new LineChart(
+            wx.createCanvasContext('linechart1'),
+            {
+                width: 360,
+                height: 200,
+                lineStyle: {
+                    lineWidth: 1,
+                    lineColor: '#7587db',
+                    fillColor: 'rgba(0, 135, 219, 0.3)',
+                    // 是否需要背景颜色
+                    needFill: true,
+                    circle: {
+                        show: true,
+                        fillColor: '#FFFFFF',
+                        strokeColor: '#FFAA00',
+                        radius: 1.2,
+                    }
+                },
+            },
+        );
+
+        this.linechart = linechart;
+
+        let points = [];
+        for (let i = 0; i < 20; i++) {
+            points.push({
+                x: i + 1,
+                y: Math.ceil( 50 + Math.random() * 10),
+            });
+        }
+
+        linechart.draw({
+            datasets: [
+                {
+                    points: points,
                     lineName: 'test',
                 },
             ]

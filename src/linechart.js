@@ -9,7 +9,8 @@ import {
     deepCopy,
     changeUnit,
     isPlainObject,
-    getDataRangeAndStep
+    getDataRangeAndStep,
+    none
 } from './util.js';
 
 import config    from './config/linechart.js';
@@ -346,7 +347,10 @@ export default class LineChart extends Base {
         let leftStart   = this._boundary.leftTop.x + yAxis.marginLeft;
         let bottomStart = this._boundary.leftBottom.y
 
-        let changeFunc  = this._config.changeUnit || changeUnit;
+        //let changeFunc  = this._config.changeUnit || changeUnit;
+        let changeFunc  = (  this._config.changeUnit && this._config.changeUnit !== none
+                           ? this._config.changeUnit
+                           : changeUnit  );
         let toFixed     = (  ( max < 1 || max > 1e7 )
                            ? 2
                            : 1 );
@@ -588,7 +592,10 @@ export default class LineChart extends Base {
 
         this._render.toolTipData.words = [];
 
-        let changeFunc  = this._config.changeUnit || changeUnit;
+        //let changeFunc  = this._config.changeUnit || changeUnit;
+        let changeFunc  = (  this._config.changeUnit && this._config.changeUnit !== none
+                           ? this._config.changeUnit
+                           : changeUnit  );
         let toFixed     = (  ( this._render.max < 1 || this._render > 1e7 )
                            ? 2
                            : 1 );

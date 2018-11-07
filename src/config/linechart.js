@@ -1,6 +1,7 @@
 import common from './common.js';
 import {
-    extend
+    extend,
+    none
 } from '../util.js';
 
 let linechartConfig = {
@@ -11,7 +12,7 @@ let linechartConfig = {
      * Y轴标签以及toolTip的单位换算函数
      * 组件内置了changeUnit函数，可以自行设置
      */
-    changeUnit : null,
+    changeUnit : none,
 
     /**
      * 给定一组数据，Y轴标签的最大值最小值和每一步的值都是组件自动算出来的

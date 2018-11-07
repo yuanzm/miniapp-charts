@@ -76,7 +76,7 @@ Page({
 
 ## LineChart参数解析
 
-LineChart构造函数接受三个参数，第一个参数为小程序canvas的Context，第二个参数cfg为配置对象 组件完整的配置可见：[config.js](https://github.com/yuanzm/wxapp-line-chart/blob/master/src/config.js)
+LineChart构造函数接受三个参数，第一个参数为小程序canvas的Context，第二个参数cfg为配置对象 组件完整的配置可见：[config.js](https://github.com/yuanzm/miniapp-charts/blob/master/src/config/linechart.js)
 
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
