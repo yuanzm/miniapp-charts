@@ -1,0 +1,56 @@
+{
+  "_args": [
+    [
+      "git+https://github.com/yuanzm/miniapp-charts.git",
+      "/Users/yuanzimin/tmp/minigame_helper_v2"
+    ]
+  ],
+  "_from": "git+https://github.com/yuanzm/miniapp-charts.git",
+  "_id": "miniapp-charts@git+https://github.com/yuanzm/miniapp-charts.git#c6709a1a80df2f4e4bf574f77272fe89888f7a07",
+  "_inBundle": false,
+  "_integrity": "",
+  "_location": "/miniapp-charts",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "git",
+    "raw": "git+https://github.com/yuanzm/miniapp-charts.git",
+    "rawSpec": "git+https://github.com/yuanzm/miniapp-charts.git",
+    "saveSpec": "git+https://github.com/yuanzm/miniapp-charts.git",
+    "fetchSpec": "https://github.com/yuanzm/miniapp-charts.git",
+    "gitCommittish": null
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "git+https://github.com/yuanzm/miniapp-charts.git#c6709a1a80df2f4e4bf574f77272fe89888f7a07",
+  "_spec": "git+https://github.com/yuanzm/miniapp-charts.git",
+  "_where": "/Users/yuanzimin/tmp/minigame_helper_v2",
+  "author": {
+    "name": "yuanzm"
+  },
+  "bugs": {
+    "url": "https://github.com/yuanzm/wxapp-line-chart/issues"
+  },
+  "description": "chart",
+  "devDependencies": {
+    "webpack": "^4.8.3",
+    "webpack-cli": "^2.1.4"
+  },
+  "homepage": "https://github.com/yuanzm/wxapp-line-chart#readme",
+  "keywords": [
+    "chart"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "name": "miniapp-charts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yuanzm/wxapp-line-chart.git"
+  },
+  "scripts": {
+    "build": "webpack --config webpack.config.js -p",
+    "start": "webpack --config webpack.config.js --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "0.0.1"
+}
