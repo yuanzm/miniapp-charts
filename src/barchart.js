@@ -136,7 +136,8 @@ export default class BarChart extends Base {
         const first         = this._datasets[0];
         const second        = this._datasets[1];
         const count         = first.points.length;
-        let totalBarWidth = this._datasets.length * count * this._config.barWidth
+        let leftBottom      = this._boundary.leftBottom;
+        let totalBarWidth   = this._datasets.length * count * this._config.barWidth
 
         if ( second ) {
             totalBarWidth += this._config.compareBarMargin * count;
@@ -145,9 +146,6 @@ export default class BarChart extends Base {
         // 每组柱子的间距
         const barPadding    = ( xCenterAxis.end.x - xCenterAxis.start.x - totalBarWidth ) / (count + 1);
 
-        let leftBottom     = this._boundary.leftBottom;
-        console.log(xCenterAxis, totalBarWidth, barPadding);
-        /*y: leftBottom.y - ( item.y - this._render.min) * this._render.unitY * this._render.yMultiple,*/
 
         // 柱子的X轴开始位置
         let xStart = xCenterAxis.start.x + barPadding;
@@ -195,6 +193,7 @@ export default class BarChart extends Base {
                 centerX += barWidth / 2 + this._config.compareBarMargin / 2;
             }
 
+            // X轴的标签
             this._render.barLabels.push({
                 text    : bar.label || '',
                 color   : xAxis.color,
