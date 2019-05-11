@@ -503,8 +503,6 @@ export default class RadarChart extends Base {
             this.drawToCanvas
         );
 
-        //this.drawToCanvas();
-
         if ( this._config.debug ) {
             console.log('time cost:', new Date() - this._start, 'ms');
             console.log('render data:', this._render);

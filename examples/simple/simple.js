@@ -1,6 +1,7 @@
 
 import RadarChart from '../../src/radar.js';
 import LineChart  from '../../src/linechart.js';
+import BarChart   from '../../src/barchart.js';
 
 Page({
     onLoad() {
@@ -43,35 +44,10 @@ Page({
         );
 
         this.renderLineChart();
+        this.renderBarChart();
     },
 
     renderLineChart() {
-        /*let linechart = new LineChart(
-            wx.createCanvasContext('linechart1'),
-            {
-                height: 200,
-            },
-            //wx.createCanvasContext('canvas2'),
-        );
-
-        this.linechart = linechart;
-
-        let points = [];
-        for ( let i = 0; i < 108;i++) {
-            points.push({
-                x: i + 1,
-                y: Math.ceil(Math.random()*30),
-            });
-        }
-
-        linechart.draw({
-            datasets: [
-                {
-                    points  : points,
-                    lineName: 'test',
-                },
-            ]
-        });*/
         let linechart = new LineChart(
             wx.createCanvasContext('linechart1'),
             {
@@ -124,6 +100,61 @@ Page({
 
     bindtouchend(e) {
         this.linechart.touchEnd(e);
+    },
+
+    renderBarChart() {
+        let context = wx.createCanvasContext('bar');
+
+        let barchart = new BarChart(
+            wx.createCanvasContext('bar'),
+            {
+                width : 414,
+                height: 200,
+            },
+        );
+
+        console.log(barchart);
+
+        barchart.draw({
+            datasets: [
+                {
+                    name: '行业',
+                    fillColor: '#6684C7',
+                    points: [
+                        {
+                            label: '新增',
+                            value: 20,
+                        },
+                        {
+                            label: '活跃',
+                            value: 100,
+                        },
+                        {
+                            label: '留存',
+                            value: 5,
+                        },
+                    ],
+                },
+                {
+                    name: '行业',
+                    fillColor: '#3AC6D5',
+                    points: [
+                        {
+                            label: '新增',
+                            value: 44,
+                        },
+                        {
+                            label: '活跃',
+                            value: 77,
+                        },
+                        {
+                            label: '留存',
+                            value: 34,
+                        },
+                    ],
+                }
+            ]
+        });
     }
 });
 
