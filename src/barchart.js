@@ -176,7 +176,7 @@ export default class BarChart extends Base {
                     text    : bar.barLabel || '',
                     color   : this._config.barLabelStyle.color,
                     fontSize: this._config.barLabelStyle.fontSize,
-                    x       : xStart + this._config.barWidth / 2,
+                    x       : xStart + this._config.barWidth / 2 + 1,
                     y       : y - 5,
                     textAlign: 'center',
                 });
@@ -226,75 +226,6 @@ export default class BarChart extends Base {
             });
 
         });
-    }
-
-    // 计算用于绘制的点的信息
-    calPointData() {
-        let pointData      = [];
-        let yAxisWidth     = this._render.yAxisWidth;
-        let leftBottom     = this._boundary.leftBottom;
-        let startX         = leftBottom.x + yAxisWidth;
-        let longestLine    = this._render.longestLine;
-
-        // 为了提高性能，会限制单条线最多圆的数量
-        let needCircle     = (  this._config.maxCircleCount >= longestLine.points.length
-                              ? true
-                              : false  );
-        // 原点
-        let origin     = {
-            x: leftBottom.x + yAxisWidth,
-            y: leftBottom.y,
-        };
-        let circlePoints = []
-
-        this._datasets.forEach((oneline ) => {
-            let style  = oneline.style;
-            let cStyle = style.circle;
-
-            let points   = oneline.points;
-            let length   = points.length;
-            let _oneline = {
-                points     : [],
-                style
-            };
-
-            points.forEach((item, index) => {
-                if ( index < length ) {
-                    let temp = {
-                        x: startX + index * this._render.unitX,
-                        y: leftBottom.y - ( item.y - this._render.min) * this._render.unitY * this._render.yMultiple,
-                    };
-
-                    if ( style.circle && style.circle.show && needCircle ) {
-                        let circle = {
-                            x          : temp.x,
-                            y          : temp.y,
-                            r          : cStyle.radius      || 2,
-                            fillColor  : cStyle.fillColor   || '#FFFFFF',
-                            strokeColor: style.lineColor,
-                            lineWidth  : style.lineWidth,
-                        };
-                        circlePoints.push(circle);
-                    }
-
-                    _oneline.points.push(temp);
-                }
-            });
-
-            if ( points.length > 1 ) {
-                // 为了能够实现闭合，增加的辅助点
-                _oneline.points.unshift(origin);
-                _oneline.points.push({
-                    x           : _oneline.points[_oneline.points.length - 1].x,
-                    y           : leftBottom.y,
-                });
-
-                pointData.push(_oneline);
-            }
-        });
-
-        this._render.circlePoints = circlePoints;
-        this._render.pointData    = pointData;
     }
 
     calXAxisLines() {
@@ -643,12 +574,6 @@ export default class BarChart extends Base {
         this.calXAxisLines();
 
         this.calBarData();
-
-        // 计算X轴数据
-        /*this.calXAxis();*/
-
-        // 计算每条线的数据
-        /*this.calPointData();*/
 
         this.log('initData');
     }
