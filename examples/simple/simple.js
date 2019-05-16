@@ -110,10 +110,9 @@ Page({
             {
                 width : 414,
                 height: 200,
+                unit  : '%',
             },
         );
-
-        console.log(barchart);
 
         barchart.draw({
             datasets: [
@@ -124,14 +123,17 @@ Page({
                         {
                             label: '新增',
                             value: 20,
+                            barLabel: '20%',
                         },
                         {
                             label: '活跃',
                             value: 100,
+                            barLabel: '100%',
                         },
                         {
                             label: '留存',
                             value: 5,
+                            barLabel: '50%',
                         },
                     ],
                 },

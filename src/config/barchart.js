@@ -27,6 +27,7 @@ let linechartConfig = {
      * }
      */
     formatY    : null,
+    maxY       : Infinity,
 
     // x轴文案的样式配置
     xAxis: {
@@ -77,9 +78,16 @@ let linechartConfig = {
     barStyle: {
         fillColor: '#6684C7',
     },
-    barWidth: 20,
+    barWidth: 30,
 
     compareBarMargin: 5,
+
+    leftRightPadding: 10,
+
+    barLabelStyle: {
+        color      : '#B8B8B8',
+        fontSize   : 11,
+    }
 }
 
 export default extend(linechartConfig, common);

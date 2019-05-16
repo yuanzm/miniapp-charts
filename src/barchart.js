@@ -144,14 +144,14 @@ export default class BarChart extends Base {
         }
 
         // 每组柱子的间距
-        const barPadding    = ( xCenterAxis.end.x - xCenterAxis.start.x - totalBarWidth ) / (count + 1);
-
+        const barPadding    = ( xCenterAxis.end.x - xCenterAxis.start.x - totalBarWidth - this._config.leftRightPadding * 2 ) / (count - 1);
 
         // 柱子的X轴开始位置
-        let xStart = xCenterAxis.start.x + barPadding;
+        let xStart = xCenterAxis.start.x + this._config.leftRightPadding;
 
-        this._render.bars      = [];
-        this._render.barLabels = [];
+        this._render.bars         = [];
+        this._render.barLabels    = [];
+        this._render.topbarLabels = [];
 
         const barWidth = this._config.barWidth;
         const xAxis    = this._config.xAxis;
@@ -170,6 +170,17 @@ export default class BarChart extends Base {
                 height   : height,
             }
             this._render.bars.push(rect);
+
+            if ( bar.barLabel ) {
+                this._render.topbarLabels.push({
+                    text    : bar.barLabel || '',
+                    color   : this._config.barLabelStyle.color,
+                    fontSize: this._config.barLabelStyle.fontSize,
+                    x       : xStart + this._config.barWidth / 2,
+                    y       : y - 5,
+                    textAlign: 'center',
+                });
+            }
 
             xStart += this._config.barWidth;
 
@@ -191,6 +202,17 @@ export default class BarChart extends Base {
                 xStart += ( this._config.barWidth + barPadding );
 
                 centerX += barWidth / 2 + this._config.compareBarMargin / 2;
+
+                if ( second.barLabel ) {
+                    this._render.topbarLabels.push({
+                        text    : cBar.barLabel || '',
+                        color   : this._config.barLabelStyle.color,
+                        fontSize: this._config.barLabelStyle.fontSize,
+                        x       : xStart + this._config.barWidth / 2,
+                        y       : cy - 5,
+                        textAlign: 'center',
+                    });
+                }
             }
 
             // X轴的标签
@@ -202,6 +224,7 @@ export default class BarChart extends Base {
                 y       : bottom,
                 textAlign: 'center',
             });
+
         });
     }
 
@@ -495,6 +518,9 @@ export default class BarChart extends Base {
         });
 
         let formatFunc = this._config.formatY || getDataRangeAndStep;
+        /*if ( max > this._config.maxY ) {
+            max = maxY;
+        }*/
         let range = formatFunc(max, min, yAxisCount);
 
         this._render.min       = range.min;
@@ -567,6 +593,9 @@ export default class BarChart extends Base {
             this.drawRect(this.ctx1, bar);
         });
         this._render.barLabels.forEach(label => {
+            this.drawWord(this.ctx1, label);
+        });
+        this._render.topbarLabels.forEach(label => {
             this.drawWord(this.ctx1, label);
         });
     }
