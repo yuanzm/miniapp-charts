@@ -212,6 +212,8 @@ export default class BarChart extends Base {
                         y       : cy - 5,
                         textAlign: 'center',
                     });
+                } else {
+                    xStart += barPadding;
                 }
             }
 
@@ -482,9 +484,11 @@ export default class BarChart extends Base {
     // 绘制Y轴
     drawYAxis() {
         // 绘制Y轴文案
-        this._render.yAxisData.forEach((item) => {
-            this.drawWord(this.ctx1, item);
-        });
+        if ( this._config.yAxis.show ) {
+            this._render.yAxisData.forEach((item) => {
+                this.drawWord(this.ctx1, item);
+            });
+        }
 
         // 根据配置来决定是否绘制Y中心轴
         if ( this._config.yAxis.centerShow ) {
