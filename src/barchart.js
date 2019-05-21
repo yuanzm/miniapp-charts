@@ -212,9 +212,9 @@ export default class BarChart extends Base {
                         y       : cy - 5,
                         textAlign: 'center',
                     });
-                } else {
-                    xStart += barPadding;
                 }
+            } else {
+                xStart += barPadding;
             }
 
             // X轴的标签
