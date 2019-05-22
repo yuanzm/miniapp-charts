@@ -131,6 +131,34 @@ export default class BarChart extends Base {
         return this._boundary;
     }
 
+    calLabelDataForItem(x, yStart, barLabel) {
+        let labelArr = ( isType('array', barLabel) ? barLabel : [barLabel]);
+        let height   = 0;
+        let arr      = [];
+
+        labelArr.forEach( item => {
+            let labelConfig = deepCopy(this._config.barLabelStyle);
+            let obj = isType('object', item) ? item : { name: item, style: labelConfig };
+            obj.style = extend(labelConfig, obj.style || {});
+
+            yStart -= obj.style.paddingBottom;
+            height += obj.style.paddingBottom;
+
+            arr.push({
+                text    : obj.name || '',
+                color   : obj.style.color,
+                fontSize: obj.style.fontSize,
+                x       : x,
+                y       : yStart,
+                textAlign: 'center',
+            });
+            yStart -= obj.style.fontSize;
+            height += obj.style.fontSize;
+        });
+
+        return { arr, height };
+    }
+
     // TODO: 重构
     calBarData() {
         const xCenterAxis   = this._render.xCenterAxis;
@@ -173,24 +201,9 @@ export default class BarChart extends Base {
             this._render.bars.push(rect);
 
             if ( bar.barLabel ) {
-                let labelArr = ( isType('array', bar.barLabel) ? bar.barLabel : [bar.barLabel]);
-                let yStart = y - 5;
+                let { arr } = this.calLabelDataForItem(xStart + this._config.barWidth / 2 + 1, y, bar.barLabel);
 
-                labelArr.forEach( item => {
-                    let labelConfig = deepCopy(this._config.barLabelStyle);
-                    let obj = isType('object', item) ? item : { name: item, style: labelConfig };
-                    obj.style = extend(labelConfig, obj.style || {});
-
-                    this._render.topbarLabels.push({
-                        text    : obj.name || '',
-                        color   : obj.style.color,
-                        fontSize: obj.style.fontSize,
-                        x       : xStart + this._config.barWidth / 2 + 1,
-                        y       : yStart,
-                        textAlign: 'center',
-                    });
-                    yStart -= (obj.style.fontSize + 5);
-                });
+                this._render.topbarLabels = this._render.topbarLabels.concat(arr);
             }
 
             xStart += this._config.barWidth;
@@ -214,24 +227,8 @@ export default class BarChart extends Base {
                 centerX += barWidth / 2 + this._config.compareBarMargin / 2;
 
                 if ( cBar.barLabel ) {
-                    let labelArr = ( isType('array', cBar.barLabel) ? cBar.barLabel : [cBar.barLabel]);
-                    let yStart = cy - 5;
-
-                    labelArr.forEach( item => {
-                        let labelConfig = deepCopy(this._config.barLabelStyle);
-                        let obj = isType('object', item) ? item : { name: item, style: labelConfig };
-                        obj.style = extend(labelConfig, obj.style || {});
-
-                        this._render.topbarLabels.push({
-                            text    : obj.name || '',
-                            color   : obj.style.color,
-                            fontSize: obj.style.fontSize,
-                            x       : xStart + this._config.barWidth / 2 + 1,
-                            y       : yStart,
-                            textAlign: 'center',
-                        });
-                        yStart -= (obj.style.fontSize + 5);
-                    });
+                    let { arr } = this.calLabelDataForItem(xStart + this._config.barWidth / 2 + 1, cy, bar.barLabel);
+                    this._render.topbarLabels = this._render.topbarLabels.concat(arr);
                 }
                 xStart += ( this._config.barWidth + barPadding );
             } else {
@@ -372,6 +369,24 @@ export default class BarChart extends Base {
     calYAxis() {
         let { max, min, yDivider, maxYPoint, longestLine } = this.calYAxisBoundary();
 
+            /*const height = ( bar.value - this._render.min) * this._render.unitY * this._render.yMultiple;
+            const y = leftBottom.y - height;*/
+
+        let maxItem;
+        this._datasets.forEach(dataset => {
+            dataset.points.forEach(item => {
+                if ( !maxItem ) {
+                    maxItem = item;
+                } else {
+                    if ( item.value > maxItem.value ) {
+                        maxItem = item;
+                    }
+                }
+            });
+        });
+
+        const { height } = this.calLabelDataForItem(0, 0, maxItem.barLabel || []);
+
         let yAxis      = this._config.yAxis;
         let yAxisLine  = this._config.yAxisLine;
 
@@ -383,14 +398,13 @@ export default class BarChart extends Base {
 
         // 计算Y轴上两个点之间的像素值
         let unitY = (  (  this._boundary.leftBottom.y
-                        - this._boundary.leftTop.y  )
+                        - this._boundary.leftTop.y - height  )
                      / ( yDivider * this._render.yMultiple  * this._config.yAxisCount )
                     );
 
         let leftStart   = this._boundary.leftTop.x + yAxis.marginLeft;
         let bottomStart = this._boundary.leftBottom.y
 
-        //let changeFunc  = this._config.changeUnit || changeUnit;
         let changeFunc  = (  this._config.changeUnit && this._config.changeUnit !== none
                            ? this._config.changeUnit
                            : changeUnit  );
@@ -416,7 +430,6 @@ export default class BarChart extends Base {
         yAxisWidth = ( yAxis.show
                      ? yAxisWidth + yAxis.marginRight
                      : 0  );
-
 
         this._render.unitY               = unitY;
         this._render.yAxisWidth          = yAxisWidth;

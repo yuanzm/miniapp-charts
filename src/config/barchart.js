@@ -87,6 +87,7 @@ let linechartConfig = {
     barLabelStyle: {
         color      : '#B8B8B8',
         fontSize   : 11,
+        paddingBottom: 5,
     }
 }
 

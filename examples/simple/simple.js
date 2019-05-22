@@ -148,7 +148,7 @@ Page({
                     points: [
                         {
                             label: '新增',
-                            value: 44,
+                            value: 120,
                             barLabel: [{
                                 name: '335',
                                 style: {
