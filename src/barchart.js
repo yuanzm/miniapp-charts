@@ -396,11 +396,18 @@ export default class BarChart extends Base {
         // Y轴文案所占据的宽度
         let yAxisWidth = 0;
 
+        let cHeigth = this._boundary.leftBottom.y - this._boundary.leftTop.y;
         // 计算Y轴上两个点之间的像素值
-        let unitY = (  (  this._boundary.leftBottom.y
-                        - this._boundary.leftTop.y - height  )
-                     / ( yDivider * this._render.yMultiple  * this._config.yAxisCount )
-                    );
+        let unitY =  cHeight / ( yDivider * this._render.yMultiple  * this._config.yAxisCount );
+
+        /**
+         * 计算最长的条加上label之后的高度,如果超过绘图边界，将unitY更改成刚好使得最长的条填充满绘图区
+         * 这里仍然存在一种可能，很短的条有很多label导致超过绘图边界，不予考虑
+         */
+        const maxH = ( maxItem.value - min) * unitY * this._render.yMultiple;
+        if ( maxH + height > cHeight ) {
+            unitY = (cHeight - height ) / (maxItem.value - min) / this._render.yMultiple;
+        }
 
         let leftStart   = this._boundary.leftTop.x + yAxis.marginLeft;
         let bottomStart = this._boundary.leftBottom.y
