@@ -131,6 +131,7 @@ export default class BarChart extends Base {
         return this._boundary;
     }
 
+    // TODO: 重构
     calBarData() {
         const xCenterAxis   = this._render.xCenterAxis;
         const first         = this._datasets[0];
@@ -172,13 +173,23 @@ export default class BarChart extends Base {
             this._render.bars.push(rect);
 
             if ( bar.barLabel ) {
-                this._render.topbarLabels.push({
-                    text    : bar.barLabel || '',
-                    color   : this._config.barLabelStyle.color,
-                    fontSize: this._config.barLabelStyle.fontSize,
-                    x       : xStart + this._config.barWidth / 2 + 1,
-                    y       : y - 5,
-                    textAlign: 'center',
+                let labelArr = ( isType('array', bar.barLabel) ? bar.barLabel : [bar.barLabel]);
+                let yStart = y - 5;
+
+                labelArr.forEach( item => {
+                    let labelConfig = deepCopy(this._config.barLabelStyle);
+                    let obj = isType('object', item) ? item : { name: item, style: labelConfig };
+                    obj.style = extend(labelConfig, obj.style || {});
+
+                    this._render.topbarLabels.push({
+                        text    : obj.name || '',
+                        color   : obj.style.color,
+                        fontSize: obj.style.fontSize,
+                        x       : xStart + this._config.barWidth / 2 + 1,
+                        y       : yStart,
+                        textAlign: 'center',
+                    });
+                    yStart -= (obj.style.fontSize + 5);
                 });
             }
 
@@ -199,20 +210,30 @@ export default class BarChart extends Base {
                 }
 
                 this._render.bars.push(rect);
-                xStart += ( this._config.barWidth + barPadding );
 
                 centerX += barWidth / 2 + this._config.compareBarMargin / 2;
 
-                if ( second.barLabel ) {
-                    this._render.topbarLabels.push({
-                        text    : cBar.barLabel || '',
-                        color   : this._config.barLabelStyle.color,
-                        fontSize: this._config.barLabelStyle.fontSize,
-                        x       : xStart + this._config.barWidth / 2,
-                        y       : cy - 5,
-                        textAlign: 'center',
+                if ( cBar.barLabel ) {
+                    let labelArr = ( isType('array', cBar.barLabel) ? cBar.barLabel : [cBar.barLabel]);
+                    let yStart = cy - 5;
+
+                    labelArr.forEach( item => {
+                        let labelConfig = deepCopy(this._config.barLabelStyle);
+                        let obj = isType('object', item) ? item : { name: item, style: labelConfig };
+                        obj.style = extend(labelConfig, obj.style || {});
+
+                        this._render.topbarLabels.push({
+                            text    : obj.name || '',
+                            color   : obj.style.color,
+                            fontSize: obj.style.fontSize,
+                            x       : xStart + this._config.barWidth / 2 + 1,
+                            y       : yStart,
+                            textAlign: 'center',
+                        });
+                        yStart -= (obj.style.fontSize + 5);
                     });
                 }
+                xStart += ( this._config.barWidth + barPadding );
             } else {
                 xStart += barPadding;
             }
@@ -226,7 +247,6 @@ export default class BarChart extends Base {
                 y       : bottom,
                 textAlign: 'center',
             });
-
         });
     }
 
