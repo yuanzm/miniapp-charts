@@ -396,7 +396,7 @@ export default class BarChart extends Base {
         // Y轴文案所占据的宽度
         let yAxisWidth = 0;
 
-        let cHeigth = this._boundary.leftBottom.y - this._boundary.leftTop.y;
+        let cHeight = this._boundary.leftBottom.y - this._boundary.leftTop.y;
         // 计算Y轴上两个点之间的像素值
         let unitY =  cHeight / ( yDivider * this._render.yMultiple  * this._config.yAxisCount );
 
