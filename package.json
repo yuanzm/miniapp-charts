@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/yuanzm/wxapp-line-chart#readme",
   "devDependencies": {
-    "webpack": "^4.8.3",
-    "webpack-cli": "^2.1.4"
+    "webpack": "^4.20.2",
+    "webpack-cli": "^3.1.1"
   }
 }

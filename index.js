@@ -1,5 +1,11 @@
 
-import LineChart from './src/index.js';
+import LineChart  from './src/linechart.js';
+import BarChart   from './src/barchart.js';
+import RadarChart from './src/radar.js';
 
-export default LineChart;
+export {
+    LineChart,
+    BarChart,
+    RadarChart,
+}
 

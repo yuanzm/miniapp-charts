@@ -3,9 +3,7 @@ const path = require('path');
 
 module.exports = {
     entry: {
-		index: "./src/index.js",
-		radar: "./src/radar.js",
-        main : "./src/main.js",
+		index: "./index.js",
 	},
     output: {
         path    : path.resolve(__dirname, 'dist'),
