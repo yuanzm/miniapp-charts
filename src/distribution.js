@@ -268,12 +268,11 @@ export default class DistributionChart extends Base {
 
         this.getConfig(cfg, this._config);
 
-
+        this.initData(data);
         if ( !this._datasets.length ) {
             return;
         }
 
-        this.initData(data);
         this.drawToCanvas();
         this.ctx.draw();
     }
