@@ -1,13 +1,8 @@
-/**
- * @author: zimyuan
- */
-
 import {
     isType,
     extend,
     deepCopy,
     changeUnit,
-    isPlainObject,
     getDataRangeAndStep,
     none
 } from './util.js';
@@ -41,7 +36,7 @@ export default class BarChart extends Base {
         this._performance = {};
 
         // 本实例配置文件
-        this._config      = this.getConfig(cfg);
+        this._config      = this.getConfig(cfg, deepCopy(config));
 
         // 实际绘图区域边界点信息
         this._boundary    = {};
@@ -58,77 +53,6 @@ export default class BarChart extends Base {
      */
     log(performancePointName) {
         this._performance[performancePointName] = new Date() - this._start;
-    }
-
-    /**
-     * 获取本实例的配置
-     */
-    getConfig(cfg, sourceConfig) {
-        if ( !isPlainObject(cfg) )
-            throw new Error('options must be type of Object');
-
-        // 所有的实例先深拷贝一份默认配置文件，避免不同实例之间的配置相互影响
-        let copyConfig = sourceConfig || deepCopy(config);
-
-        for ( let key in copyConfig ) {
-            if ( cfg[key] !== undefined ) {
-                if ( typeof copyConfig[key] !== typeof cfg[key] )
-                    throw new Error(`[BarChart] TypeMismatch：${key} must be type of ${ typeof copyConfig[key]}`);
-
-                // Object类型的extend而不是直接覆盖
-                if ( isPlainObject(cfg[key]) )
-                    copyConfig[key] = extend(copyConfig[key], cfg[key]);
-
-                else
-                    copyConfig[key] = cfg[key];
-            }
-        }
-
-        return copyConfig;
-    }
-
-    /**
-     * 因为可以设置padding样式，所以需要维护真实的边界点
-     * 才可以实现精确绘制
-     */
-    calBoundaryPoint() {
-        let _config = this._config;
-        let padding = this._config.padding;
-
-        // 实际绘图区域的左上角
-        this._boundary.leftTop = {
-            x: padding.left,
-            y: padding.top
-        };
-
-        // 计算实际绘图区域的左下角信息
-        this._boundary.leftBottom = {
-            x: padding.left,
-            y: (   _config.height
-                - padding.bottom
-                - _config.xAxis.fontSize
-                - _config.xAxis.marginTop  )
-        };
-
-        // 计算实际绘图区域的右上角信息
-        this._boundary.rightTop =  {
-            x: _config.width - padding.right,
-            y: padding.top
-        };
-
-        this._boundary.rightBottom = {
-            x: _config.width - padding.right,
-            y: this._boundary.leftBottom.y
-        };
-
-        this._boundary.size = {
-            width : this._boundary.rightTop.x - this._boundary.leftTop.x,
-            height: this._boundary.leftBottom.y - this._boundary.leftTop.y,
-        };
-
-        this.log('calBoundaryPoint');
-
-        return this._boundary;
     }
 
     calLabelDataForItem(x, yStart, barLabel) {
@@ -272,7 +196,6 @@ export default class BarChart extends Base {
      * 计算用于X轴绘制需要的数据
      */
     calXAxis() {
-        let datasets    = this._datasets;
         let data        = this._render;
 
         let length      = this._render.longestLinePointCnt;
@@ -388,7 +311,6 @@ export default class BarChart extends Base {
         const { height } = this.calLabelDataForItem(0, 0, maxItem.barLabel || []);
 
         let yAxis      = this._config.yAxis;
-        let yAxisLine  = this._config.yAxisLine;
 
         // 用于绘制的数据
         let yAxisData  = [];
@@ -477,7 +399,6 @@ export default class BarChart extends Base {
         let max         = -Infinity;
         let min         = Infinity;
 
-        let start = new Date();
         datasets.forEach((oneline) => {
             let points = oneline.points || [];
 
@@ -511,11 +432,6 @@ export default class BarChart extends Base {
 
     // 绘制X轴
     drawXAxis() {
-        // 绘制X轴文案
-        /*this._render.xAxisData.forEach((item) => {
-            this.drawWord(this.ctx1, item);
-        });*/
-
         if ( this._config.xAxisLine.centerShow ) {
             this.drawLine(this.ctx1, this._render.xCenterAxis);
         }

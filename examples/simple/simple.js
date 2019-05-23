@@ -111,6 +111,7 @@ Page({
                 width : 414,
                 height: 200,
                 unit  : '%',
+                debug : true,
             },
         );
 

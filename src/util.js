@@ -16,7 +16,7 @@ function is(obj, type) {
 	return (type === 'Null' && obj === null) ||
 		(type === "Undefined" && obj === undefined) ||
 		toString.call(obj).slice(8, -1) === type;
-};
+}
 
 /*
  * 深拷贝函数
@@ -24,32 +24,26 @@ function is(obj, type) {
  * @param {Object} newObj: 需要拷贝的对象
  * @ return {Object} newObj: 拷贝之后的对象
  */
-
- function deepCopy(oldObj = {}, newObj={}) {
- 	for (var key in oldObj) {
- 		var copy = oldObj[key];
- 		if (oldObj === copy) continue; //如window.window === window，会陷入死循环，需要处理一下
- 		if (is(copy, "Object")) {
- 			newObj[key] = deepCopy(copy, newObj[key] || {});
- 		} else if (is(copy, "Array")) {
- 			newObj[key] = []
-			newObj[key] = deepCopy(copy, newObj[key] || []);
- 		} else {
- 			newObj[key] = copy;
- 		}
- 	}
- 	return newObj;
- }
+function deepCopy(oldObj = {}, newObj={}) {
+    for (var key in oldObj) {
+        var copy = oldObj[key];
+        if (oldObj === copy) continue; //如window.window === window，会陷入死循环，需要处理一下
+        if (is(copy, "Object")) {
+            newObj[key] = deepCopy(copy, newObj[key] || {});
+        } else if (is(copy, "Array")) {
+            newObj[key] = []
+            newObj[key] = deepCopy(copy, newObj[key] || []);
+        } else {
+            newObj[key] = copy;
+        }
+    }
+    return newObj;
+}
 
 function isType (type, value) {
-	let _type = Object
-		   		.prototype
-		   		.toString
-		   		.call(value)
-		   		.match(/\s(\w+)/)[1]
-		   		.toLowerCase();
+	let _type = Object.prototype.toString.call(value).match(/\s(\w+)/)[1].toLowerCase();
 
-	return _type === type;
+    return _type === type;
 }
 
 function isPlainObject (value) {
@@ -71,13 +65,13 @@ function extend(destination, source) {
  * 在计算坐标轴的最大最小值和区间的时候，预期的效果是最大最小值都是“整数”
  * 这里根据数字的大小定义取整逻辑
  */
-function getRoundForNumber(number, direction) {
+function getRoundForNumber(number) {
     let round;
 
     // 计算出当前数组位数减一的最小数字
     if ( number  >= 100 )
         round = String(number).split('')
-                              .reduce((sum, item) => sum * 10, 0.01);
+                              .reduce((sum) => sum * 10, 0.01);
 
     // 数字介于10-100之间，逢5为整
     else if ( number >= 10 )
@@ -190,10 +184,6 @@ function isNumeric(n) {
   return !isNaN(parseFloat(n)) && isFinite(n);
 }
 
-function isInt(n){
-    return Number(n) === n && n % 1 === 0;
-}
-
 function isFloat(n){
     return Number(n) === n && n % 1 !== 0;
 }
@@ -212,9 +202,11 @@ function changeUnit(value, fixed = 1) {
         return number.toFixed(fixed);
 
     if ( number < 1e3 ) {
+        unit    = '';
+        divider = 1;
     }
 
-    else if ( number < 1e4) {
+    else if (number >= 1e3 &&  number < 1e4) {
         unit    = 'k';
         divider = 1e3;
     }

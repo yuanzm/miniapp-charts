@@ -4,7 +4,6 @@
  */
 
 import {
-    isType,
     extend,
     deepCopy,
     changeUnit,
@@ -46,7 +45,7 @@ export default class LineChart extends Base {
         this._performance = {};
 
         // 本实例配置文件
-        this._config      = this.getConfig(cfg);
+        this._config      = this.getConfig(cfg, deepCopy(config));
 
         // 实际绘图区域边界点信息
         this._boundary    = {};
@@ -68,78 +67,6 @@ export default class LineChart extends Base {
         this._performance[performancePointName] = new Date() - this._start;
     }
 
-    /**
-     * 获取本实例的配置
-     */
-    getConfig(cfg, sourceConfig) {
-        if ( !isPlainObject(cfg) )
-            throw new Error('options must be type of Object');
-
-        // 所有的实例先深拷贝一份默认配置文件，避免不同实例之间的配置相互影响
-        let copyConfig = sourceConfig || deepCopy(config);
-
-        for ( let key in copyConfig ) {
-            if ( cfg[key] !== undefined ) {
-                if ( typeof copyConfig[key] !== typeof cfg[key] )
-                    throw new Error(`[LineChart] TypeMismatch：${key} must be type of ${ typeof copyConfig[key]}`);
-
-                // Object类型的extend而不是直接覆盖
-                if ( isPlainObject(cfg[key]) )
-                    copyConfig[key] = extend(copyConfig[key], cfg[key]);
-
-                else
-                    copyConfig[key] = cfg[key];
-            }
-        }
-
-        return copyConfig;
-    }
-
-    /**
-     * 因为可以设置padding样式，所以需要维护真实的边界点
-     * 才可以实现精确绘制
-     */
-    calBoundaryPoint() {
-        let _config = this._config;
-        let padding = this._config.padding;
-
-        // 实际绘图区域的左上角
-        this._boundary.leftTop = {
-            x: padding.left,
-            y: padding.top
-        };
-
-        // 计算实际绘图区域的左下角信息
-        this._boundary.leftBottom = {
-            x: padding.left,
-            y: (   _config.height
-                - padding.bottom
-                - _config.xAxis.fontSize
-                - _config.xAxis.marginTop  )
-        };
-
-        // 计算实际绘图区域的右上角信息
-        this._boundary.rightTop =  {
-            x: _config.width - padding.right,
-            y: padding.top
-        };
-
-        this._boundary.rightBottom = {
-            x: _config.width - padding.right,
-            y: this._boundary.leftBottom.y
-        };
-
-        this._boundary.size = {
-            width : this._boundary.rightTop.x - this._boundary.leftTop.x,
-            height: this._boundary.leftBottom.y - this._boundary.leftTop.y,
-        };
-
-        this.log('calBoundaryPoint');
-
-        return this._boundary;
-    }
-
-    // 计算用于绘制的点的信息
     calPointData() {
         let pointData      = [];
         let yAxisWidth     = this._render.yAxisWidth;
@@ -233,7 +160,6 @@ export default class LineChart extends Base {
      * 计算用于X轴绘制需要的数据
      */
     calXAxis() {
-        let datasets    = this._datasets;
         let data        = this._render;
 
         let length      = this._render.longestLinePointCnt;
@@ -330,7 +256,6 @@ export default class LineChart extends Base {
         let { max, min, yDivider, maxYPoint, longestLine } = this.calYAxisBoundary();
 
         let yAxis      = this._config.yAxis;
-        let yAxisLine  = this._config.yAxisLine;
 
         // 用于绘制的数据
         let yAxisData  = [];
@@ -414,7 +339,6 @@ export default class LineChart extends Base {
         let max         = -Infinity;
         let min         = Infinity;
 
-        let start = new Date();
         datasets.forEach((oneline) => {
             let points = oneline.points || [];
 
@@ -521,7 +445,7 @@ export default class LineChart extends Base {
     /**
      * 计算tooltip的容器样式数据
      */
-    calToolTipWordData(e) {
+    calToolTipWordData() {
         this._render.toolTipData.circles = [];
 
         let wrapper     = this._render.toolTipData.wrapper;
@@ -567,13 +491,10 @@ export default class LineChart extends Base {
         words.unshift(title);
     }
 
-    calToolTipWrapperData(e) {
+    calToolTipWrapperData() {
         let style       = this._config.toolTip;
-        let longestLine = this._render.longestLine;
         let pindex      = this._render.toolTipData.pindex;
 
-        // 当前手指对应最长线的点
-        let point       = longestLine.points[pindex].x;
         let maxWidth    = 0;
 
         // tooltip的总宽度
@@ -832,15 +753,15 @@ export default class LineChart extends Base {
 
         this.log('realDraw');
 
-        if ( this._config.debug )
+        if ( this._config.debug ) {
             console.log(this._performance);
+        }
     }
 
     /**
      * 触摸事件处理，绘制tooltip
      */
     touchHandler(e) {
-        let start = new Date();
         /**
          * ctx2本身是为了性能优化存在的，如果没有ctx2，
          * 还是要把所用东西老老实实在ctx1上面绘制一遍
@@ -878,7 +799,7 @@ export default class LineChart extends Base {
     /**
      * tooltip在触摸结束之后是否需要保留可以通过是否调用这个函数决定
      */
-    touchEnd(e) {
+    touchEnd() {
         /**
          * ctx2本身是为了性能优化存在的，如果没有ctx2，
          * 还是要把所用东西老老实实在ctx1上面绘制一遍

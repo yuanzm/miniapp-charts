@@ -1,8 +1,6 @@
 
 import ChartBase from './draw.js';
 import {
-    deepCopy,
-    extend,
     isPlainObject
 } from '../util.js';
 
@@ -44,6 +42,52 @@ export default class Base extends ChartBase {
 
         return sourceConfig;
     }
+
+    /**
+     * 因为可以设置padding样式，所以需要维护真实的边界点
+     * 才可以实现精确绘制
+     */
+    calBoundaryPoint() {
+        let _config = this._config;
+        let padding = this._config.padding;
+
+        // 实际绘图区域的左上角
+        this._boundary.leftTop = {
+            x: padding.left,
+            y: padding.top
+        };
+
+        // 计算实际绘图区域的左下角信息
+        this._boundary.leftBottom = {
+            x: padding.left,
+            y: (   _config.height
+                - padding.bottom
+                - _config.xAxis.fontSize
+                - _config.xAxis.marginTop  )
+        };
+
+        // 计算实际绘图区域的右上角信息
+        this._boundary.rightTop =  {
+            x: _config.width - padding.right,
+            y: padding.top
+        };
+
+        this._boundary.rightBottom = {
+            x: _config.width - padding.right,
+            y: this._boundary.leftBottom.y
+        };
+
+        this._boundary.size = {
+            width : this._boundary.rightTop.x - this._boundary.leftTop.x,
+            height: this._boundary.leftBottom.y - this._boundary.leftTop.y,
+        };
+
+        this.log('calBoundaryPoint');
+
+        return this._boundary;
+    }
+
+    // 计算用于绘制的点的信息
 
     requestAnimFrame(callback) {
         if ( typeof requestAnimationFrame !== 'undefined' ) {

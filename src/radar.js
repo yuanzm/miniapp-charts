@@ -6,7 +6,6 @@
 import {
     isType,
     deepCopy,
-    changeUnit,
 } from './util.js';
 
 import config  from './config/radar.js';
@@ -110,7 +109,6 @@ export default class RadarChart extends Base {
 
     calDatasetsData(animationPercent = 1) {
         let datasets      = this._datasets;
-        let steps         = this._render.steps;
         let angelLineData = this._render.angelLineData;
         let center        = this._render.center;
         let grid          = this._config.grid;
@@ -323,7 +321,7 @@ export default class RadarChart extends Base {
 
         return this._render.labels.map((label, index) => {
             let base              = angelLineData[index].end;
-            let { width, height, style } = labelsSizeData[index];
+            let { width, height} = labelsSizeData[index];
             let baseX   = parseInt(base.x);
             let baseY   = parseInt(base.y);
             let centerX = parseInt(center.x);
@@ -429,7 +427,7 @@ export default class RadarChart extends Base {
             });
         });
 
-        return circles;;
+        return circles;
     }
 
     /**
@@ -463,7 +461,7 @@ export default class RadarChart extends Base {
 
         // 网格线
         if ( this._config.grid.display ) {
-            this._render.gridLineData.forEach((line, index) => {
+            this._render.gridLineData.forEach((line) => {
                 this.drawLongLine(this.ctx, line);
             });
         }

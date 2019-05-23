@@ -1,7 +1,3 @@
-import {
-    extend,
-} from '../util.js';
-
 /**
  * 图表组件基础类，封装一些canvas画图的基本方法
  * 这里可用于兼容H5和小程序
@@ -105,7 +101,7 @@ export default class ChartBase {
 
             else
                 ctx.lineTo(point.x, point.y);
-        };
+        }
 
         // 需要填充背景颜色要在stroke之前填充，否则边界线会发虚
         if ( line.fill ) {
@@ -147,7 +143,7 @@ export default class ChartBase {
 
             else
                 ctx.lineTo(point.x, point.y);
-        };
+        }
 
         ctx.stroke();
 
