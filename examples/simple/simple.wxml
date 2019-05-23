@@ -16,3 +16,7 @@
     style="width: 414px; height: 200px;"
 />
 
+<canvas
+    canvas-id="distribution"
+    style="width: 414px; height: 200px;"
+/>

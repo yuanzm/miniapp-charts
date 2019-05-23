@@ -38,33 +38,15 @@ export default class LineChart extends Base {
          * 约定！所有的内部变量都需要这里先声明
          * 可以大大提高源码阅读性
          */
-        // 用于性能数据打点
-        this._start       = 0;
-
-        // 为了方便调试，在调试模式下会打出性能信息
-        this._performance = {};
 
         // 本实例配置文件
         this._config      = this.getConfig(cfg, deepCopy(config));
 
-        // 实际绘图区域边界点信息
-        this._boundary    = {};
-
         // 线条数据
         this._datasets    = [];
 
-        // 寄存最终用于渲染的数据
-        this._render      = {};
-
         // 用于触摸事件的函数节流
         this._touchTimer  = 0;
-    }
-
-    /**
-     * 性能数据打点
-     */
-    log(performancePointName) {
-        this._performance[performancePointName] = new Date() - this._start;
     }
 
     calPointData() {
@@ -296,9 +278,8 @@ export default class LineChart extends Base {
 
         // 考虑Y轴不需要文案的情况
         yAxisWidth = ( yAxis.show
-                     ? yAxisWidth + yAxis.marginRight
-                     : 0  );
-
+                      ? yAxisWidth + yAxis.marginRight
+                      : 0  );
 
         this._render.unitY               = unitY;
         this._render.yAxisWidth          = yAxisWidth;

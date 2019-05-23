@@ -6,9 +6,9 @@ module.exports = {
 		index: "./index.js",
 	},
     output: {
-        path    : path.resolve(__dirname, 'dist'),
-        filename: "[name].js"
+        path    : path.resolve(__dirname, 'examples/libs'),
+        filename: "[name].js",
     },
-    mode: "development",
+    mode: "production"
 };
 

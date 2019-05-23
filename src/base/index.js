@@ -10,13 +10,24 @@ export default class Base extends ChartBase {
     constructor() {
         super();
 
+        // 用于性能数据打点
         this._start = 0;
 
+        // 寄存最终用于渲染的数据
         this._render = {};
 
+        // 为了方便调试，在调试模式下会打出性能信息
         this._performance = {};
 
+        // 实际绘图区域边界点信息
         this._boundary = {};
+    }
+
+    /**
+     * 性能数据打点
+     */
+    log(performancePointName) {
+        this._performance[performancePointName] = new Date() - this._start;
     }
 
     /**
@@ -61,10 +72,12 @@ export default class Base extends ChartBase {
         this._boundary.leftBottom = {
             x: padding.left,
             y: (   _config.height
-                - padding.bottom
-                - _config.xAxis.fontSize
-                - _config.xAxis.marginTop  )
+                - padding.bottom  )
         };
+
+        if ( _config.xAxis ) {
+            this._boundary.leftBottom.y -= ( _config.xAxis.fontSize + _config.xAxis.marginTop  );
+        }
 
         // 计算实际绘图区域的右上角信息
         this._boundary.rightTop =  {

@@ -29,30 +29,11 @@ export default class BarChart extends Base {
          * 约定！所有的内部变量都需要这里先声明
          * 可以大大提高源码阅读性
          */
-        // 用于性能数据打点
-        this._start       = 0;
-
-        // 为了方便调试，在调试模式下会打出性能信息
-        this._performance = {};
-
         // 本实例配置文件
         this._config      = this.getConfig(cfg, deepCopy(config));
 
-        // 实际绘图区域边界点信息
-        this._boundary    = {};
-
         // 线条数据
         this._datasets    = [];
-
-        // 寄存最终用于渲染的数据
-        this._render      = {};
-    }
-
-    /**
-     * 性能数据打点
-     */
-    log(performancePointName) {
-        this._performance[performancePointName] = new Date() - this._start;
     }
 
     calLabelDataForItem(x, yStart, barLabel) {
@@ -461,10 +442,6 @@ export default class BarChart extends Base {
         }
     }
 
-    // 绘制X轴的竖线
-    drawXAxisLine() {
-    }
-
     /**
      * 绘制所有的点
      */
@@ -504,7 +481,6 @@ export default class BarChart extends Base {
         this.drawXAxis();
         this.log('drawXAxis');
 
-        /*this.drawPoints();*/
         this.drawBars();
         this.log('drawPoints');
     }

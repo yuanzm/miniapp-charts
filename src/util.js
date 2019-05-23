@@ -2,10 +2,6 @@
  * @author: zimyuan
  */
 
-/*function deepCopy(obj) {
-    return JSON.parse(JSON.stringify(obj));
-}*/
-
 /*
  * 判断JavaScript对象类型的函数
  * @param {}
