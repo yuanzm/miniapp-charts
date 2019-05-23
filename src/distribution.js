@@ -2,9 +2,6 @@ import {
     isType,
     extend,
     deepCopy,
-    changeUnit,
-    getDataRangeAndStep,
-    none
 } from './util.js';
 
 import config from './config/distribution.js';
@@ -56,6 +53,7 @@ export default class DistributionChart extends Base {
                 x        : xStart,
                 y        : y,
                 textAlign: 'left',
+                baseline : 'middle',
             }
             arr.push(word);
             let w = this.getWordWidth(word);
@@ -81,7 +79,6 @@ export default class DistributionChart extends Base {
         const { width } = this.calLabelDataForItem(0, 0, maxItem.barLabel);
 
         const maxBarWidth = config.width - config.padding.right - xStart - width;
-        console.log(maxBarWidth);
 
         const barData      = [];
         let barLabelData = [];
@@ -95,8 +92,6 @@ export default class DistributionChart extends Base {
                 barArr.push(cBar);
             }
 
-            let centerY;
-
             barArr.forEach( (bar, barIndex)  => {
                 const rect = {
                     fillColor: bar.fillColor,
@@ -106,29 +101,30 @@ export default class DistributionChart extends Base {
                     height   : barStyle.height,
                 }
 
-                let { arr } = this.calLabelDataForItem(xStart + rect.width, yStart + barStyle.height, bar.barLabel);
+                // TODO: fix 0.5
+                let { arr } = this.calLabelDataForItem(xStart + rect.width, yStart + barStyle.height / 2 - 0.5, bar.barLabel);
 
-                centerY = yStart + barStyle.height / 2;
                 yStart += barStyle.height;
 
                 if ( second && barIndex === 0 ) {
                     yStart += config.compareBarMargin;
-                    centerY += barStyle.height / 2 + config.compareBarMargin / 2;
                 } else {
                     yStart += barStyle.padding;
                 }
 
-                rect.centerY = centerY;
-
                 barData.push(rect);
                 barLabelData = barLabelData.concat(arr);
             });
+
+            let centerY = (  barArr.length > 1
+                           ? yStart - barStyle.padding - barStyle.height - config.compareBarMargin / 2
+                           : yStart - barStyle.padding - barStyle.height / 2  );
+
+            this._render.yAxisData[index].y = centerY + this._render.yAxisData[index].fontSize / 2;
         });
 
         this._render.barData = barData;
         this._render.barLabelData = barLabelData;
-
-        console.log(barData, barLabelData);
     }
 
     calYAxisLines() {
@@ -136,7 +132,6 @@ export default class DistributionChart extends Base {
         let yAxisWidth = data.yAxisWidth;
         let leftTop    = this._boundary.leftTop;
         let leftBottom = this._boundary.leftBottom;
-        let rightTop   = this._boundary.rightBottom;
         let yAxisLine  = this._config.yAxisLine;
 
         // 计算Y轴中轴线数据
@@ -182,20 +177,18 @@ export default class DistributionChart extends Base {
         let yAxisWidth = 0;
         let leftStart   = this._boundary.leftTop.x + yAxis.marginLeft;
 
-        this._datasets.forEach(dataset => {
-            dataset.points.forEach( item => {
-                let word = {
-                    text    : item.label || '',
-                    color   : yAxis.color,
-                    fontSize: yAxis.fontSize,
-                    x       : leftStart,
-                    y       : 0,
-                };
+        this._datasets[0].points.forEach( item => {
+            let word = {
+                text    : item.label || '',
+                color   : yAxis.color,
+                fontSize: yAxis.fontSize,
+                x       : leftStart,
+                y       : 0,
+            };
 
-                yAxisWidth = Math.max(this.getWordWidth(word), yAxisWidth);
+            yAxisWidth = Math.max(this.getWordWidth(word), yAxisWidth);
 
-                yAxisData.push(word);
-            });
+            yAxisData.push(word);
         });
 
         // 考虑Y轴不需要文案的情况
@@ -205,8 +198,6 @@ export default class DistributionChart extends Base {
 
         this._render.yAxisData  = yAxisData;
         this._render.yAxisWidth = yAxisWidth;
-
-        this.log('calYAxis');
     }
 
     // 绘制Y轴
@@ -216,11 +207,6 @@ export default class DistributionChart extends Base {
             this._render.yAxisData.forEach((item) => {
                 this.drawWord(this.ctx, item);
             });
-        }
-
-        // 根据配置来决定是否绘制Y中心轴
-        if ( this._config.yAxis.centerShow ) {
-            this.drawLine(this.ctx, this._render.yCenterAxis);
         }
     }
 
@@ -246,15 +232,7 @@ export default class DistributionChart extends Base {
      * 将处理后的合法数据按照配置绘制到canvas上面
      */
     drawToCanvas() {
-        /*this.drawYAxis();
-        this.log('drawYAxis');
-
-        this.drawYAxisLine();
-        this.log('drawYAxisLine');
-
-        this.drawXAxis();
-        this.log('drawXAxis');*/
-
+        this.drawYAxis();
         this.drawBars();
     }
 
@@ -280,8 +258,6 @@ export default class DistributionChart extends Base {
         this.calYAxisLines();
 
         this.calBarData();
-
-        this.log('initData');
     }
 
     /**
@@ -292,21 +268,14 @@ export default class DistributionChart extends Base {
 
         this.getConfig(cfg, this._config);
 
-        this.initData(data);
 
         if ( !this._datasets.length ) {
             return;
         }
 
+        this.initData(data);
         this.drawToCanvas();
-
         this.ctx.draw();
-
-        this.log('realDraw');
-
-        if ( this._config.debug ) {
-            console.log(this._performance);
-        }
     }
 }
 

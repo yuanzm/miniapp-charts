@@ -37,7 +37,7 @@ let distributionConfig = {
 
     barStyle: {
         fillColor: '#6684C7',
-        height   : 8,
+        height   : 10,
         padding  : 20,
     },
     compareBarMargin: 3,

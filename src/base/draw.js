@@ -44,6 +44,10 @@ export default class ChartBase {
         if ( word.isbottom )
             ctx.setTextBaseline('bottom')
 
+        if ( word.baseline ) {
+            ctx.setTextBaseline(word.baseline)
+        }
+
         ctx.setFontSize(word.fontSize);
         ctx.setFillStyle(word.color);
         ctx.setTextAlign(word.textAlign || 'left');
