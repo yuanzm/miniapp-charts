@@ -4,6 +4,9 @@ import DistributionChart from '../../src/distribution.js';
 import BarChart  from '../../src/barchart.js';
 
 Page({
+    data: {
+        totalHeight: 200,
+    },
     onLoad() {
         let context = wx.createCanvasContext('radar');
 
@@ -182,7 +185,7 @@ Page({
             },
         );
 
-        chart.draw({
+        chart.initData({
             datasets: [
                 {
                     name     : '行业',
@@ -236,6 +239,12 @@ Page({
                 }
             ]
         });
+
+        this.setData({
+            totalHeight: chart.totalHeight
+        });
+
+        chart.draw();
     }
 });
 

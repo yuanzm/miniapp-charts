@@ -31,6 +31,8 @@ export default class DistributionChart extends Base {
 
         // 线条数据
         this._datasets    = [];
+
+        this.totalHeight  = 0;
     }
 
     calLabelDataForItem(xStart, y, barLabel) {
@@ -81,7 +83,7 @@ export default class DistributionChart extends Base {
         const maxBarWidth = config.width - config.padding.right - xStart - width;
 
         const barData      = [];
-        let barLabelData = [];
+        let barLabelData   = [];
 
         first.points.forEach((point, index) => {
             point.fillColor = first.fillColor || barStyle.fillColor;
@@ -120,29 +122,30 @@ export default class DistributionChart extends Base {
                            ? yStart - barStyle.padding - barStyle.height - config.compareBarMargin / 2
                            : yStart - barStyle.padding - barStyle.height / 2  );
 
-            this._render.yAxisData[index].y = centerY + this._render.yAxisData[index].fontSize / 2;
+            this._render.yAxisData[index].y = centerY;
         });
 
-        this._render.barData = barData;
+        this._render.barData      = barData;
         this._render.barLabelData = barLabelData;
+        this._render.totalHeight  = yStart - barStyle.padding + config.padding.bottom + config.topBottomPadding;
+        this.totalHeight          = this._render.totalHeight;
     }
 
     calYAxisLines() {
-        let data       = this._render;
-        let yAxisWidth = data.yAxisWidth;
-        let leftTop    = this._boundary.leftTop;
-        let leftBottom = this._boundary.leftBottom;
-        let yAxisLine  = this._config.yAxisLine;
+        const config  = this._config;
+        const padding = config.padding;
+        const render  = this._render;
+        const yAxisLine = config.yAxisLine;
 
         // 计算Y轴中轴线数据
         this._render.yCenterAxis = {
             start: {
-                x: leftTop.x + yAxisWidth,
-                y: leftTop.y
+                x: padding.left + render.yAxisWidth,
+                y: padding.top,
             },
             end  : {
-                x: leftTop.x + yAxisWidth,
-                y: leftBottom.y
+                x: padding.left + render.yAxisWidth,
+                y: render.totalHeight - padding.bottom,
             },
             width: yAxisLine.width,
             color: yAxisLine.color,
@@ -184,6 +187,7 @@ export default class DistributionChart extends Base {
                 fontSize: yAxis.fontSize,
                 x       : leftStart,
                 y       : 0,
+                baseline: 'middle',
             };
 
             yAxisWidth = Math.max(this.getWordWidth(word), yAxisWidth);
@@ -212,11 +216,7 @@ export default class DistributionChart extends Base {
 
     // 绘制Y轴横线
     drawYAxisLine() {
-        if ( this._config.yAxisLine.show ) {
-            this._render.yAxisLines.forEach((line) => {
-                this.drawLine(this.ctx, line);
-            });
-        }
+        this.drawLine(this.ctx,this._render.yCenterAxis);
     }
 
     drawBars() {
@@ -233,6 +233,7 @@ export default class DistributionChart extends Base {
      */
     drawToCanvas() {
         this.drawYAxis();
+        this.drawYAxisLine();
         this.drawBars();
     }
 
@@ -241,8 +242,9 @@ export default class DistributionChart extends Base {
      * 数据字段比较多，存在后面的函数调用依赖前面的计算结果的情况
      * 因此不能随便调换initData里面的函数顺序
      */
-    initData(data) {
-        this._datasets = data.datasets || [];
+    initData(data, cfg = {}) {
+        this.getConfig(cfg, this._config);
+        this._datasets = (data.datasets || []).filter( dataset => !!dataset.points && dataset.points.length);
 
         if ( !this._datasets.length ) {
             return;
@@ -253,22 +255,15 @@ export default class DistributionChart extends Base {
 
         // 计算Y轴数据
         this.calYAxis();
-
+        this.calBarData();
         // 计算Y轴线条数据
         this.calYAxisLines();
-
-        this.calBarData();
     }
 
     /**
      * 实际的绘制函数
      */
-    draw(data, cfg = {}) {
-        this._start = new Date();
-
-        this.getConfig(cfg, this._config);
-
-        this.initData(data);
+    draw() {
         if ( !this._datasets.length ) {
             return;
         }

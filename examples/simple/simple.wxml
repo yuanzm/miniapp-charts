@@ -18,5 +18,5 @@
 
 <canvas
     canvas-id="distribution"
-    style="width: 414px; height: 200px;"
+    style="width: 414px; height: {{ totalHeight }}px;"
 />

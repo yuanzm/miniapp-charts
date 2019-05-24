@@ -38,11 +38,11 @@ let distributionConfig = {
     barStyle: {
         fillColor: '#6684C7',
         height   : 10,
-        padding  : 20,
+        padding  : 12,
     },
     compareBarMargin: 3,
 
-    topBottomPadding: 10,
+    topBottomPadding: 5,
 
     barLabelStyle: {
         color        : '#B8B8B8',

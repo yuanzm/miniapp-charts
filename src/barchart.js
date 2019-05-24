@@ -491,7 +491,7 @@ export default class BarChart extends Base {
      * 因此不能随便调换initData里面的函数顺序
      */
     initData(data) {
-        this._datasets = data.datasets || [];
+        this._datasets = (data.datasets || []).filter( dataset => !!dataset.points && dataset.points.length);
 
         if ( !this._datasets.length ) {
             return;
