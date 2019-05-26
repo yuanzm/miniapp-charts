@@ -15,15 +15,14 @@ import Base   from './base/index.js';
  */
 export default class BarChart extends Base {
     /**
-     * @param { CanvasContext } ctx1: 小程序的绘图上下文
-     * @param { CanvasContext } ctx2: 小程序的绘图上下文
+     * @param { CanvasContext } ctx: 小程序的绘图上下文
      * @param { Object } cfg: 组件配置
      */
-    constructor(ctx1, cfg = {}) {
+    constructor(ctx, cfg = {}) {
         super();
 
         this.chartType = 'bar';
-        this.ctx1      = ctx1;
+        this.ctx       = ctx;
 
         /**
          * 约定！所有的内部变量都需要这里先声明
@@ -64,9 +63,11 @@ export default class BarChart extends Base {
         return { arr, height };
     }
 
-    // TODO: 重构
     calBarData() {
-        const xCenterAxis   = this._render.xCenterAxis;
+        const config = this._config;
+        const render = this._render;
+
+        const xCenterAxis   = render.xCenterAxis;
         const first         = this._datasets[0];
         const second        = this._datasets[1];
         const count         = first.points.length;
@@ -83,66 +84,55 @@ export default class BarChart extends Base {
         // 柱子的X轴开始位置
         let xStart = xCenterAxis.start.x + this._config.leftRightPadding;
 
-        this._render.bars         = [];
-        this._render.barLabels    = [];
-        this._render.topbarLabels = [];
+        render.bars         = [];
+        render.barLabels    = [];
+        render.topbarLabels = [];
 
-        const barWidth = this._config.barWidth;
-        const xAxis    = this._config.xAxis;
+        const barWidth = config.barWidth;
+        const xAxis    = config.xAxis;
         const bottom   = leftBottom.y + xAxis.marginTop + xAxis.fontSize;
+        const barStyle = config.barStyle;
 
-        first.points.forEach((bar, index) => {
-            const height = ( bar.value - this._render.min) * this._render.unitY * this._render.yMultiple;
-            const y = leftBottom.y - height;
-            let centerX = xStart + barWidth / 2;
-
-            const rect = {
-                fillColor: first.fillColor || this._config.barStyle.fillColor,
-                x        : xStart,
-                y        : y,
-                width    : this._config.barWidth,
-                height   : height,
-            }
-            this._render.bars.push(rect);
-
-            if ( bar.barLabel ) {
-                let { arr } = this.calLabelDataForItem(xStart + this._config.barWidth / 2 + 1, y, bar.barLabel);
-
-                this._render.topbarLabels = this._render.topbarLabels.concat(arr);
-            }
-
-            xStart += this._config.barWidth;
-
+        first.points.forEach((point, index) => {
+            point.fillColor = first.fillColor || barStyle.fillColor;
+            const barArr = [point];
             if ( second ) {
-                xStart += this._config.compareBarMargin;
                 let cBar = second.points[index];
-                const cHeight = ( cBar.value - this._render.min) * this._render.unitY * this._render.yMultiple;
-                const cy = leftBottom.y - cHeight;
-
-                const rect = {
-                    fillColor: second.fillColor || this._config.barStyle.fillColor,
-                    x        : xStart,
-                    y        : cy,
-                    width    : this._config.barWidth,
-                    height   : cHeight,
-                }
-
-                this._render.bars.push(rect);
-
-                centerX += barWidth / 2 + this._config.compareBarMargin / 2;
-
-                if ( cBar.barLabel ) {
-                    let { arr } = this.calLabelDataForItem(xStart + this._config.barWidth / 2 + 1, cy, bar.barLabel);
-                    this._render.topbarLabels = this._render.topbarLabels.concat(arr);
-                }
-                xStart += ( this._config.barWidth + barPadding );
-            } else {
-                xStart += barPadding;
+                cBar.fillColor = second.fillColor || barStyle.fillColor;
+                barArr.push(cBar);
             }
+
+            let centerX = xStart + barWidth / 2;
+            barArr.forEach((bar,barIndex) => {
+                const height = ( bar.value - render.min) * render.unitY * render.yMultiple;
+                const y = leftBottom.y - height;
+                const rect = {
+                    fillColor: bar.fillColor,
+                    x        : xStart,
+                    y        : y,
+                    width    : this._config.barWidth,
+                    height   : height,
+                }
+                render.bars.push(rect);
+                if ( bar.barLabel ) {
+                    let { arr } = this.calLabelDataForItem(xStart + this._config.barWidth / 2 + 1, y, bar.barLabel);
+
+                    render.topbarLabels = this._render.topbarLabels.concat(arr);
+                }
+
+                xStart += config.barWidth;
+
+                if ( second && barIndex === 0 ) {
+                    xStart += config.compareBarMargin;
+                } else {
+                    xStart += barPadding;
+                    centerX += (barWidth / 2 + config.compareBarMargin / 2);
+                }
+            });
 
             // X轴的标签
             this._render.barLabels.push({
-                text    : bar.label || '',
+                text    : point.label || '',
                 color   : xAxis.color,
                 fontSize: xAxis.fontSize,
                 x       : centerX,
@@ -414,7 +404,7 @@ export default class BarChart extends Base {
     // 绘制X轴
     drawXAxis() {
         if ( this._config.xAxisLine.centerShow ) {
-            this.drawLine(this.ctx1, this._render.xCenterAxis);
+            this.drawLine(this.ctx, this._render.xCenterAxis);
         }
     }
 
@@ -423,13 +413,13 @@ export default class BarChart extends Base {
         // 绘制Y轴文案
         if ( this._config.yAxis.show ) {
             this._render.yAxisData.forEach((item) => {
-                this.drawWord(this.ctx1, item);
+                this.drawWord(this.ctx, item);
             });
         }
 
         // 根据配置来决定是否绘制Y中心轴
         if ( this._config.yAxis.centerShow ) {
-            this.drawLine(this.ctx1, this._render.yCenterAxis);
+            this.drawLine(this.ctx, this._render.yCenterAxis);
         }
     }
 
@@ -437,7 +427,7 @@ export default class BarChart extends Base {
     drawYAxisLine() {
         if ( this._config.yAxisLine.show ) {
             this._render.yAxisLines.forEach((line) => {
-                this.drawLine(this.ctx1, line);
+                this.drawLine(this.ctx, line);
             });
         }
     }
@@ -448,23 +438,23 @@ export default class BarChart extends Base {
     drawPoints() {
         this._render.pointData.forEach((oneline) => {
             if ( oneline.points.length > 1 )
-                this.drawLongLineWithFill(this.ctx1, oneline.points, oneline.style);
+                this.drawLongLineWithFill(this.ctx, oneline.points, oneline.style);
         });
 
         this._render.circlePoints.forEach((point) => {
-            this.drawCircle(this.ctx1, point);
+            this.drawCircle(this.ctx, point);
         });
     }
 
     drawBars() {
         this._render.bars.forEach(bar => {
-            this.drawRect(this.ctx1, bar);
+            this.drawRect(this.ctx, bar);
         });
         this._render.barLabels.forEach(label => {
-            this.drawWord(this.ctx1, label);
+            this.drawWord(this.ctx, label);
         });
         this._render.topbarLabels.forEach(label => {
-            this.drawWord(this.ctx1, label);
+            this.drawWord(this.ctx, label);
         });
     }
 
@@ -530,7 +520,7 @@ export default class BarChart extends Base {
 
         this.drawToCanvas();
 
-        this.ctx1.draw();
+        this.ctx.draw();
 
         this.log('realDraw');
 
