@@ -21,6 +21,8 @@ export default class Base extends ChartBase {
 
         // 实际绘图区域边界点信息
         this._boundary = {};
+
+        this.aniTimer = null;
     }
 
     /**
@@ -126,8 +128,9 @@ export default class Base extends ChartBase {
                                                 ? easingFunction(percentComplete)
                                                 : 1  );
 
-            if ( easeAdjustedAnimationPercent > 1 )
+            if ( easeAdjustedAnimationPercent > 1 ) {
                 easeAdjustedAnimationPercent = 1;
+            }
 
             draw.call(this, easeAdjustedAnimationPercent);
         }
@@ -137,11 +140,11 @@ export default class Base extends ChartBase {
 
             animationFrame();
 
-            if ( percentComplete <= 1 )
+            if ( percentComplete <= 1 ) {
                 this.requestAnimFrame(animationLoop);
-
-            else
+            } else {
                 config.onAnimationComplete && config.onAnimationComplete();
+            }
         }
 
         this.requestAnimFrame(animationLoop);

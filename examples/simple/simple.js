@@ -42,8 +42,6 @@ Page({
                     },
                 ]
             },
-            {
-            }
         );
 
         this.renderLineChart();

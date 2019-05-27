@@ -124,9 +124,9 @@ export default class BarChart extends Base {
 
                 if ( second && barIndex === 0 ) {
                     xStart += config.compareBarMargin;
+                    centerX += (barWidth / 2 + config.compareBarMargin / 2) + 0.5;
                 } else {
                     xStart += barPadding;
-                    centerX += (barWidth / 2 + config.compareBarMargin / 2);
                 }
             });
 
