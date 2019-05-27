@@ -103,10 +103,10 @@ export default class DistributionChart extends Base {
                     height   : barStyle.height,
                 }
 
-                let arr = [];
                 // TODO: fix 0.5
                 if ( bar.barLabel ) {
                     let { arr } = this.calLabelDataForItem(xStart + rect.width, yStart + barStyle.height / 2 - 0.5, bar.barLabel);
+                    barLabelData = barLabelData.concat(arr);
                 }
 
                 yStart += barStyle.height;
@@ -118,7 +118,6 @@ export default class DistributionChart extends Base {
                 }
 
                 barData.push(rect);
-                barLabelData = barLabelData.concat(arr);
             });
 
             let centerY = (  barArr.length > 1
