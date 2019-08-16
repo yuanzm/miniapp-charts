@@ -161,7 +161,7 @@ export default class LineChart extends Base {
                           : 1  );
         data.unitX = realWidth  / pointCount;
 
-        let xDivider  = parseInt(length / ( maxXPoint) );
+        let xDivider  = Math.ceil(length / ( maxXPoint) );
         if ( xDivider === 0 )
             xDivider = 1;
 

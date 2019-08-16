@@ -53,7 +53,7 @@ Page({
         let linechart = new LineChart(
             wx.createCanvasContext('linechart1'),
             {
-                width: 360,
+                width: 414,
                 height: 200,
                 lineStyle: {
                     lineWidth: 1,
@@ -74,7 +74,7 @@ Page({
         this.linechart = linechart;
 
         let points = [];
-        for (let i = 0; i < 20; i++) {
+        for (let i = 0; i < 100; i++) {
             points.push({
                 x: i + 1,
                 y: Math.ceil( 50 + Math.random() * 10),
