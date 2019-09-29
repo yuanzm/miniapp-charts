@@ -55,12 +55,13 @@ Page({
             {
                 width: 414,
                 height: 200,
+                xAxisCount: 6,
                 lineStyle: {
                     lineWidth: 1,
                     lineColor: '#7587db',
                     fillColor: 'rgba(0, 135, 219, 0.3)',
                     // 是否需要背景颜色
-                    needFill: true,
+                    needFill: false,
                     circle: {
                         show: true,
                         fillColor: '#FFFFFF',
@@ -74,7 +75,7 @@ Page({
         this.linechart = linechart;
 
         let points = [];
-        for (let i = 0; i < 100; i++) {
+        for (let i = 0; i < 7; i++) {
             points.push({
                 x: i + 1,
                 y: Math.ceil( 50 + Math.random() * 10),

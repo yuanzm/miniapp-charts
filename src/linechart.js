@@ -94,6 +94,7 @@ export default class LineChart extends Base {
                             strokeColor: style.lineColor,
                             lineWidth  : style.lineWidth,
                         };
+
                         circlePoints.push(circle);
                     }
 
@@ -603,8 +604,9 @@ export default class LineChart extends Base {
      */
     drawPoints() {
         this._render.pointData.forEach((oneline) => {
-            if ( oneline.points.length > 1 )
+            if ( oneline.points.length > 1 ) {
                 this.drawLongLineWithFill(this.ctx1, oneline.points, oneline.style);
+            }
         });
 
         this._render.circlePoints.forEach((point) => {

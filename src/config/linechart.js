@@ -1,5 +1,6 @@
 import common from './common.js';
 import {
+e
     extend,
     none
 } from '../util.js';
@@ -39,6 +40,7 @@ let linechartConfig = {
             show       : true,
             fillColor  : '#FFFFFF',
             strokeColor: '#FFAA00',
+            lineWidth  : 1,
             radius     : 1.2,
         }
     },

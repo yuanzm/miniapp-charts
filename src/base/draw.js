@@ -129,7 +129,10 @@ export default class ChartBase {
         lineWidth: 1,
         lineColor: '#7587db',
         fillColor: 'rgba(117, 135, 219, 0.3)',
+        needFill : false,
     }) {
+        ctx.save();
+
         ctx.beginPath();
         ctx.setFillStyle(opts.fillColor);
         ctx.setLineWidth(opts.lineWidth);
@@ -154,9 +157,13 @@ export default class ChartBase {
         ctx.lineTo(end.x, end.y);
         ctx.lineTo(start.x, start.y);
 
-        ctx.fill()
+        if ( opts.needFill !== false ) {
+            ctx.fill();
+        }
 
         ctx.closePath();
+
+        ctx.restore();
     }
 
     /**
