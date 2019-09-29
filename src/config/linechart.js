@@ -1,6 +1,5 @@
 import common from './common.js';
 import {
-e
     extend,
     none
 } from '../util.js';
