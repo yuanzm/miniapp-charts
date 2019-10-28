@@ -99,6 +99,8 @@ let linechartConfig = {
         marginRight: 0,
         color      : '#B8B8B8',
         fontSize   : 11,
+        unit       : '',
+        textAlign  : 'right',
     },
 
     /**

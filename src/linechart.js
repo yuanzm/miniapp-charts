@@ -67,7 +67,12 @@ export default class LineChart extends Base {
         };
         let circlePoints = []
 
-        this._datasets.forEach((oneline ) => {
+        let second = this._render.second;
+        this._alldatasets.forEach((oneline ) => {
+            let min       = oneline.axis !== 2 ? this._render.min : second.min;
+            let unitY     = oneline.axis !== 2 ? this._render.unitY: second.unitY;
+            let yMultiple = oneline.axis !== 2 ? this._render.yMultiple: second.yMultiple;
+
             let style  = oneline.style;
             let cStyle = style.circle;
 
@@ -82,7 +87,7 @@ export default class LineChart extends Base {
                 if ( index < length ) {
                     let temp = {
                         x: startX + index * this._render.unitX,
-                        y: leftBottom.y - ( item.y - this._render.min) * this._render.unitY * this._render.yMultiple,
+                        y: leftBottom.y - ( item.y - min) * unitY * yMultiple,
                     };
 
                     if ( style.circle && style.circle.show && needCircle ) {
@@ -137,6 +142,10 @@ export default class LineChart extends Base {
             width: xAxisLine.width,
             color: xAxisLine.color,
         }
+
+        if ( this._render.second ) {
+            this._render.xCenterAxis.end.x -= this._render.second.width;
+        }
     }
 
     /**
@@ -157,6 +166,9 @@ export default class LineChart extends Base {
 
         // 计算X轴两个点之间的像素距离
         let realWidth =  rightBottom.x - leftBottom.x - this._render.yAxisWidth;
+        if ( this._render.second ) {
+            realWidth -= this._render.second.width;
+        }
         let pointCount = (  points.length - 1 > 0
                           ? points.length - 1
                           : 1  );
@@ -215,6 +227,7 @@ export default class LineChart extends Base {
         }
 
         this._render.yAxisLines = [];
+        let second = this._render.second;
         this._render.yAxisData.forEach((item, index) => {
             if ( index > 0 ) {
                 this._render.yAxisLines.push({
@@ -223,7 +236,7 @@ export default class LineChart extends Base {
                         y: item.y
                     },
                     end: {
-                        x: rightTop.x,
+                        x: rightTop.x - ( second && second.width || 0),
                         y: item.y
                     },
                     width: yAxisLine.width,
@@ -233,11 +246,92 @@ export default class LineChart extends Base {
         });
     }
 
+    calSecondYAxis() {
+        let { max, min, yDivider, maxYPoint, longestLine, yMultiple } = this.calYAxisBoundary(this._secondDatasets);
+
+        console.log(max, min, yDivider, maxYPoint, longestLine);
+        let second = {};
+        this._render.second = second;
+
+        second.min       = min;
+        second.max       = max;
+        second.yMultiple = yMultiple;
+
+        let yAxis      = this._config.secondYaxis;
+
+        // 用于绘制的数据
+        let yAxisData  = [];
+
+        // Y轴文案所占据的宽度
+        let yAxisWidth = 0;
+
+        // 计算Y轴上两个点之间的像素值
+        let unitY = (  (  this._boundary.leftBottom.y
+                        - this._boundary.leftTop.y  )
+                     / ( yDivider * yMultiple  * this._config.yAxisCount )
+                    );
+
+
+        //let changeFunc  = this._config.changeUnit || changeUnit;
+        let changeFunc  = (  this._config.changeUnit && this._config.changeUnit !== none
+                           ? this._config.changeUnit
+                           : changeUnit  );
+        let toFixed     = (  ( max < 1 || max > 1e7 )
+                           ? 2
+                           : 1 );
+
+
+        let bottomStart = this._boundary.leftBottom.y
+
+        for( let i = 0; i < this._config.yAxisCount + 1; i++ ) {
+            let word = {
+                text    : changeFunc(min + i * yDivider, toFixed) + (yAxis.unit || this._config.unit),
+                color   : yAxis.color,
+                fontSize: yAxis.fontSize,
+                y       : bottomStart - ( i * yDivider * unitY * yMultiple ),
+                textAlign: yAxis.textAlign,
+            };
+
+            yAxisWidth = Math.max(this.getWordWidth(word), yAxisWidth);
+
+            yAxisData.push(word);
+        }
+
+        // 考虑Y轴不需要文案的情况
+        yAxisWidth = (  yAxis.show
+                      ? yAxisWidth
+                      : 0  );
+
+        let leftStart = this._boundary.rightTop.x - yAxis.marginRight - yAxisWidth;
+        if ( yAxis.textAlign === 'right' ) {
+            leftStart += yAxisWidth;
+        }
+
+        for( let i = 0; i < this._config.yAxisCount + 1; i++ ) {
+            yAxisData[i].x  = leftStart;
+        }
+
+        second.unitY               = unitY;
+        second.yAxisWidth          = yAxisWidth;
+        second.yAxisData           = yAxisData;
+        second.longestLinePointCnt = maxYPoint;
+        second.longestLine         = longestLine;
+        second.width               = yAxisWidth + yAxis.marginLeft + yAxis.marginRight;
+
+        console.log(second);
+
+        this.log('calSecondYAxis');
+    }
+
     /**
      * 计算Y轴的边界和阶梯值
      */
     calYAxis() {
-        let { max, min, yDivider, maxYPoint, longestLine } = this.calYAxisBoundary();
+        let { max, min, yDivider, maxYPoint, longestLine, yMultiple } = this.calYAxisBoundary(this._datasets);
+
+        this._render.min       = min;
+        this._render.max       = max;
+        this._render.yMultiple = yMultiple;
 
         let yAxis      = this._config.yAxis;
 
@@ -266,7 +360,7 @@ export default class LineChart extends Base {
 
         for( let i = 0; i < this._config.yAxisCount + 1; i++ ) {
             let word = {
-                text    : changeFunc(min + i * yDivider, toFixed) + this._config.unit,
+                text    : changeFunc(min + i * yDivider, toFixed) + (yAxis.unit || this._config.unit),
                 color   : yAxis.color,
                 fontSize: yAxis.fontSize,
                 x       : leftStart,
@@ -314,8 +408,7 @@ export default class LineChart extends Base {
      * 计算用于Y轴绘制需要的数据
      * https://codeburst.io/javascript-finding-minimum-and-maximum-values-in-an-array-of-objects-329c5c7e22a2
      */
-    calYAxisBoundary() {
-        let datasets    = this._datasets;
+    calYAxisBoundary(datasets) {
         let maxYPoint   = 0;
         let longestLine = datasets[0];
         let yAxisCount  = this._config.yAxisCount;
@@ -337,16 +430,14 @@ export default class LineChart extends Base {
         let formatFunc = this._config.formatY || getDataRangeAndStep;
         let range = formatFunc(max, min, yAxisCount);
 
-        this._render.min       = range.min;
-        this._render.max       = range.max;
-        this._render.yMultiple = range.multiple || 1;
 
         return {
-            max     : range.max,
-            min     : range.min,
-            yDivider: range.divider,
+            max      : range.max,
+            min      : range.min,
+            yDivider : range.divider,
+            yMultiple: range.multiple || 1,
             maxYPoint,
-            longestLine
+            longestLine,
         };
     }
 
@@ -585,6 +676,12 @@ export default class LineChart extends Base {
         if ( this._config.yAxis.centerShow ) {
             this.drawLine(this.ctx1, this._render.yCenterAxis);
         }
+
+        if ( this._render.second ) {
+            this._render.second.yAxisData.forEach((item) => {
+                this.drawWord(this.ctx1, item);
+            });
+        }
     }
 
     // 绘制Y轴横线
@@ -635,6 +732,8 @@ export default class LineChart extends Base {
         });
     }
 
+
+
     /**
      * 将处理后的合法数据按照配置绘制到canvas上面
      */
@@ -655,9 +754,9 @@ export default class LineChart extends Base {
     initDataSets(data) {
         let datasets = data.datasets || [];
 
-        this._datasets = datasets.filter((item) => item.points && item.points.length);
+        let _datasets = datasets.filter((item) => item.points && item.points.length);
 
-        this._datasets.forEach(( oneline ) => {
+        _datasets.forEach(( oneline ) => {
             let defaultStyle = deepCopy(this._config.lineStyle);
             let style        = oneline.style || {};
 
@@ -676,6 +775,10 @@ export default class LineChart extends Base {
 
             oneline.style = defaultStyle;
         });
+
+        this._alldatasets    = _datasets;
+        this._datasets       = _datasets.filter( line => line.axis !== 2);
+        this._secondDatasets = _datasets.filter( line => line.axis === 2);
     }
 
     /**
@@ -687,7 +790,7 @@ export default class LineChart extends Base {
         // 原始调用者传入的数据
         this.initDataSets(data);
 
-        if ( !this._datasets.length ) {
+        if ( !this._datasets.length && !this._secondDatasets.length ) {
             return;
         }
 
@@ -696,6 +799,9 @@ export default class LineChart extends Base {
 
         // 计算Y轴数据
         this.calYAxis();
+
+        // 计算第二Y轴数据
+        this.calSecondYAxis();
 
         // 计算Y轴线条数据
         this.calYAxisLines();
@@ -738,8 +844,8 @@ export default class LineChart extends Base {
 
         this.log('realDraw');
 
-        if ( this._config.debug ) {
-            console.log(this._performance);
+        if ( true || this._config.debug ) {
+            console.log(this, this._performance);
         }
     }
 
@@ -789,8 +895,9 @@ export default class LineChart extends Base {
          * ctx2本身是为了性能优化存在的，如果没有ctx2，
          * 还是要把所用东西老老实实在ctx1上面绘制一遍
          */
-        if ( this.ctx2 === this.ctx1 )
+        if ( this.ctx2 === this.ctx1 ) {
             this.drawToCanvas();
+        }
 
         this.ctx2.draw();
     }

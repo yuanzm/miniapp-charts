@@ -56,6 +56,9 @@ Page({
                 width : 414,
                 height: 200,
                 xAxisCount: 6,
+                secondYaxis: {
+                    unit: '%',
+                },
                 lineStyle: {
                     lineWidth: 1,
                     lineColor: '#7587db',
@@ -86,7 +89,7 @@ Page({
         for (let i = 0; i < 7; i++) {
             points2.push({
                 x: i + 1,
-                y: Math.ceil( 80 + Math.random() * 10),
+                y: Math.ceil( Math.random() * 10),
             });
         }
 
