@@ -92,6 +92,24 @@ let linechartConfig = {
         fontSize   : 11,
     },
 
+    // 第二Y轴
+    secondYaxis: {
+        show       : true,
+        marginLeft : 5,
+        marginRight: 0,
+        color      : '#B8B8B8',
+        fontSize   : 11,
+    },
+
+    /**
+     * Y轴轴体的样式
+     */
+    secondYAxisLine : {
+        show      : true,
+        width     : 0.2,
+        color     : '#C6C6C6',
+    },
+
     /**
      * Y轴轴体的样式
      */
@@ -118,6 +136,7 @@ let linechartConfig = {
             bottom: 5,
         },
     },
+
 }
 
 export default extend(linechartConfig, common);

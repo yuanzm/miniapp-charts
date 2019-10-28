@@ -163,8 +163,9 @@ export default class LineChart extends Base {
         data.unitX = realWidth  / pointCount;
 
         let xDivider  = Math.ceil(length / ( maxXPoint) );
-        if ( xDivider === 0 )
+        if ( xDivider === 0 ) {
             xDivider = 1;
+        }
 
         let leftStart = this._render.yAxisWidth + leftBottom.x;
         let bottom    = leftBottom.y + xAxis.marginTop + xAxis.fontSize;
@@ -686,8 +687,9 @@ export default class LineChart extends Base {
         // 原始调用者传入的数据
         this.initDataSets(data);
 
-        if ( !this._datasets.length )
+        if ( !this._datasets.length ) {
             return;
+        }
 
         // 为了绘制精确，首先要计算绘制的边界值，防止样式走位
         this.calBoundaryPoint();

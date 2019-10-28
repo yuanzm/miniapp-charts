@@ -53,7 +53,7 @@ Page({
         let linechart = new LineChart(
             wx.createCanvasContext('linechart1'),
             {
-                width: 414,
+                width : 414,
                 height: 200,
                 xAxisCount: 6,
                 lineStyle: {
@@ -61,7 +61,7 @@ Page({
                     lineColor: '#7587db',
                     fillColor: 'rgba(0, 135, 219, 0.3)',
                     // 是否需要背景颜色
-                    needFill: false,
+                    needFill : true,
                     circle: {
                         show: true,
                         fillColor: '#FFFFFF',
@@ -82,11 +82,24 @@ Page({
             });
         }
 
+        let points2 = [];
+        for (let i = 0; i < 7; i++) {
+            points2.push({
+                x: i + 1,
+                y: Math.ceil( 80 + Math.random() * 10),
+            });
+        }
+
         linechart.draw({
             datasets: [
                 {
-                    points: points,
+                    points  : points,
                     lineName: 'test',
+                },
+                {
+                    points  : points2,
+                    lineName: 'test2',
+                    axis    : 2,
                 },
             ]
         });
