@@ -801,7 +801,9 @@ export default class LineChart extends Base {
         this.calYAxis();
 
         // 计算第二Y轴数据
-        this.calSecondYAxis();
+        if ( this._secondDatasets.length ) {
+            this.calSecondYAxis();
+        }
 
         // 计算Y轴线条数据
         this.calYAxisLines();
