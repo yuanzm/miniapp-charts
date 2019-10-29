@@ -457,11 +457,13 @@ export default class LineChart extends Base {
         let leftDis    = touchesx - ( leftTop.x + yAxisWidth );
 
         // 边界值场景
-        if ( leftDis < 0 )
+        if ( leftDis < 0 ) {
             leftDis = 0;
+        }
 
-        else if ( leftDis > rightTop.x )
+        else if ( leftDis > rightTop.x ) {
             leftDis = rightTop.x;
+        }
 
         // 取出当前手指对应的点索引
         let pindex = Math.round(leftDis / this._render.unitX );
@@ -476,7 +478,7 @@ export default class LineChart extends Base {
             leftDis,
         };
 
-        this._datasets.forEach(( oneline, index ) => {
+        this._alldatasets.forEach(( oneline, index ) => {
             let points = this._render.pointData[index].points;
             // pointData为了将折线图形成封闭，在开始和结束分别增加了一个辅助点
             let curr   = points[pindex + 1];
@@ -595,7 +597,7 @@ export default class LineChart extends Base {
                            ? 2
                            : 1 );
 
-        this._datasets.forEach(( oneline ) => {
+        this._alldatasets.forEach(( oneline ) => {
             let points = oneline.points;
             let curr   = points[pindex];
 
@@ -605,7 +607,7 @@ export default class LineChart extends Base {
 
             if ( curr ) {
                 let word = {
-                    text    : title + changeFunc(curr.y, toFixed) + this._config.unit,
+                    text    : title + changeFunc(curr.y, toFixed) + (oneline.unit || this._config.unit),
                     fontSize: style.fontSize,
                     color   : style.color,
                     x       : 0,

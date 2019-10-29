@@ -102,7 +102,8 @@ Page({
                 {
                     points  : points2,
                     lineName: 'test2',
-                    /*axis    : 2,*/
+                    axis    : 2,
+                    unit    : '%',
                 },
             ]
         });
