@@ -88,7 +88,7 @@ Page({
         let points2 = [];
         for (let i = 0; i < 7; i++) {
             points2.push({
-                x: i + 1,
+                x: i + 3,
                 y: Math.ceil( Math.random() * 10),
             });
         }

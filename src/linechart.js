@@ -249,7 +249,6 @@ export default class LineChart extends Base {
     calSecondYAxis() {
         let { max, min, yDivider, maxYPoint, longestLine, yMultiple } = this.calYAxisBoundary(this._secondDatasets);
 
-        console.log(max, min, yDivider, maxYPoint, longestLine);
         let second = {};
         this._render.second = second;
 
@@ -317,8 +316,6 @@ export default class LineChart extends Base {
         second.longestLinePointCnt = maxYPoint;
         second.longestLine         = longestLine;
         second.width               = yAxisWidth + yAxis.marginLeft + yAxis.marginRight;
-
-        console.log(second);
 
         this.log('calSecondYAxis');
     }
@@ -530,16 +527,19 @@ export default class LineChart extends Base {
         let baseX       = wrapper.x;
         let baseY       = wrapper.y ;
         let words       = this._render.toolTipData.words;
+        let title;
 
-        let title    = {
-            x       : 0,
-            y       : baseY + style.fontSize + style.linePadding,
-            fontSize: style.fontSize,
-            color   : style.color,
-            text    : longestLine.points[this._render.toolTipData.pindex].x,
-        };
+        if ( style.needTitle ) {
+            title    = {
+                x       : 0,
+                y       : baseY + style.fontSize + style.linePadding,
+                fontSize: style.fontSize,
+                color   : style.color,
+                text    : longestLine.points[this._render.toolTipData.pindex].x,
+            };
 
-        baseY += style.fontSize + style.linePadding;
+            baseY += style.fontSize + style.linePadding;
+        }
 
         words.forEach((word, index) => {
             word.x = baseX + style.padding.left;
@@ -563,8 +563,10 @@ export default class LineChart extends Base {
             word.x += ( style.fontSize + 5);
         });
 
-        title.x = words[0].x;
-        words.unshift(title);
+        if ( title ) {
+            title.x = words[0].x;
+            words.unshift(title);
+        }
     }
 
     calToolTipWrapperData() {
@@ -584,8 +586,8 @@ export default class LineChart extends Base {
         let height     = (  style.padding.top
                           + style.padding.bottom
                           // 第一行用于绘制当前X坐标的坐标值
-                          + style.fontSize
-                          + style.linePadding  );
+                          + ( style.needTitle ? style.fontSize + style.linePadding : 0 )
+                         );
 
         this._render.toolTipData.words = [];
 
@@ -601,9 +603,8 @@ export default class LineChart extends Base {
             let points = oneline.points;
             let curr   = points[pindex];
 
-            let title = (  oneline.lineName
-                         ? oneline.lineName + ': '
-                         : ''  );
+            let title = (style.needX ? curr.x + '-' : '');
+            title += ( oneline.lineName || '') + ': ';
 
             if ( curr ) {
                 let word = {
@@ -848,7 +849,7 @@ export default class LineChart extends Base {
 
         this.log('realDraw');
 
-        if ( true || this._config.debug ) {
+        if ( this._config.debug ) {
             console.log(this, this._performance);
         }
     }

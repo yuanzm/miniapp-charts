@@ -130,6 +130,8 @@ let linechartConfig = {
         fillColor  : 'rgba(136, 136, 136, 0.6)',
         //needCircle : true,
         linePadding: 5,
+        needTitle  : false,
+        needX      : true,
 
         padding: {
             left  : 5,
