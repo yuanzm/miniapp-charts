@@ -801,7 +801,9 @@ export default class LineChart extends Base {
         this.calBoundaryPoint();
 
         // 计算Y轴数据
-        this.calYAxis();
+        if ( this._datasets.length ) {
+            this.calYAxis();
+        }
 
         // 计算第二Y轴数据
         if ( this._secondDatasets.length ) {
@@ -809,7 +811,9 @@ export default class LineChart extends Base {
         }
 
         // 计算Y轴线条数据
-        this.calYAxisLines();
+        if ( this._datasets.length ) {
+            this.calYAxisLines();
+        }
 
         // 计算X轴数据
         this.calXAxis();
@@ -840,7 +844,7 @@ export default class LineChart extends Base {
         this.getConfig(cfg, this._config);
         this.initData(data);
 
-        if ( !this._datasets.length )
+        if ( !this._alldatasets.length )
             return;
 
         this.drawToCanvas();
