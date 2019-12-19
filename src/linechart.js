@@ -479,12 +479,13 @@ export default class LineChart extends Base {
 
         this._alldatasets.forEach(( oneline, index ) => {
             let points = this._render.pointData[index].points;
+            let originPoint = oneline.points[pindex];
             // pointData为了将折线图形成封闭，在开始和结束分别增加了一个辅助点
             let curr   = points[pindex + 1];
             let style  = oneline.style;
 
             // 可能出现有些线比较短的情况
-            if ( curr ) {
+            if ( curr && originPoint.show !== false ) {
                 let temp = {
                     x          : curr.x,
                     y          : curr.y,
