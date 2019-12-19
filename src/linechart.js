@@ -84,26 +84,28 @@ export default class LineChart extends Base {
             };
 
             points.forEach((item, index) => {
-                if ( index < length ) {
-                    let temp = {
-                        x: startX + index * this._render.unitX,
-                        y: leftBottom.y - ( item.y - min) * unitY * yMultiple,
-                    };
-
-                    if ( style.circle && style.circle.show && needCircle ) {
-                        let circle = {
-                            x          : temp.x,
-                            y          : temp.y,
-                            r          : cStyle.radius      || 2,
-                            fillColor  : cStyle.fillColor   || '#FFFFFF',
-                            strokeColor: style.lineColor,
-                            lineWidth  : style.lineWidth,
+                if ( item.show !== false ) {
+                    if ( index < length ) {
+                        let temp = {
+                            x: startX + index * this._render.unitX,
+                            y: leftBottom.y - ( item.y - min) * unitY * yMultiple,
                         };
 
-                        circlePoints.push(circle);
-                    }
+                        if ( style.circle && style.circle.show && needCircle ) {
+                            let circle = {
+                                x          : temp.x,
+                                y          : temp.y,
+                                r          : cStyle.radius      || 2,
+                                fillColor  : cStyle.fillColor   || '#FFFFFF',
+                                strokeColor: style.lineColor,
+                                lineWidth  : style.lineWidth,
+                            };
 
-                    _oneline.points.push(temp);
+                            circlePoints.push(circle);
+                        }
+
+                        _oneline.points.push(temp);
+                    }
                 }
             });
 
@@ -500,18 +502,23 @@ export default class LineChart extends Base {
         let one          = this._render.toolTipData.currPoints[0];
         let toolTipStyle = this._config.toolTip;
 
-        // 标尺
-        this._render.toolTipData.currPointsLine = {
-            start: {
-                x: one.x,
-                y: leftTop.y,
-            },
-            end: {
-                x: one.x,
-                y: leftBottom.y
-            },
-            color: toolTipStyle.lineColor,
-            width: toolTipStyle.lineWidth,
+        if ( one ) {
+            // 标尺
+            this._render.toolTipData.currPointsLine = {
+                start: {
+                    x: one.x,
+                    y: leftTop.y,
+                },
+                end: {
+                    x: one.x,
+                    y: leftBottom.y
+                },
+                color: toolTipStyle.lineColor,
+                width: toolTipStyle.lineWidth,
+            }
+            return one;
+        } else {
+            return false;
         }
     }
 
@@ -652,9 +659,12 @@ export default class LineChart extends Base {
      * 与initData相同的是，这里的函数调用顺序同样不能随便更改
      */
     calToolTipData(e) {
-        this.calToolTipPointData(e);
-        this.calToolTipWrapperData(e);
-        this.calToolTipWordData(e);
+        let point = this.calToolTipPointData(e);
+
+        if ( point ) {
+            this.calToolTipWrapperData(e);
+            this.calToolTipWordData(e);
+        }
     }
 
     // 绘制X轴
@@ -862,6 +872,13 @@ export default class LineChart extends Base {
      * 触摸事件处理，绘制tooltip
      */
     touchHandler(e) {
+        // 计算用于绘制tooltip的数据
+        this.calToolTipData(e);
+
+        if ( !this._render.toolTipData.currPoints.length ) {
+            return;
+        }
+
         /**
          * ctx2本身是为了性能优化存在的，如果没有ctx2，
          * 还是要把所用东西老老实实在ctx1上面绘制一遍
@@ -869,9 +886,6 @@ export default class LineChart extends Base {
         if ( this.ctx2 === this.ctx1 ) {
             this.drawToCanvas();
         }
-
-        // 计算用于绘制tooltip的数据
-        this.calToolTipData(e);
 
         // 将tooltip绘制到对应的canvas
         this.drawToolTip();
