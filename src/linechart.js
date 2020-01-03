@@ -485,7 +485,7 @@ export default class LineChart extends Base {
             let style  = oneline.style;
 
             // 可能出现有些线比较短的情况
-            if ( curr && originPoint.show !== false ) {
+            if ( curr && originPoint && originPoint.show !== false ) {
                 let temp = {
                     x          : curr.x,
                     y          : curr.y,
@@ -611,7 +611,7 @@ export default class LineChart extends Base {
             let points = oneline.points;
             let curr   = points[pindex];
 
-            let title = (style.needX ? curr.x + '-' : '');
+            let title = (style.needX ? curr && (curr.x + '-') : '');
             title += ( oneline.lineName || '') + ': ';
 
             if ( curr ) {
