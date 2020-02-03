@@ -1,7 +1,8 @@
-import RadarChart from '../../src/radar.js';
-import LineChart from '../../src/linechart.js';
-import DistributionChart from '../../src/distribution.js';
-import BarChart  from '../../src/barchart.js';
+import LineChart from '../lib/linechart.js';
+import RadarChart from '../lib/rardar.js';
+import BarChart from '../lib/barchart.js';
+import DistributionChart from '../lib/distributionchart.js';
+console.log(LineChart);
 
 Page({
     data: {

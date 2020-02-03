@@ -1,6 +1,6 @@
 {
     "pages": [
-        "examples/simple/simple"
+        "simple/simple"
     ],
     "window": {
         "backgroundTextStyle": "light",

@@ -1,16 +1,3 @@
-# README
-
-## wxapp-line-chart
-
-小程序折线图组件
-
-## 安装使用
-
-```text
-git clone https://github.com/yuanzm/wxapp-line-chart
-// 小程序内直接引用wxapp-line-chart
-import LineChart from 'wxapp-line-chart';
-```
 
 ## 简单示例
 
@@ -27,7 +14,7 @@ import LineChart from 'wxapp-line-chart';
 
 2. 在js里面实例化组件
 ```
-import LineChart from '../../utils/linechart/index.js';
+import LineChart         from 'miniapp-charts';
 
 Page({
     onLoad() {
