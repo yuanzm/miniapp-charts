@@ -29,23 +29,22 @@ import DistributionChart from 'miniapp-charts';
 [点击查看文档](https://github.com/yuanzm/miniapp-charts/blob/master/doc/README.md)
 
 效果图如下:
-![](imgs/linechart1.jpg)
-![](imgs/linechart2.jpg)
+<img src="imgs/linechart.jpg" width=400>
 
 ### 雷达图组件
 [点击查看文档](https://github.com/yuanzm/miniapp-charts/blob/master/doc/radar.md)
 效果图如下:
-![](imgs/radar.jpg)
+<img src="imgs/radar.jpg" width=400>
 
 ### 柱状图组件
 文档：TODO
 
 效果图如下:
-![](imgs/barchart.jpg)
+<img src="imgs/barchart.jpg" width=400>
 
 ### 分布图组件
 文档：TODO
 
 效果图如下:
-![](imgs/distribution.jpg)
+<img src="imgs/distribution.jpg" width=400>
 
