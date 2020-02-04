@@ -1195,15 +1195,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 let distributionConfig = {
-    // Y轴标签的单位
-    unit       : '',
-
-    /**
-     * Y轴标签以及toolTip的单位换算函数
-     * 组件内置了changeUnit函数，可以自行设置
-     */
-    changeUnit : _util_js__WEBPACK_IMPORTED_MODULE_1__["none"],
-
     /**
      * y轴的样式配置
      */

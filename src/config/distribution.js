@@ -5,15 +5,6 @@ import {
 } from '../util.js';
 
 let distributionConfig = {
-    // Y轴标签的单位
-    unit       : '',
-
-    /**
-     * Y轴标签以及toolTip的单位换算函数
-     * 组件内置了changeUnit函数，可以自行设置
-     */
-    changeUnit : none,
-
     /**
      * y轴的样式配置
      */

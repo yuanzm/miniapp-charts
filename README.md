@@ -13,7 +13,7 @@
 
 ## 安装使用
 
-```text
+```
 git clone https://github.com/yuanzm/miniapp-charts
 // 小程序内直接引用miniapp-charts
 import LineChart         from 'miniapp-charts';
@@ -26,25 +26,26 @@ import DistributionChart from 'miniapp-charts';
 
 ### 折线图组件
 
-[点击查看文档](https://github.com/yuanzm/miniapp-charts/blob/master/doc/README.md)
+[点击查看文档](https://github.com/yuanzm/miniapp-charts/blob/master/doc/linechart.md)
 
-效果图如下:
+效果图如下:  
 <img src="imgs/linechart.jpg" width=400>
 
 ### 雷达图组件
 [点击查看文档](https://github.com/yuanzm/miniapp-charts/blob/master/doc/radar.md)
-效果图如下:
+
+效果图如下:  
 <img src="imgs/radar.jpg" width=400>
 
 ### 柱状图组件
-文档：TODO
+[点击查看文档](https://github.com/yuanzm/miniapp-charts/blob/master/doc/barchart.md)
 
-效果图如下:
+效果图如下:  
 <img src="imgs/barchart.jpg" width=400>
 
 ### 分布图组件
-文档：TODO
+[点击查看文档](https://github.com/yuanzm/miniapp-charts/blob/master/doc/distributionchart.md)
 
-效果图如下:
+效果图如下:  
 <img src="imgs/distribution.jpg" width=400>
 

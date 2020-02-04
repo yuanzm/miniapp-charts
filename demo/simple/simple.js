@@ -2,7 +2,6 @@ import LineChart from '../lib/linechart.js';
 import RadarChart from '../lib/rardar.js';
 import BarChart from '../lib/barchart.js';
 import DistributionChart from '../lib/distributionchart.js';
-console.log(LineChart);
 
 Page({
     data: {

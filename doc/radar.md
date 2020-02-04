@@ -1,10 +1,3 @@
-## 小程序雷达图组件
-
-## 安装使用
-```
-git clone https://github.com/yuanzm/miniapp-charts
-import RadrChart  from 'miniapp-charts/src/radar.js';
-```
 ## 简单示例
 1. 在wxml添加canvas
 ```

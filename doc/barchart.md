@@ -1,4 +1,3 @@
-
 ## 简单示例
 
 1. 在wxml添加canvas
@@ -10,60 +9,90 @@
     bindtouchmove="bindtouchmove"
     bindtouchend="bindtouchend"
    />
- ```
+```
 
 2. 在js里面实例化组件
 ```
-import LineChart         from 'miniapp-charts';
+import BarChart from 'miniapp-charts';
 
 Page({
     onLoad() {
         this.init();
     },
     init() {
-        let linechart = new LineChart(
-            wx.createCanvasContext('canvas1'),
+        let context = wx.createCanvasContext('bar');
+
+        let barchart = new BarChart(
+            wx.createCanvasContext('bar'),
             {
+                width : 414,
                 height: 200,
+                unit  : '%',
+                debug : true,
             },
-            //wx.createCanvasContext('canvas2'),
         );
 
-        this.linechart = linechart;
-
-        let points = [];
-        for ( let i = 0; i < 108;i++) {
-            points.push({
-                x: i + 1,
-                y: Math.ceil(Math.random()*30),
-            });
-        }
-
-        linechart.draw({
+        barchart.draw({
             datasets: [
                 {
-                    points  : points,
-                    lineName: 'test',
+                    name: '行业',
+                    fillColor: '#6684C7',
+                    points: [
+                        {
+                            label: '新增',
+                            value: 20,
+                            barLabel: '20%',
+                        },
+                        {
+                            label: '活跃',
+                            value: 100,
+                            barLabel: '100%',
+                        },
+                        {
+                            label: '留存',
+                            value: 5,
+                            barLabel: [{
+                                name: '335',
+                                style: {
+                                    color: '#6684C7',
+                                }
+                            }, '50%'],
+                        },
+                    ],
                 },
+                {
+                    name: '行业',
+                    fillColor: '#3AC6D5',
+                    points: [
+                        {
+                            label: '新增',
+                            value: 120,
+                            barLabel: [{
+                                name: '335',
+                                style: {
+                                    color: '#6684C7',
+                                }
+                            }, '50%'],
+                        },
+                        {
+                            label: '活跃',
+                            value: 77,
+                        },
+                        {
+                            label: '留存',
+                            value: 34,
+                        },
+                    ],
+                }
             ]
         });
-    },
-    bindtouchstart(e) {
-        this.linechart.touch(e);
-    },
-    bindtouchmove(e) {
-        this.linechart.touch(e);
-    },
-    bindtouchend(e) {
-        this.linechart.touchEnd(e);
-    }
-});
-
+   },
+}
 ```
 
-## LineChart参数解析
+## Barchart参数解析
 
-LineChart构造函数接受三个参数，第一个参数为小程序canvas的Context，第二个参数cfg为配置对象 组件完整的配置可见：[config.js](https://github.com/yuanzm/miniapp-charts/blob/master/src/config/linechart.js)
+BarChart构造函数接受两个参数，第一个参数为小程序canvas的Context，第二个参数cfg为配置对象 组件完整的配置可见：[config.js](https://github.com/yuanzm/miniapp-charts/blob/master/src/config/barchart.js)
 
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
@@ -72,14 +101,17 @@ LineChart构造函数接受三个参数，第一个参数为小程序canvas的Co
 | height   | Number   | 同width，需要手动传入，默认为200 |
 | unit     | String | Y轴标签的单位，默认为'' |
 | padding  | Object   | canvas的绘图区域的padding，与canvas本身样式的padding无关|
-| maxCircleCount | Number | 如果单条线的点很少，每个点会带上一个小圆环，当最长线条的点数量大于maxCircleCount的时候，不绘制小圆环，默认为30 |
 | xAxisCount | Number | X轴标签的数量(不包含原点标签)，默认为7 |
 | xAxis      | Object | X轴标签样式配置 |
 | xAxisLine  | Object | X中轴线样式配置 |
 | yAxisCount | Number | Y轴标签数(不包含原点标签)，默认为4|
 | yAxis     | Object | Y轴样式配置    |
 | yAxisLine | Object | Y轴中轴线样式配置 |
-| toolTip | Object | tooltip样式配置 |
+| barStyle  | Object | 柱体的样式配置 |
+| barWidth         | Number| 柱体的宽度，默认为30|
+| compareBarMargin | Number| 每组数据有多个柱体的时候，柱体的间距，默认为5|
+| leftRightPadding | Number| X轴绘图区域的左右间距，默认为10|
+| barLabelStyle | Object |柱子上文字的样式配置 |
 
 ## padding配置
 
@@ -130,18 +162,6 @@ LineChart构造函数接受三个参数，第一个参数为小程序canvas的Co
 | color     | String    | 线条的颜色，默认为#C6C6C6 |
 | style     | String    | 线条的样式，默认为solid，可选的为dash |
 
-## toolTip配置
-
-| keyName  | 类型     |  描述    |
-|----------|----------| ---------|
-| lineColor | Sring | toolTip中轴线的颜色，默认为#C6C6C6 |
-| lineWidth | Number | toolTip中轴线的宽度，默认为0.5    |
-| fontSize  | Number  | toolTip的字体大小，默认为11 |
-| color     | String  | toolTip的字体颜色，默认为#FFFFFF |
-| fillColor | String  | toolTip的背景颜色，默认为rgba(136, 136, 136, 0.6) |
-| linePadding | Number | 文案行间距，默认为5 |
-| padding     | Object | toolTip的padding，默认padding.left = 5, padding.right = 5,padding.top = 5, padding.bottom = 5 |
-
 ## changeUnit
 单位转换函数，组件内置了默认的单位转换函数，如果想采用自己的函数替换即可。
 
@@ -158,3 +178,16 @@ LineChart构造函数接受三个参数，第一个参数为小程序canvas的Co
     似的divider是大于1的数值，同时将放大的倍数告知组件，默认为1
 }
 ```
+
+## barStyle配置
+| keyName  | 类型     |  描述    |
+|----------|----------| ---------|
+| fillColor| String  |柱体填充色，默认为#6684C7|
+
+## barLabelStyle配置
+
+| keyName  | 类型     |  描述    |
+|----------|----------| ---------|
+| color     | String  | 字体颜色|
+| fontSize  | Number   |  字体大小，默认为11|
+| paddingBottom | Number| 和底部下一个元素的间距，默认为5|

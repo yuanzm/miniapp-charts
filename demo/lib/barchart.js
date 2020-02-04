@@ -1444,16 +1444,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-let linechartConfig = {
-    // Y轴标签的单位
-    unit       : '',
-
-    /**
-     * Y轴标签以及toolTip的单位换算函数
-     * 组件内置了changeUnit函数，可以自行设置
-     */
-    changeUnit : _util_js__WEBPACK_IMPORTED_MODULE_1__["none"],
-
+let barchartConfig = {
     /**
      * 给定一组数据，Y轴标签的最大值最小值和每一步的值都是组件自动算出来的
      * 有些场景组件算出来的可能不满足需求，或者调用者就是想自定义Y轴标签的数据，
@@ -1531,7 +1522,7 @@ let linechartConfig = {
     }
 }
 
-/* harmony default export */ __webpack_exports__["default"] = (Object(_util_js__WEBPACK_IMPORTED_MODULE_1__["extend"])(linechartConfig, _common_js__WEBPACK_IMPORTED_MODULE_0__["default"]));
+/* harmony default export */ __webpack_exports__["default"] = (Object(_util_js__WEBPACK_IMPORTED_MODULE_1__["extend"])(barchartConfig, _common_js__WEBPACK_IMPORTED_MODULE_0__["default"]));
 
 
 
