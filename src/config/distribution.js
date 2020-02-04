@@ -1,7 +1,6 @@
 import common from './common.js';
 import {
     extend,
-    none
 } from '../util.js';
 
 let distributionConfig = {
