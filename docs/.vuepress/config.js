@@ -1,6 +1,6 @@
 module.exports = {
     title: 'minapp-charts',
-    base:".",
+    base:"/minapp-charts/",
     description: '小程序图表组件',
     themeConfig: {
         lastUpdated: 'Last Updated', // string | boolean
