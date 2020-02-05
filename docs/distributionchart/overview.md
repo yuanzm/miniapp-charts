@@ -2,7 +2,7 @@
 
 横向柱状图
 
-<img src="/imgs/distribution.jpg" width=600>
+<img :src="$withBase('/imgs/distribution.jpg')" width=600>
 
 ## 示例
 

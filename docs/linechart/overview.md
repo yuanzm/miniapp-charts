@@ -2,7 +2,7 @@
 
 折线图组件用于绘制一条或者多条曲线。
 
-<img src="/imgs/linechart.jpg" width=400>
+<img :src="$withBase('/imgs/linechart.jpg')" width=400>
 
 ## 示例
 

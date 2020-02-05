@@ -1,7 +1,7 @@
 # 介绍
 
 雷达图是以从同一点开始的轴上表示的三个或更多个定量变量的二维图表的形式显示多变量数据的图形方法。
-<img src="/imgs/radar.jpg" width=400>
+<img :src="$withBase('/imgs/radar.jpg')" width=400>
 
 ## 示例
 
