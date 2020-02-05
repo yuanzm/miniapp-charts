@@ -1,94 +1,4 @@
-1. 在wxml添加canvas
-```
-<canvas
-    canvas-id="distribution"
-    style="width: 414px; height: {{ totalHeight }}px;"
-/>
-```
-
-2. 在js里面实例化组件
-```
-import DistributionChart from 'miniapp-charts';
-
-Page({
-    onLoad() {
-        this.init();
-    },
-    init() {
-        let chart = new DistributionChart(
-            wx.createCanvasContext('distribution'),
-            {
-                width : 414,
-                height: 200,
-                debug : true,
-            },
-        );
-
-        chart.initData({
-            datasets: [
-                {
-                    name     : '行业',
-                    fillColor: '#6684C7',
-                    points: [
-                        {
-                            label: '新增',
-                            value: 20,
-                            barLabel: '20%',
-                        },
-                        {
-                            label: '活跃',
-                            value: 100,
-                            barLabel: '100%',
-                        },
-                        {
-                            label: '留存',
-                            value: 5,
-                            barLabel: [{
-                                name: '335',
-                                style: {
-                                    color: '#6684C7',
-                                }
-                            }, '50%'],
-                        },
-                    ],
-                },
-                {
-                    name: '行业',
-                    fillColor: '#3AC6D5',
-                    points: [
-                        {
-                            label: '新增',
-                            value: 120,
-                            barLabel: [{
-                                name: '335',
-                                style: {
-                                    color: '#6684C7',
-                                }
-                            }, '50%'],
-                        },
-                        {
-                            label: '活跃',
-                            value: 77,
-                        },
-                        {
-                            label: '留存',
-                            value: 34,
-                        },
-                    ],
-                }
-            ]
-        });
-
-        this.setData({
-            totalHeight: chart.totalHeight
-        });
-
-        chart.draw();
-    },
-}
-```
-
-## DistributionChart参数解析
+# 参数
 
 BarChart构造函数接受两个参数，第一个参数为小程序canvas的Context，第二个参数cfg为配置对象 组件完整的配置可见：[config.js](https://github.com/yuanzm/miniapp-charts/blob/master/src/config/barchart.js)
 
@@ -100,11 +10,15 @@ BarChart构造函数接受两个参数，第一个参数为小程序canvas的Con
 | unit     | String | Y轴标签的单位，默认为'' |
 | padding  | Object   | canvas的绘图区域的padding，与canvas本身样式的padding无关|
 | xAxisCount | Number | X轴标签的数量(不包含原点标签)，默认为7 |
+| xAxis      | Object | X轴标签样式配置 |
+| xAxisLine  | Object | X中轴线样式配置 |
+| yAxisCount | Number | Y轴标签数(不包含原点标签)，默认为4|
 | yAxis     | Object | Y轴样式配置    |
 | yAxisLine | Object | Y轴中轴线样式配置 |
 | barStyle  | Object | 柱体的样式配置 |
-| compareBarMargin | Number| 每组数据有多个柱体的时候，柱体的间距，默认为3|
-| topBottomPadding | Number| Y轴绘图区域的左右间距，默认为10|
+| barWidth         | Number| 柱体的宽度，默认为30|
+| compareBarMargin | Number| 每组数据有多个柱体的时候，柱体的间距，默认为5|
+| leftRightPadding | Number| X轴绘图区域的左右间距，默认为10|
 | barLabelStyle | Object |柱子上文字的样式配置 |
 
 ## padding配置
@@ -154,19 +68,34 @@ BarChart构造函数接受两个参数，第一个参数为小程序canvas的Con
 | centerShow | Boolean | 是否需要展示X轴的中轴线，默认为false|
 | width     | Number   | 线条的宽度，默认为0.6 |
 | color     | String    | 线条的颜色，默认为#C6C6C6 |
+| style     | String    | 线条的样式，默认为solid，可选的为dash |
+
+## changeUnit
+单位转换函数，组件内置了默认的单位转换函数，如果想采用自己的函数替换即可。
+
+## formatY
+给定一组数据，Y轴标签的最大值最小值和每一步的值都是组件自动算出来的
+有些场景组件算出来的可能不满足需求，或者调用者就是想自定义Y轴标签的数据，
+因此提供自定义的formatY(max, min, yAxisCount)函数，调用者按要求返回数据给组件处理即可
+```
+@return {
+    max: 将原始的最大值处理之后的最大值
+    min: 将原始的最小值处理之后的最小值
+    divider: 每一步的值
+    multiple: 如果处理过程中发现divider是小于1的小数，需要将上面三个数值相对应放大一定倍数
+    似的divider是大于1的数值，同时将放大的倍数告知组件，默认为1
+}
+```
 
 ## barStyle配置
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
 | fillColor| String  |柱体填充色，默认为#6684C7|
-| height   | Number  |单个柱体的高度，默认为10|
-| padding  | Number |每组柱体的间距，默认为12|
 
 ## barLabelStyle配置
 
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
-| color     | String  | 字体颜色，默认为#B8B8B8|
+| color     | String  | 字体颜色|
 | fontSize  | Number   |  字体大小，默认为11|
-| paddingLeft| Number| 和左边元素的间距，默认为5|
-
+| paddingBottom | Number| 和底部下一个元素的间距，默认为5|

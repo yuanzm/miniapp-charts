@@ -1,43 +1,4 @@
-## 示例
-1. 在wxml添加canvas
-```
-<canvas
-    canvas-id="radar"
-    style="width:250px;height:250px;"
-/>
-```
-2. 在js里面实例化组件
-```
-
-import RadarChart from 'miniapp-charts/src/radar.js';
-Page({
-    onLoad() {
-        let context = wx.createCanvasContext('radar');
-
-        this.radarchart = new RadarChart(context,
-            {
-                width : 250,
-                height: 250,
-                padding: {
-                    left: 5, right: 5, top:5, bottom: 5
-                }
-            }
-        );
-
-        this.radarchart.draw(
-            {
-                labels  : ['KDA', ['输出', 'KDA'],'KDA', 'KDA', 'KDA', '推进'],
-                datasets: [
-                    {
-                        data: [50, 80, 75, 90,  67, 77],
-                    },
-                ]
-            },
-        );
-    }
-});
-```
-
+# 参数
 ## RadarChart构造函数
 ### RadarChart(context, [cfg])
 | keyName  | 类型     |  描述    |

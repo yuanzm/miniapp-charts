@@ -1,5 +1,4 @@
-# miniapp-chart
-小程序图表组件
+# 介绍
 
 ## 简介
 
@@ -13,7 +12,7 @@
 
 ## 安装使用
 
-```
+``` js
 // 克隆仓库至小程序目录
 git clone https://github.com/yuanzm/miniapp-charts
 // 小程序内直接引用miniapp-charts
@@ -22,31 +21,3 @@ import Barchart          from 'miniapp-charts';
 import RadarChart        from 'miniapp-charts';
 import DistributionChart from 'miniapp-charts';
 ```
-
-## 组件列表
-
-### 折线图组件
-
-[点击查看文档](https://github.com/yuanzm/miniapp-charts/blob/master/doc/linechart.md)
-
-效果图如下:  
-<img src="imgs/linechart.jpg" width=400>
-
-### 雷达图组件
-[点击查看文档](https://github.com/yuanzm/miniapp-charts/blob/master/doc/radar.md)
-
-效果图如下:  
-<img src="imgs/radar.jpg" width=400>
-
-### 柱状图组件
-[点击查看文档](https://github.com/yuanzm/miniapp-charts/blob/master/doc/barchart.md)
-
-效果图如下:  
-<img src="imgs/barchart.jpg" width=400>
-
-### 分布图组件
-[点击查看文档](https://github.com/yuanzm/miniapp-charts/blob/master/doc/distributionchart.md)
-
-效果图如下:  
-<img src="imgs/distribution.jpg" width=400>
-
