@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>介绍 | minapp-charts</title>
+    <meta name="description" content="小程序图表组件">
+    
+    
+    <link rel="preload" href="/assets/css/0.styles.337995c8.css" as="style"><link rel="preload" href="/assets/js/app.98bb546e.js" as="script"><link rel="preload" href="/assets/js/2.c002adc4.js" as="script"><link rel="preload" href="/assets/js/7.f6bc5966.js" as="script"><link rel="prefetch" href="/assets/js/10.fa6cc950.js"><link rel="prefetch" href="/assets/js/11.0d733404.js"><link rel="prefetch" href="/assets/js/12.2d65d588.js"><link rel="prefetch" href="/assets/js/13.55b2225a.js"><link rel="prefetch" href="/assets/js/14.191db041.js"><link rel="prefetch" href="/assets/js/3.6d5996db.js"><link rel="prefetch" href="/assets/js/4.5522e8c9.js"><link rel="prefetch" href="/assets/js/5.de5d132b.js"><link rel="prefetch" href="/assets/js/6.84579b70.js"><link rel="prefetch" href="/assets/js/8.6f6be645.js"><link rel="prefetch" href="/assets/js/9.a7282f44.js">
+    <link rel="stylesheet" href="/assets/css/0.styles.337995c8.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/" class="home-link router-link-active"><!----> <span class="site-name">minapp-charts</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <!----></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><!---->  <ul class="sidebar-links"><li><a href="/" class="sidebar-link">概览</a></li><li><section class="sidebar-group depth-0"><a href="/linechart/overview" class="sidebar-heading clickable"><span>折线图</span> <!----></a> <ul class="sidebar-links sidebar-group-items"><li><a href="/linechart/overview.html" class="sidebar-link">介绍</a></li><li><a href="/linechart/api.html" class="sidebar-link">参数</a></li></ul></section></li><li><section class="sidebar-group depth-0"><a href="/barchart/overview" class="sidebar-heading clickable open active"><span>柱状图</span> <!----></a> <ul class="sidebar-links sidebar-group-items"><li><a href="/barchart/overview.html" class="active sidebar-link">介绍</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/barchart/overview.html#示例" class="sidebar-link">示例</a></li></ul></li><li><a href="/barchart/api.html" class="sidebar-link">参数</a></li></ul></section></li><li><section class="sidebar-group depth-0"><a href="/distributionchart/overview" class="sidebar-heading clickable"><span>分布图</span> <!----></a> <ul class="sidebar-links sidebar-group-items"><li><a href="/distributionchart/overview.html" class="sidebar-link">介绍</a></li><li><a href="/distributionchart/api.html" class="sidebar-link">参数</a></li></ul></section></li><li><section class="sidebar-group depth-0"><a href="/radar/overview" class="sidebar-heading clickable"><span>雷达图</span> <!----></a> <ul class="sidebar-links sidebar-group-items"><li><a href="/radar/overview.html" class="sidebar-link">介绍</a></li><li><a href="/radar/api.html" class="sidebar-link">参数</a></li></ul></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="介绍"><a href="#介绍" class="header-anchor">#</a> 介绍</h1> <p>通过使用水平或垂直方向柱子的高度来显示不同类别的数值。</p> <h2 id="示例"><a href="#示例" class="header-anchor">#</a> 示例</h2> <ol><li>在wxml添加canvas</li></ol> <div class="language-html extra-class"><pre class="language-html"><code>   <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>canvas</span>
+    <span class="token attr-name">canvas-id</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">&quot;</span>canvas1<span class="token punctuation">&quot;</span></span><span class="token style-attr language-css"><span class="token attr-name">
+    <span class="token attr-name">style</span></span><span class="token punctuation">=&quot;</span><span class="token attr-value"><span class="token property">width</span><span class="token punctuation">:</span>414px<span class="token punctuation">;</span><span class="token property">height</span><span class="token punctuation">:</span>200px<span class="token punctuation">;</span><span class="token property">margin</span><span class="token punctuation">:</span>0<span class="token punctuation">;</span></span><span class="token punctuation">&quot;</span></span>
+    <span class="token attr-name">bindtouchstart</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">&quot;</span>bindtouchstart<span class="token punctuation">&quot;</span></span>
+    <span class="token attr-name">bindtouchmove</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">&quot;</span>bindtouchmove<span class="token punctuation">&quot;</span></span>
+    <span class="token attr-name">bindtouchend</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">&quot;</span>bindtouchend<span class="token punctuation">&quot;</span></span>
+   <span class="token punctuation">/&gt;</span></span>
+</code></pre></div><ol start="2"><li>在js里面实例化组件</li></ol> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">import</span> BarChart <span class="token keyword">from</span> <span class="token string">'miniapp-charts'</span><span class="token punctuation">;</span>
+
+<span class="token function">Page</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+    <span class="token function">onLoad</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">init</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token function">init</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">let</span> context <span class="token operator">=</span> wx<span class="token punctuation">.</span><span class="token function">createCanvasContext</span><span class="token punctuation">(</span><span class="token string">'bar'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token keyword">let</span> barchart <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">BarChart</span><span class="token punctuation">(</span>
+            wx<span class="token punctuation">.</span><span class="token function">createCanvasContext</span><span class="token punctuation">(</span><span class="token string">'bar'</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+            <span class="token punctuation">{</span>
+                width <span class="token operator">:</span> <span class="token number">414</span><span class="token punctuation">,</span>
+                height<span class="token operator">:</span> <span class="token number">200</span><span class="token punctuation">,</span>
+                unit  <span class="token operator">:</span> <span class="token string">'%'</span><span class="token punctuation">,</span>
+                debug <span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+            <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        barchart<span class="token punctuation">.</span><span class="token function">draw</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+            datasets<span class="token operator">:</span> <span class="token punctuation">[</span>
+                <span class="token punctuation">{</span>
+                    name<span class="token operator">:</span> <span class="token string">'行业'</span><span class="token punctuation">,</span>
+                    fillColor<span class="token operator">:</span> <span class="token string">'#6684C7'</span><span class="token punctuation">,</span>
+                    points<span class="token operator">:</span> <span class="token punctuation">[</span>
+                        <span class="token punctuation">{</span>
+                            label<span class="token operator">:</span> <span class="token string">'新增'</span><span class="token punctuation">,</span>
+                            value<span class="token operator">:</span> <span class="token number">20</span><span class="token punctuation">,</span>
+                            barLabel<span class="token operator">:</span> <span class="token string">'20%'</span><span class="token punctuation">,</span>
+                        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                        <span class="token punctuation">{</span>
+                            label<span class="token operator">:</span> <span class="token string">'活跃'</span><span class="token punctuation">,</span>
+                            value<span class="token operator">:</span> <span class="token number">100</span><span class="token punctuation">,</span>
+                            barLabel<span class="token operator">:</span> <span class="token string">'100%'</span><span class="token punctuation">,</span>
+                        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                        <span class="token punctuation">{</span>
+                            label<span class="token operator">:</span> <span class="token string">'留存'</span><span class="token punctuation">,</span>
+                            value<span class="token operator">:</span> <span class="token number">5</span><span class="token punctuation">,</span>
+                            barLabel<span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">{</span>
+                                name<span class="token operator">:</span> <span class="token string">'335'</span><span class="token punctuation">,</span>
+                                style<span class="token operator">:</span> <span class="token punctuation">{</span>
+                                    color<span class="token operator">:</span> <span class="token string">'#6684C7'</span><span class="token punctuation">,</span>
+                                <span class="token punctuation">}</span>
+                            <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token string">'50%'</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+                        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                    <span class="token punctuation">]</span><span class="token punctuation">,</span>
+                <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                <span class="token punctuation">{</span>
+                    name<span class="token operator">:</span> <span class="token string">'行业'</span><span class="token punctuation">,</span>
+                    fillColor<span class="token operator">:</span> <span class="token string">'#3AC6D5'</span><span class="token punctuation">,</span>
+                    points<span class="token operator">:</span> <span class="token punctuation">[</span>
+                        <span class="token punctuation">{</span>
+                            label<span class="token operator">:</span> <span class="token string">'新增'</span><span class="token punctuation">,</span>
+                            value<span class="token operator">:</span> <span class="token number">120</span><span class="token punctuation">,</span>
+                            barLabel<span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">{</span>
+                                name<span class="token operator">:</span> <span class="token string">'335'</span><span class="token punctuation">,</span>
+                                style<span class="token operator">:</span> <span class="token punctuation">{</span>
+                                    color<span class="token operator">:</span> <span class="token string">'#6684C7'</span><span class="token punctuation">,</span>
+                                <span class="token punctuation">}</span>
+                            <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token string">'50%'</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+                        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                        <span class="token punctuation">{</span>
+                            label<span class="token operator">:</span> <span class="token string">'活跃'</span><span class="token punctuation">,</span>
+                            value<span class="token operator">:</span> <span class="token number">77</span><span class="token punctuation">,</span>
+                        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                        <span class="token punctuation">{</span>
+                            label<span class="token operator">:</span> <span class="token string">'留存'</span><span class="token punctuation">,</span>
+                            value<span class="token operator">:</span> <span class="token number">34</span><span class="token punctuation">,</span>
+                        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                    <span class="token punctuation">]</span><span class="token punctuation">,</span>
+                <span class="token punctuation">}</span>
+            <span class="token punctuation">]</span>
+        <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+   <span class="token punctuation">}</span><span class="token punctuation">,</span>
+<span class="token punctuation">}</span>
+</code></pre></div></div> <footer class="page-edit"><!----> <div class="last-updated"><span class="prefix">Last Updated:</span> <span class="time">2/5/2020, 6:57:00 PM</span></div></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/linechart/api.html" class="prev">参数</a></span> <span class="next"><a href="/barchart/api.html">参数</a>
+      →
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/assets/js/app.98bb546e.js" defer></script><script src="/assets/js/2.c002adc4.js" defer></script><script src="/assets/js/7.f6bc5966.js" defer></script>
+  </body>
+</html>

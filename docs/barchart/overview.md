@@ -7,11 +7,8 @@
 1. 在wxml添加canvas
 ``` html
    <canvas
-    canvas-id="canvas1"
+    canvas-id="bar"
     style="width:414px;height:200px;margin:0;"
-    bindtouchstart="bindtouchstart"
-    bindtouchmove="bindtouchmove"
-    bindtouchend="bindtouchend"
    />
 ```
 
