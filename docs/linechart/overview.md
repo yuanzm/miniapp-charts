@@ -2,6 +2,8 @@
 
 折线图组件用于绘制一条或者多条曲线。
 
+<img src="/imgs/linechart.jpg" width=400>
+
 ## 示例
 
 1. 在wxml添加canvas

@@ -1,6 +1,7 @@
 # 介绍
 
 通过使用水平或垂直方向柱子的高度来显示不同类别的数值。
+<img src="/imgs/barchart.jpg" width=400>
 
 ## 示例
 

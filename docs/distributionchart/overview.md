@@ -2,6 +2,8 @@
 
 横向柱状图
 
+<img src="/imgs/distribution.jpg" width=600>
+
 ## 示例
 
 1. 在wxml添加canvas

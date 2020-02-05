@@ -1,9 +1,27 @@
+const moment = require('moment');
+
 module.exports = {
     title: 'miniapp-charts',
     base:"/miniapp-charts/",
     description: '小程序图表组件',
+    plugins: [
+        [
+            '@vuepress/last-updated',
+            {
+                transformer: (timestamp, lang) => {
+                    // 不要忘了安装 moment
+                    const moment = require('moment')
+                    moment.locale(lang)
+                    return moment(timestamp).fromNow()
+                }
+            }
+        ]
+    ],
     themeConfig: {
-        lastUpdated: 'Last Updated', // string | boolean
+        repo: 'yuanzm/miniapp-charts',
+        editLinks: true,
+        editLinkText:'在 GitHub 上编辑此页',
+        lastUpdated: '上次更新', // string | boolean
         sidebar: [
             {
                 title: '概览',   // 必要的
