@@ -19,6 +19,8 @@
 ``` js
 // 克隆仓库至小程序目录
 git clone https://github.com/yuanzm/miniapp-charts
+// 也可以通过npm安装
+npm i miniapp-charts
 
 // 小程序内直接引用miniapp-charts
 import LineChart         from 'miniapp-charts';
