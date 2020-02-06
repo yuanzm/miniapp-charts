@@ -17,12 +17,13 @@
 ## 安装使用
 
 ``` js
-// 克隆仓库至小程序目录
+// 通过Git的方式安装，克隆仓库至小程序目录
 git clone https://github.com/yuanzm/miniapp-charts
-// 也可以通过npm安装
+
+// 也可以通过npm安装，小程序npm使用参考[文档](https://developers.weixin.qq.com/miniprogram/dev/devtools/npm.html)
 npm i miniapp-charts
 
-// 小程序内直接引用miniapp-charts
+// 小程序内直接引用miniapp-charts(注意安装路径要正确)
 import LineChart         from 'miniapp-charts';
 import Barchart          from 'miniapp-charts';
 import RadarChart        from 'miniapp-charts';

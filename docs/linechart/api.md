@@ -1,6 +1,15 @@
-# 参数
+# 文档
 
-LineChart构造函数接受三个参数，第一个参数为小程序canvas的Context，第二个参数cfg为配置对象 组件完整的配置可见：[config.js](https://github.com/yuanzm/miniapp-charts/blob/master/src/config/linechart.js)
+## 构造函数
+### Linechart(context, [cfg], [context2])
+| keyName  | 类型     |  描述    |
+|----------|----------| ---------|
+| context  | Object   | 小程序canvas的Context |
+| cfg      | Object   | 组件配置对象，cfg的属性值会替换默认配置对应属性的值|
+| context2  | Object   | 小程序canvas的Context，当需要响应触摸事件，传入context2具有更好的性能，注意，两个canvas应该重叠并且第二个canvas的层级更高 |
+
+### cfg
+组件完整的配置可见：[config/linechart.js](https://github.com/yuanzm/miniapp-charts/blob/master/src/config/linechart.js)
 
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
@@ -17,8 +26,10 @@ LineChart构造函数接受三个参数，第一个参数为小程序canvas的Co
 | yAxis     | Object | Y轴样式配置    |
 | yAxisLine | Object | Y轴中轴线样式配置 |
 | toolTip | Object | tooltip样式配置 |
+| formatY  | Function |详细见下面formatY配置|
+| lineStyle| Object |单条曲线默认配置|
 
-## padding配置
+### padding配置
 
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
@@ -27,7 +38,7 @@ LineChart构造函数接受三个参数，第一个参数为小程序canvas的Co
 | top      | Number   | 上边距，默认为10 |
 | bottom   | Number   | 下边距，默认为5  |
 
-## xAxis配置
+### xAxis配置
 
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
@@ -36,7 +47,7 @@ LineChart构造函数接受三个参数，第一个参数为小程序canvas的Co
 | color    | String   | X轴标签字体颜色，默认为#B8B8B8 |
 | fontSize | Number   | X轴标签字体大小，默认是11 |
 
-## xAxisLine配置
+### xAxisLine配置
 
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
@@ -46,7 +57,7 @@ LineChart构造函数接受三个参数，第一个参数为小程序canvas的Co
 | color     | String    | 线条的颜色，默认为#C6C6C6 |
 | style     | String    | 线条的样式，默认为solid，可选的为dash |
 
-## yAxis配置
+### yAxis配置
 
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
@@ -57,7 +68,7 @@ LineChart构造函数接受三个参数，第一个参数为小程序canvas的Co
 | fontSize  | Number   | Y轴标签的字体大小 |
 
 
-## yAxisLine配置
+### yAxisLine配置
 
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
@@ -67,7 +78,7 @@ LineChart构造函数接受三个参数，第一个参数为小程序canvas的Co
 | color     | String    | 线条的颜色，默认为#C6C6C6 |
 | style     | String    | 线条的样式，默认为solid，可选的为dash |
 
-## toolTip配置
+### toolTip配置
 
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
@@ -79,10 +90,10 @@ LineChart构造函数接受三个参数，第一个参数为小程序canvas的Co
 | linePadding | Number | 文案行间距，默认为5 |
 | padding     | Object | toolTip的padding，默认padding.left = 5, padding.right = 5,padding.top = 5, padding.bottom = 5 |
 
-## changeUnit
+### changeUnit
 单位转换函数，组件内置了默认的单位转换函数，如果想采用自己的函数替换即可。
 
-## formatY
+### formatY
 给定一组数据，Y轴标签的最大值最小值和每一步的值都是组件自动算出来的
 有些场景组件算出来的可能不满足需求，或者调用者就是想自定义Y轴标签的数据，
 因此提供自定义的formatY(max, min, yAxisCount)函数，调用者按要求返回数据给组件处理即可
@@ -95,3 +106,55 @@ LineChart构造函数接受三个参数，第一个参数为小程序canvas的Co
     似的divider是大于1的数值，同时将放大的倍数告知组件，默认为1
 }
 ```
+### lineStyle
+| keyName  | 类型     |  描述    |
+|----------|----------| ---------|
+| lineWidth | Number| 线条的粗细，默认为1|
+| lineColor |String| 线条的颜色，默认为#7587db|
+| needFill |Boolean| 是否需要闭合填充颜色，默认为true|
+| fillColor |String| 闭合填充颜色，默认为rgba(117, 135, 219, 0.3)|
+| circle   |Object| 如果数据点为圆，圆样式的配置|
+
+#### circle
+| keyName  | 类型     |  描述    |
+|----------|----------| ---------|
+| show     | Boolean| 是否展示圆，默认为true|
+| fillColor | String| 圆的填充色，默认为#FFFFFF|
+| strokeColor| String| 圆周的颜色，默认为#FFAA00|
+| lineWidth | Number| 圆周的粗细，默认为1|
+| radius| Number| 圆的半径，默认为1.2|
+
+## API
+
+### draw(data, [cfg])
+给定数据，执行真正的绘制操作。
+
+| keyName  | 类型     |  描述    |
+|----------|----------| ---------|
+| data     | Object   | 正确绘制图表需要的数据对象|
+| cfg      | Object   | 组件配置对象，cfg的属性值会替换组件示例已有配置的属性值 |
+
+#### data
+| keyName  | 类型     |  描述    |
+|----------|----------| ---------|
+| datasets | Array    | 数组的每一项为一条曲线，曲线又可以独立配置，见下面dataset配置|
+
+#####  dataset配置
+| keyName  | 类型     |  描述    |
+|----------|----------| ---------|
+| points   | Array    | 由数据点构成的数组，points的每一项配置见point|
+| lineName | String   | 曲线的名称，绘制toolTip需要用到，默认为空|
+| style    | Object   | 曲线的样式配置，会覆盖组件实的lineStyle对应的属性值|
+
+###### point
+| keyName  | 类型     |  描述    |
+|----------|----------| ---------|
+| x | String/Number  | X轴标签字符串|
+| y | Number | 数据点的值|
+
+### touch(e)
+处理小程序的触摸事件，e为bindtouchstart和bindtouchmove事件获取到的事件对象。
+
+### touchEnd()
+处理bindtouchend的触摸事件
+

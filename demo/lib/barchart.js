@@ -1064,59 +1064,6 @@ class BarChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
         }
     }
 
-    /**
-     * 计算用于X轴绘制需要的数据
-     */
-    calXAxis() {
-        let data        = this._render;
-
-        let length      = this._render.longestLinePointCnt;
-        let maxXPoint   = this._config.xAxisCount;
-        let points      = this._render.longestLine.points;
-        let xAxis       = this._config.xAxis;
-
-        let leftBottom  = this._boundary.leftBottom;
-        let rightBottom = this._boundary.rightBottom;
-
-        let xAxisData   = [];
-
-        // 计算X轴两个点之间的像素距离
-        let realWidth =  rightBottom.x - leftBottom.x - this._render.yAxisWidth;
-        let pointCount = (  points.length - 1 > 0
-                          ? points.length - 1
-                          : 1  );
-        data.unitX = realWidth  / pointCount;
-
-        let xDivider  = parseInt(length / ( maxXPoint) );
-        if ( xDivider === 0 ) {
-            xDivider = 1;
-        }
-
-        let leftStart = this._render.yAxisWidth + leftBottom.x;
-        let bottom    = leftBottom.y + xAxis.marginTop + xAxis.fontSize;
-
-        for ( let i = 0; i < length; i += xDivider ) {
-            let word = {
-                text    : points[i].x,
-                color   : xAxis.color,
-                fontSize: xAxis.fontSize,
-                x       : leftStart + i * data.unitX,
-                y       : bottom
-            }
-
-            let width = this.getWordWidth(word);
-            word.x -= width / 2;
-
-            // 防止超边界
-            if ( word.x + width > this._config.width )
-                word.x = this._config.width - width - 1;
-
-            xAxisData.push(word);
-        }
-
-        this._render.xAxisData = xAxisData;
-    }
-
     calYAxisLines() {
         let data       = this._render;
         let yAxisWidth = data.yAxisWidth;

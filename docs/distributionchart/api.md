@@ -9,7 +9,6 @@ DistributionChart构造函数接受两个参数，第一个参数为小程序can
 | height   | Number   | 同width，需要手动传入，默认为200 |
 | unit     | String | Y轴标签的单位，默认为'' |
 | padding  | Object   | canvas的绘图区域的padding，与canvas本身样式的padding无关|
-| xAxisCount | Number | X轴标签的数量(不包含原点标签)，默认为7 |
 | yAxis     | Object | Y轴样式配置    |
 | yAxisLine | Object | Y轴中轴线样式配置 |
 | barStyle  | Object | 柱体的样式配置 |

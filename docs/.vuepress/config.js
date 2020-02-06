@@ -4,6 +4,12 @@ module.exports = {
     title: 'miniapp-charts',
     base:"/miniapp-charts/",
     description: '小程序图表组件',
+    head: [
+        // meta
+        ["meta", {name: "robots", content: "all"}],
+        ["meta", {name: "author", content: "yuanzm"}],
+        ["meta", {name: "keywords", content: "miniapp-charts, charts, miniapp, js, canvas, github, components"}],
+    ],
     plugins: [
         [
             '@vuepress/last-updated',
@@ -31,7 +37,7 @@ module.exports = {
                 title: '折线图',
                 path: '/linechart/overview',
                 collapsable: false, // 可选的, 默认值是 true,
-                sidebarDepth: 1,    // 可选的, 默认值是 1
+                sidebarDepth: 2,    // 可选的, 默认值是 1
                 children: [
                     '/linechart/overview',
                     '/linechart/api',
@@ -41,7 +47,7 @@ module.exports = {
                 title: '柱状图',
                 path: '/barchart/overview',
                 collapsable: false, // 可选的, 默认值是 true,
-                sidebarDepth: 1,    // 可选的, 默认值是 1
+                sidebarDepth: 2,    // 可选的, 默认值是 1
                 children: [
                     '/barchart/overview',
                     '/barchart/api',
@@ -51,7 +57,7 @@ module.exports = {
                 title: '分布图',
                 path: '/distributionchart/overview',
                 collapsable: false, // 可选的, 默认值是 true,
-                sidebarDepth: 1,    // 可选的, 默认值是 1
+                sidebarDepth: 2,    // 可选的, 默认值是 1
                 children: [
                     '/distributionchart/overview',
                     '/distributionchart/api',
@@ -61,7 +67,7 @@ module.exports = {
                 title: '雷达图',
                 path: '/radar/overview',
                 collapsable: false, // 可选的, 默认值是 true,
-                sidebarDepth: 1,    // 可选的, 默认值是 1
+                sidebarDepth: 2,    // 可选的, 默认值是 1
                 children: [
                     '/radar/overview',
                     '/radar/api',

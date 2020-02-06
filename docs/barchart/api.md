@@ -9,7 +9,6 @@ BarChart构造函数接受两个参数，第一个参数为小程序canvas的Con
 | height   | Number   | 同width，需要手动传入，默认为200 |
 | unit     | String | Y轴标签的单位，默认为'' |
 | padding  | Object   | canvas的绘图区域的padding，与canvas本身样式的padding无关|
-| xAxisCount | Number | X轴标签的数量(不包含原点标签)，默认为7 |
 | xAxis      | Object | X轴标签样式配置 |
 | xAxisLine  | Object | X中轴线样式配置 |
 | yAxisCount | Number | Y轴标签数(不包含原点标签)，默认为4|
