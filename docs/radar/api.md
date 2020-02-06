@@ -1,4 +1,10 @@
 # 参数
+
+## 图例
+由于配置过多，文字表达可能带来歧义，这里附上图例以供参考
+
+<img :src="$withBase('/imgs/radartooltip.jpg')" width=600>
+
 ## RadarChart构造函数
 ### RadarChart(context, [cfg])
 | keyName  | 类型     |  描述    |

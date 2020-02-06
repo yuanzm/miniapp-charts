@@ -1,5 +1,10 @@
 # 文档
 
+## 图例
+由于配置过多，文字表达可能带来歧义，这里附上图例以供参考
+
+<img :src="$withBase('/imgs/linecharttooltip.jpg')" width=800>
+
 ## 构造函数
 ### Linechart(context, [cfg], [context2])
 | keyName  | 类型     |  描述    |
@@ -145,6 +150,7 @@
 | points   | Array    | 由数据点构成的数组，points的每一项配置见point|
 | lineName | String   | 曲线的名称，绘制toolTip需要用到，默认为空|
 | style    | Object   | 曲线的样式配置，会覆盖组件实的lineStyle对应的属性值|
+| axis     | Number   | 最多支持两个坐标轴，如果axis为2，代表改曲线使用右边的坐标轴|
 
 ###### point
 | keyName  | 类型     |  描述    |

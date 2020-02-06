@@ -1,6 +1,19 @@
-# 参数
+# 文档
 
-BarChart构造函数接受两个参数，第一个参数为小程序canvas的Context，第二个参数cfg为配置对象 组件完整的配置可见：[config.js](https://github.com/yuanzm/miniapp-charts/blob/master/src/config/barchart.js)
+## 图例
+由于配置过多，文字表达可能带来歧义，这里附上图例以供参考
+
+<img :src="$withBase('/imgs/barcharttooltip.jpg')" width=800>
+
+## 构造函数
+### Linechart(context, [cfg], [context2])
+| keyName  | 类型     |  描述    |
+|----------|----------| ---------|
+| context  | Object   | 小程序canvas的Context |
+| cfg      | Object   | 组件配置对象，cfg的属性值会替换默认配置对应属性的值|
+
+### cfg
+组件完整的配置可见：[config/barchart.js](https://github.com/yuanzm/miniapp-charts/blob/master/src/config/barchart.js)
 
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
@@ -20,7 +33,7 @@ BarChart构造函数接受两个参数，第一个参数为小程序canvas的Con
 | leftRightPadding | Number| X轴绘图区域的左右间距，默认为10|
 | barLabelStyle | Object |柱子上文字的样式配置 |
 
-## padding配置
+### padding配置
 
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
@@ -29,7 +42,7 @@ BarChart构造函数接受两个参数，第一个参数为小程序canvas的Con
 | top      | Number   | 上边距，默认为10 |
 | bottom   | Number   | 下边距，默认为5  |
 
-## xAxis配置
+### xAxis配置
 
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
@@ -38,7 +51,7 @@ BarChart构造函数接受两个参数，第一个参数为小程序canvas的Con
 | color    | String   | X轴标签字体颜色，默认为#B8B8B8 |
 | fontSize | Number   | X轴标签字体大小，默认是11 |
 
-## xAxisLine配置
+### xAxisLine配置
 
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
@@ -48,7 +61,7 @@ BarChart构造函数接受两个参数，第一个参数为小程序canvas的Con
 | color     | String    | 线条的颜色，默认为#C6C6C6 |
 | style     | String    | 线条的样式，默认为solid，可选的为dash |
 
-## yAxis配置
+### yAxis配置
 
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
@@ -58,8 +71,7 @@ BarChart构造函数接受两个参数，第一个参数为小程序canvas的Con
 | color     | String  | Y轴标签的字体颜色 |
 | fontSize  | Number   | Y轴标签的字体大小 |
 
-
-## yAxisLine配置
+### yAxisLine配置
 
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
@@ -69,10 +81,10 @@ BarChart构造函数接受两个参数，第一个参数为小程序canvas的Con
 | color     | String    | 线条的颜色，默认为#C6C6C6 |
 | style     | String    | 线条的样式，默认为solid，可选的为dash |
 
-## changeUnit
+### changeUnit
 单位转换函数，组件内置了默认的单位转换函数，如果想采用自己的函数替换即可。
 
-## formatY
+### formatY
 给定一组数据，Y轴标签的最大值最小值和每一步的值都是组件自动算出来的
 有些场景组件算出来的可能不满足需求，或者调用者就是想自定义Y轴标签的数据，
 因此提供自定义的formatY(max, min, yAxisCount)函数，调用者按要求返回数据给组件处理即可
@@ -86,15 +98,82 @@ BarChart构造函数接受两个参数，第一个参数为小程序canvas的Con
 }
 ```
 
-## barStyle配置
+### barStyle配置
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
 | fillColor| String  |柱体填充色，默认为#6684C7|
 
-## barLabelStyle配置
+### barLabelStyle配置
 
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
 | color     | String  | 字体颜色|
 | fontSize  | Number   |  字体大小，默认为11|
 | paddingBottom | Number| 和底部下一个元素的间距，默认为5|
+
+## API
+
+### draw(data, [cfg])
+给定数据，执行真正的绘制操作。
+
+| keyName  | 类型     |  描述    |
+|----------|----------| ---------|
+| data     | Object   | 正确绘制图表需要的数据对象|
+| cfg      | Object   | 组件配置对象，cfg的属性值会替换组件示例已有配置的属性值 |
+
+#### data
+| keyName  | 类型     |  描述    |
+|----------|----------| ---------|
+| datasets | Array    | 数组的每一项为一组柱状体，每组柱状体又可以独立配置，见下面dataset配置|
+
+#####  dataset配置
+| keyName  | 类型     |  描述    |
+|----------|----------| ---------|
+| points   | Array    | 由数据点构成的数组，points的每一项配置见point|
+| barStyle | Object   | 柱状体样式配置，会覆盖组件实例的barStyle对应的属性值|
+
+###### point
+| keyName  | 类型     |  描述    |
+|----------|----------| ---------|
+| label    | String   | 该数据名称 |
+| value    | Number   | 该数据的值 |
+| barLabel | String/Object/Array | 配置详情见下面|
+
+###### point.barLabel
+| barLabel类型|   描述    |
+|----------|----------|
+| String   | 在该柱体上面添加一个文案，样式与组件实例的barLabelStyle相同|
+| Object   | 在该柱体上面添加一个文案，该对象具有两个属性，第一个为name，为label的值，第二个为style对象，会覆盖组件实例的barLabelStyle的值|
+| Array    | 在该柱体上面添加多个文案，数组的每一项可以是String，也可以是Object类型的，与上述两种类型一致|
+
+``` js
+// 覆盖上述所有barLabel类型的配置示例
+points: [
+    {
+        label: '活跃',
+        value: 77,
+        barLabel: '50%',
+    },
+    {
+        label: '留存',
+        value: 34,
+        barLabel: {
+            name: '335',
+            style: {
+                color: '#6684C7',
+            }
+        }
+    },
+    {
+        label: '新增',
+        value: 120,
+        barLabel: [{
+            name: '335',
+            style: {
+                color: '#6684C7',
+            }
+        }, '50%'],
+    }
+],
+```
+

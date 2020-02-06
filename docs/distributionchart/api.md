@@ -1,4 +1,9 @@
-# 参数
+# 文档
+
+## 图例
+由于配置过多，文字表达可能带来歧义，这里附上图例以供参考
+
+<img :src="$withBase('/imgs/distributiontooltip.jpg')" width=800>
 
 DistributionChart构造函数接受两个参数，第一个参数为小程序canvas的Context，第二个参数cfg为配置对象 组件完整的配置可见：[config.js](https://github.com/yuanzm/miniapp-charts/blob/master/src/config/barchart.js)
 
