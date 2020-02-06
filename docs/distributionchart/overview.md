@@ -2,9 +2,11 @@
 
 横向柱状图
 
+## 示意图
+
 <img :src="$withBase('/imgs/distribution.jpg')" width=600>
 
-## 示例
+## 代码示例
 
 1. 在wxml添加canvas
 ``` html

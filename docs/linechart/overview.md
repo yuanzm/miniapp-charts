@@ -1,10 +1,10 @@
 # 介绍
-
 折线图组件用于绘制一条或者多条曲线。
 
+## 示意图
 <img :src="$withBase('/imgs/linechart.jpg')" width=400>
 
-## 示例
+## 代码示例
 
 1. 在wxml添加canvas
 ``` html
