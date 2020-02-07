@@ -10,9 +10,14 @@
 
 故将业务中的一套图表组件开源出来，不会很强大，但是该有的配置基本都有，有问题可以提issue，我会尽量修复。
 
+## 设计理念
 
-## 示例
-[点击启动小程序代码片段](https://developers.weixin.qq.com/s/Rb0JWWmo7led)
+所有组件设计的时候都会遵循两个简单的理念
+
+1. 尽可能提供详细的配置功能，力求组件的每个部位都是可以配置样式的；
+2. **不要**太强大，本组件库的出发点是提供轻量级的图表库，使用者无须理解图形语法；
+
+
 
 ## 安装使用
 
@@ -29,3 +34,6 @@ import Barchart          from 'miniapp-charts';
 import RadarChart        from 'miniapp-charts';
 import DistributionChart from 'miniapp-charts';
 ```
+
+[点击启动小程序代码片段](https://developers.weixin.qq.com/s/Rb0JWWmo7led)
+

@@ -41,6 +41,7 @@ module.exports = {
                 children: [
                     '/linechart/overview',
                     '/linechart/api',
+                    '/linechart/examples',
                 ]
             },
             {

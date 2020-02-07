@@ -12,7 +12,9 @@ let linechartConfig = {
      * Y轴标签以及toolTip的单位换算函数
      * 组件内置了changeUnit函数，可以自行设置
      */
-    changeUnit : none,
+    changeUnit : null,
+
+    secondChangeUnit: null,
 
     /**
      * 给定一组数据，Y轴标签的最大值最小值和每一步的值都是组件自动算出来的
@@ -96,7 +98,6 @@ let linechartConfig = {
     secondYaxis: {
         show       : true,
         marginLeft : 5,
-        marginRight: 0,
         color      : '#B8B8B8',
         fontSize   : 11,
         unit       : '',
@@ -128,7 +129,6 @@ let linechartConfig = {
         fontSize   : 11,
         color      : '#FFFFFF',
         fillColor  : 'rgba(136, 136, 136, 0.6)',
-        //needCircle : true,
         linePadding: 5,
         needTitle  : false,
         needX      : true,

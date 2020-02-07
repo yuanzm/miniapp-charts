@@ -156,9 +156,8 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
         let longestLine    = this._render.longestLine;
 
         // 为了提高性能，会限制单条线最多圆的数量
-        let needCircle     = (  this._config.maxCircleCount >= longestLine.points.length
-                              ? true
-                              : false  );
+        let needCircle     = !!(  this._config.maxCircleCount >= longestLine.points.length )
+
         // 原点
         let origin     = {
             x: leftBottom.x + yAxisWidth,
@@ -270,6 +269,7 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
         if ( this._render.second ) {
             realWidth -= this._render.second.width;
         }
+
         let pointCount = (  points.length - 1 > 0
                           ? points.length - 1
                           : 1  );
@@ -292,7 +292,7 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
                 y       : bottom
             }
 
-            let width = this.getWordWidth(word);
+            let width = this.measureText(this.ctx1, word);
             word.x -= width / 2;
 
             // 防止超边界
@@ -371,28 +371,25 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
                      / ( yDivider * yMultiple  * this._config.yAxisCount )
                     );
 
-
-        //let changeFunc  = this._config.changeUnit || changeUnit;
-        let changeFunc  = (  this._config.changeUnit && this._config.changeUnit !== _util_js__WEBPACK_IMPORTED_MODULE_0__["none"]
-                           ? this._config.changeUnit
-                           : _util_js__WEBPACK_IMPORTED_MODULE_0__["changeUnit"]  );
+        let changeFunc = this._config.secondChangeUnit || this._config.changeUnit || _util_js__WEBPACK_IMPORTED_MODULE_0__["changeUnit"];
         let toFixed     = (  ( max < 1 || max > 1e7 )
                            ? 2
                            : 1 );
 
-
-        let bottomStart = this._boundary.leftBottom.y
+        let bottomStart = this._boundary.leftBottom.y;
 
         for( let i = 0; i < this._config.yAxisCount + 1; i++ ) {
             let word = {
-                text    : changeFunc(min + i * yDivider, toFixed) + (yAxis.unit || this._config.unit),
-                color   : yAxis.color,
-                fontSize: yAxis.fontSize,
-                y       : bottomStart - ( i * yDivider * unitY * yMultiple ),
+                text     : changeFunc(min + i * yDivider, toFixed) + (yAxis.unit || this._config.unit),
+                color    : yAxis.color,
+                fontSize : yAxis.fontSize,
+                y        : bottomStart - ( i * yDivider * unitY * yMultiple ),
                 textAlign: yAxis.textAlign,
             };
 
-            yAxisWidth = Math.max(this.getWordWidth(word), yAxisWidth);
+            yAxisWidth = Math.max(this.measureText(this.ctx1, word), yAxisWidth);
+
+            this.measureText(this.ctx1, word);
 
             yAxisData.push(word);
         }
@@ -402,7 +399,7 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
                       ? yAxisWidth
                       : 0  );
 
-        let leftStart = this._boundary.rightTop.x - yAxis.marginRight - yAxisWidth;
+        let leftStart = this._boundary.rightTop.x - yAxisWidth;
         if ( yAxis.textAlign === 'right' ) {
             leftStart += yAxisWidth;
         }
@@ -416,7 +413,7 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
         second.yAxisData           = yAxisData;
         second.longestLinePointCnt = maxYPoint;
         second.longestLine         = longestLine;
-        second.width               = yAxisWidth + yAxis.marginLeft + yAxis.marginRight;
+        second.width               = yAxisWidth + yAxis.marginLeft;
 
         this.log('calSecondYAxis');
     }
@@ -448,10 +445,7 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
         let leftStart   = this._boundary.leftTop.x + yAxis.marginLeft;
         let bottomStart = this._boundary.leftBottom.y
 
-        //let changeFunc  = this._config.changeUnit || changeUnit;
-        let changeFunc  = (  this._config.changeUnit && this._config.changeUnit !== _util_js__WEBPACK_IMPORTED_MODULE_0__["none"]
-                           ? this._config.changeUnit
-                           : _util_js__WEBPACK_IMPORTED_MODULE_0__["changeUnit"]  );
+        let changeFunc  = this._config.changeUnit || _util_js__WEBPACK_IMPORTED_MODULE_0__["changeUnit"];
         let toFixed     = (  ( max < 1 || max > 1e7 )
                            ? 2
                            : 1 );
@@ -465,7 +459,7 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
                 y       : bottomStart - ( i * yDivider * unitY * this._render.yMultiple )
             };
 
-            yAxisWidth = Math.max(this.getWordWidth(word), yAxisWidth);
+            yAxisWidth = Math.max(this.measureText(this.ctx1, word), yAxisWidth);
 
             yAxisData.push(word);
         }
@@ -527,7 +521,6 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
 
         let formatFunc = this._config.formatY || _util_js__WEBPACK_IMPORTED_MODULE_0__["getDataRangeAndStep"];
         let range = formatFunc(max, min, yAxisCount);
-
 
         return {
             max      : range.max,
@@ -698,10 +691,7 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
 
         this._render.toolTipData.words = [];
 
-        //let changeFunc  = this._config.changeUnit || changeUnit;
-        let changeFunc  = (  this._config.changeUnit && this._config.changeUnit !== _util_js__WEBPACK_IMPORTED_MODULE_0__["none"]
-                           ? this._config.changeUnit
-                           : _util_js__WEBPACK_IMPORTED_MODULE_0__["changeUnit"]  );
+        let changeFunc  = this._config.secondChangeUnit || this._config.changeUnit || _util_js__WEBPACK_IMPORTED_MODULE_0__["changeUnit"];
         let toFixed     = (  ( this._render.max < 1 || this._render > 1e7 )
                            ? 2
                            : 1 );
@@ -725,7 +715,7 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
                 };
 
                 // 计算当前时刻最长单词的宽度
-                maxWidth = Math.max(maxWidth, this.getWordWidth(word));
+                maxWidth = Math.max(maxWidth, this.measureText(this.ctx1, word));
 
                 // 加上每行文字的行高和行间距
                 height += ( style.fontSize + style.linePadding );
@@ -903,7 +893,8 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
         // 原始调用者传入的数据
         this.initDataSets(data);
 
-        if ( !this._datasets.length && !this._secondDatasets.length ) {
+        // 如果没有有效数据，不执行绘制
+        if ( !this._alldatasets.length ) {
             return;
         }
 
@@ -1295,7 +1286,9 @@ let linechartConfig = {
      * Y轴标签以及toolTip的单位换算函数
      * 组件内置了changeUnit函数，可以自行设置
      */
-    changeUnit : _util_js__WEBPACK_IMPORTED_MODULE_1__["none"],
+    changeUnit : null,
+
+    secondChangeUnit: null,
 
     /**
      * 给定一组数据，Y轴标签的最大值最小值和每一步的值都是组件自动算出来的
@@ -1379,7 +1372,6 @@ let linechartConfig = {
     secondYaxis: {
         show       : true,
         marginLeft : 5,
-        marginRight: 0,
         color      : '#B8B8B8',
         fontSize   : 11,
         unit       : '',
@@ -1411,7 +1403,6 @@ let linechartConfig = {
         fontSize   : 11,
         color      : '#FFFFFF',
         fillColor  : 'rgba(136, 136, 136, 0.6)',
-        //needCircle : true,
         linePadding: 5,
         needTitle  : false,
         needX      : true,
@@ -1461,7 +1452,7 @@ __webpack_require__.r(__webpack_exports__);
      * Y轴标签以及toolTip的单位换算函数
      * 组件内置了changeUnit函数，可以自行设置
      */
-    changeUnit : _util_js__WEBPACK_IMPORTED_MODULE_0__["none"],
+    changeUnit : null,
 
     /**
      * 图表内本身的padding
@@ -1651,6 +1642,7 @@ __webpack_require__.r(__webpack_exports__);
  * 这里可用于兼容H5和小程序
  * 因为小程序和H5的绘图API并不是完全一致的，通过基础类来兼容是最合适的
  */
+
 class ChartBase {
     wordWidth(words, fontSize) {
         if ( words === undefined || words === null )
@@ -1671,9 +1663,28 @@ class ChartBase {
         return totLength;
     }
 
-    getWordWidth(word) {
-        if ( typeof(word.text) === 'number' )
+    measureText(ctx, word) {
+        // 低版本兼容处理
+        if ( !ctx.measureText ) {
+            return this.getWordWidth(word);
+        }
+
+        ctx.save();
+        if ( typeof(word.text) === 'number' ) {
             word.text = word.text.toString();
+        }
+        ctx.font = word.fontSize + 'px sans-serif';
+        const metrics = ctx.measureText(word.text);
+
+        ctx.restore();
+
+        return metrics.width;
+    }
+
+    getWordWidth(word) {
+        if ( typeof(word.text) === 'number' ) {
+            word.text = word.text.toString();
+        }
 
         let w = this.wordWidth(word.text, word.fontSize);
 

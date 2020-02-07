@@ -1,6 +1,14 @@
 <canvas
     canvas-id="linechart1"
-    style="width:414px;height:200px;margin:0;"
+    style="width:414px;height:200px;margin:0;position: absolute; left: 0; top: 0"
+    bindtouchstart="bindtouchstart"
+    bindtouchmove="bindtouchmove"
+    bindtouchend="bindtouchend"
+/>
+
+<canvas
+    canvas-id="linechart2"
+    style="width:414px;height:200px;margin:0;position: absolute; left: 0; top: 0"
     bindtouchstart="bindtouchstart"
     bindtouchmove="bindtouchmove"
     bindtouchend="bindtouchend"
@@ -8,7 +16,7 @@
 
 <canvas
     canvas-id="radar"
-    style="width:200px;height:200px;"
+    style="width:200px;height:200px;margin-top: 220px"
 />
 
 <canvas

@@ -375,7 +375,7 @@ __webpack_require__.r(__webpack_exports__);
      * Y轴标签以及toolTip的单位换算函数
      * 组件内置了changeUnit函数，可以自行设置
      */
-    changeUnit : _util_js__WEBPACK_IMPORTED_MODULE_0__["none"],
+    changeUnit : null,
 
     /**
      * 图表内本身的padding
@@ -565,6 +565,7 @@ __webpack_require__.r(__webpack_exports__);
  * 这里可用于兼容H5和小程序
  * 因为小程序和H5的绘图API并不是完全一致的，通过基础类来兼容是最合适的
  */
+
 class ChartBase {
     wordWidth(words, fontSize) {
         if ( words === undefined || words === null )
@@ -585,9 +586,28 @@ class ChartBase {
         return totLength;
     }
 
-    getWordWidth(word) {
-        if ( typeof(word.text) === 'number' )
+    measureText(ctx, word) {
+        // 低版本兼容处理
+        if ( !ctx.measureText ) {
+            return this.getWordWidth(word);
+        }
+
+        ctx.save();
+        if ( typeof(word.text) === 'number' ) {
             word.text = word.text.toString();
+        }
+        ctx.font = word.fontSize + 'px sans-serif';
+        const metrics = ctx.measureText(word.text);
+
+        ctx.restore();
+
+        return metrics.width;
+    }
+
+    getWordWidth(word) {
+        if ( typeof(word.text) === 'number' ) {
+            word.text = word.text.toString();
+        }
 
         let w = this.wordWidth(word.text, word.fontSize);
 

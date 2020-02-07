@@ -3,6 +3,7 @@
  * 这里可用于兼容H5和小程序
  * 因为小程序和H5的绘图API并不是完全一致的，通过基础类来兼容是最合适的
  */
+
 export default class ChartBase {
     wordWidth(words, fontSize) {
         if ( words === undefined || words === null )
@@ -23,9 +24,28 @@ export default class ChartBase {
         return totLength;
     }
 
-    getWordWidth(word) {
-        if ( typeof(word.text) === 'number' )
+    measureText(ctx, word) {
+        // 低版本兼容处理
+        if ( !ctx.measureText ) {
+            return this.getWordWidth(word);
+        }
+
+        ctx.save();
+        if ( typeof(word.text) === 'number' ) {
             word.text = word.text.toString();
+        }
+        ctx.font = word.fontSize + 'px sans-serif';
+        const metrics = ctx.measureText(word.text);
+
+        ctx.restore();
+
+        return metrics.width;
+    }
+
+    getWordWidth(word) {
+        if ( typeof(word.text) === 'number' ) {
+            word.text = word.text.toString();
+        }
 
         let w = this.wordWidth(word.text, word.fontSize);
 

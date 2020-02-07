@@ -1,0 +1,8 @@
+<canvas
+    canvas-id="axisdemo"
+    style="width:414px;height:200px"
+    bindtouchstart="bindtouchstart"
+    bindtouchmove="bindtouchmove"
+    bindtouchend="bindtouchend"
+/>
+
