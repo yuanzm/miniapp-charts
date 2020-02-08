@@ -156,7 +156,7 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
         let longestLine    = this._render.longestLine;
 
         // 为了提高性能，会限制单条线最多圆的数量
-        let needCircle     = !!(  this._config.maxCircleCount >= longestLine.points.length )
+        let needCircle     = !!(  this._config.lineStyle.maxCircleCount >= longestLine.points.length )
 
         // 原点
         let origin     = {
@@ -255,7 +255,7 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
         let data        = this._render;
 
         let length      = this._render.longestLinePointCnt;
-        let maxXPoint   = this._config.xAxisCount;
+        let maxXPoint   = this._config.xAxis.xAxisCount;
         let points      = this._render.longestLine.points;
         let xAxis       = this._config.xAxis;
 
@@ -275,7 +275,9 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
                           : 1  );
         data.unitX = realWidth  / pointCount;
 
-        let xDivider  = Math.ceil(length / ( maxXPoint) );
+        let xDivider  = Math.ceil(length / ( maxXPoint ) );
+
+        // 考虑只有一个点的情况
         if ( xDivider === 0 ) {
             xDivider = 1;
         }
@@ -283,12 +285,16 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
         let leftStart = this._render.yAxisWidth + leftBottom.x;
         let bottom    = leftBottom.y + xAxis.marginTop + xAxis.fontSize;
 
-        for ( let i = 0; i < length; i += xDivider ) {
+        for ( let i = 0; i < maxXPoint; i++ ) {
+            let index = (  i * xDivider >= length
+                         ? length - 1
+                         : i * xDivider  );
+
             let word = {
-                text    : points[i].x,
+                text    : points[index].x,
                 color   : xAxis.color,
                 fontSize: xAxis.fontSize,
-                x       : leftStart + i * data.unitX,
+                x       : leftStart + index * data.unitX,
                 y       : bottom
             }
 
@@ -368,7 +374,7 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
         // 计算Y轴上两个点之间的像素值
         let unitY = (  (  this._boundary.leftBottom.y
                         - this._boundary.leftTop.y  )
-                     / ( yDivider * yMultiple  * this._config.yAxisCount )
+                     / ( yDivider * yMultiple  * this._config.yAxis.yAxisCount )
                     );
 
         let changeFunc = this._config.secondChangeUnit || this._config.changeUnit || _util_js__WEBPACK_IMPORTED_MODULE_0__["changeUnit"];
@@ -378,9 +384,9 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
 
         let bottomStart = this._boundary.leftBottom.y;
 
-        for( let i = 0; i < this._config.yAxisCount + 1; i++ ) {
+        for( let i = 0; i < this._config.yAxis.yAxisCount + 1; i++ ) {
             let word = {
-                text     : changeFunc(min + i * yDivider, toFixed) + (yAxis.unit || this._config.unit),
+                text     : changeFunc(min + i * yDivider, toFixed) + (yAxis.unit || ''),
                 color    : yAxis.color,
                 fontSize : yAxis.fontSize,
                 y        : bottomStart - ( i * yDivider * unitY * yMultiple ),
@@ -404,7 +410,7 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
             leftStart += yAxisWidth;
         }
 
-        for( let i = 0; i < this._config.yAxisCount + 1; i++ ) {
+        for( let i = 0; i < this._config.yAxis.yAxisCount + 1; i++ ) {
             yAxisData[i].x  = leftStart;
         }
 
@@ -439,7 +445,7 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
         // 计算Y轴上两个点之间的像素值
         let unitY = (  (  this._boundary.leftBottom.y
                         - this._boundary.leftTop.y  )
-                     / ( yDivider * this._render.yMultiple  * this._config.yAxisCount )
+                     / ( yDivider * this._render.yMultiple  * this._config.yAxis.yAxisCount )
                     );
 
         let leftStart   = this._boundary.leftTop.x + yAxis.marginLeft;
@@ -450,9 +456,9 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
                            ? 2
                            : 1 );
 
-        for( let i = 0; i < this._config.yAxisCount + 1; i++ ) {
+        for( let i = 0; i < this._config.yAxis.yAxisCount + 1; i++ ) {
             let word = {
-                text    : changeFunc(min + i * yDivider, toFixed) + (yAxis.unit || this._config.unit),
+                text    : changeFunc(min + i * yDivider, toFixed) + (yAxis.unit || ''),
                 color   : yAxis.color,
                 fontSize: yAxis.fontSize,
                 x       : leftStart,
@@ -503,7 +509,7 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
     calYAxisBoundary(datasets) {
         let maxYPoint   = 0;
         let longestLine = datasets[0];
-        let yAxisCount  = this._config.yAxisCount;
+        let yAxisCount  = this._config.yAxis.yAxisCount;
         let max         = -Infinity;
         let min         = Infinity;
 
@@ -705,7 +711,7 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
 
             if ( curr ) {
                 let word = {
-                    text    : title + changeFunc(curr.y, toFixed) + (oneline.unit || this._config.unit),
+                    text    : title + changeFunc(curr.y, toFixed) + (oneline.unit || ''),
                     fontSize: style.fontSize,
                     color   : style.color,
                     x       : 0,
@@ -764,8 +770,9 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
             this.drawWord(this.ctx1, item);
         });
 
-        if ( this._config.xAxisLine.centerShow )
+        if ( this._config.xAxisLine.centerShow ) {
             this.drawLine(this.ctx1, this._render.xCenterAxis);
+        }
     }
 
     // 绘制Y轴
@@ -1032,6 +1039,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "extend", function() { return extend; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getDataRangeAndStep", function() { return getDataRangeAndStep; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "changeUnit", function() { return changeUnit; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatX", function() { return formatX; });
 /*
  * @author: zimyuan
  */
@@ -1263,6 +1271,25 @@ function changeUnit(value, fixed = 1) {
 function none() {
 }
 
+function formatX(length, maxXPoint) {
+    let step  = Math.ceil(length /  maxXPoint );
+    let start = 0;
+
+    // 记录原始的step长度
+    let origin = step;
+
+    while ( step * ( maxXPoint - 1 ) >= length ) {
+        step--;
+    }
+
+    if ( step < origin ) {
+        start = Math.floor(( length - step * ( maxXPoint - 1 ) ) / 2);
+    }
+
+
+    return { step, start: start > 1 ? start - 1 : start };
+}
+
 
 
 
@@ -1279,9 +1306,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 let linechartConfig = {
-    // Y轴标签的单位
-    unit       : '',
-
     /**
      * Y轴标签以及toolTip的单位换算函数
      * 组件内置了changeUnit函数，可以自行设置
@@ -1326,18 +1350,17 @@ let linechartConfig = {
      */
     maxCircleCount: 30,
 
-    /**
-     * 默认x轴打七个点
-     * 可以自行配置，但仍然会有保底逻辑
-     */
-    xAxisCount   : 7,
-
     // x轴文案的样式配置
     xAxis: {
         show     : true,
         marginTop: 10,
         color    : '#B8B8B8',
         fontSize : 11,
+        /**
+        * 默认x轴打七个点
+        * 可以自行配置，但仍然会有保底逻辑
+        */
+        xAxisCount   : 7,
     },
 
     /**
@@ -1352,12 +1375,6 @@ let linechartConfig = {
     },
 
     /**
-     * 默认Y轴打四个点
-     * 也可以自行配置，但仍然会有保底逻辑
-     */
-    yAxisCount  : 4,
-
-    /**
      * y轴的样式配置
      */
     yAxis: {
@@ -1366,6 +1383,12 @@ let linechartConfig = {
         marginRight: 10,
         color      : '#B8B8B8',
         fontSize   : 11,
+        unit       : '',
+        /**
+        * 默认Y轴打四个点
+        * 也可以自行配置，但仍然会有保底逻辑
+        */
+        yAxisCount  : 4,
     },
 
     // 第二Y轴

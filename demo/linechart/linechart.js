@@ -19,12 +19,12 @@ Page({
                 height: 200,
                 secondYaxis: {
                     unit: '%',
-                }
+                },
             },
         );
 
         let points = [];
-        for (let i = 0; i < 30; i++) {
+        for (let i = 0; i < 24; i++) {
             points.push({
                 x: i + 1,
                 y: Math.ceil( 50 + Math.random() * 10),
@@ -32,7 +32,7 @@ Page({
         }
 
         let points2= [];
-        for (let i = 0; i < 30; i++) {
+        for (let i = 0; i < 24; i++) {
             points2.push({
                 x: i + 1,
                 y: Math.ceil( 60 + Math.random() * 10),

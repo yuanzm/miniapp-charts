@@ -33,7 +33,7 @@
 
 2. 在js里面实例化组件
 ``` js
-import LineChart         from 'miniapp-charts';
+import LineChart from 'miniapp-charts';
 
 Page({
     onLoad() {
@@ -77,6 +77,5 @@ Page({
         this.linechart.touchEnd(e);
     }
 });
-
 ```
 

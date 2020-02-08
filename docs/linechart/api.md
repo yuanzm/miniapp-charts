@@ -36,21 +36,17 @@ const linechart = new LineChart(
 | debug    | Boolean  | 是否开启调试模式，调试模式下面会打出一些调试信息，默认为false|
 | width    | Number   | canvas的宽度，因为小程序没有DOM，不能获取canvas的样式信息，需要手动传入, 默认为414 |
 | height   | Number   | 同width，需要手动传入，默认为200 |
-| unit     | String | Y轴标签的单位，默认为'' |
-| padding  | Object   | canvas的绘图区域的padding，与canvas本身样式的padding无关|
-| maxCircleCount | Number | 如果单条线的点很少，每个点会带上一个小圆环，当最长线条的点数量大于maxCircleCount的时候，不绘制小圆环，默认为30 |
-| xAxisCount | Number | X轴标签的数量(不包含原点标签)，默认为7 |
-| xAxis      | Object | X轴标签样式配置 |
-| xAxisLine  | Object | X中轴线样式配置 |
-| yAxisCount | Number | Y轴标签数(不包含原点标签)，默认为4|
-| yAxis     | Object | Y轴样式配置    |
-| yAxisLine | Object | Y轴中轴线样式配置 |
+| padding  | Object   | canvas的绘图区域的padding，与canvas本身样式的padding无关，详见[padding配置](#padding配置)|
+| xAxis      | Object | X轴标签样式配置，详见[xAxis配置](#xaxis配置) |
+| xAxisLine  | Object | xAxisLine为每个x轴标签对应的垂直线段，[xAxisLine配置](#xaxisline配置)  |
+| yAxis     | Object | Y轴样式配置，详见[yAxis配置](#yaxis配置)     |
+| yAxisLine | Object | yAxisLine为每个y轴标签对应的横向线段，详见[yAxisLine配置](#yaxisline配置)   |
 | toolTip | Object | 当组件相应触摸事件的时候，会通过图例的方式绘制当前手指附近点的信息，图例面板可以通过[toolTip](#toolTip配置)配置|
-| formatY  | Function |详细见下面formatY配置|
+| formatY  | Function |详细见下面[formatY](#formaty)配置|
 | changeUnit | Function | Y轴标签单位转换函数，详见[changeUnit](#changeunit)|
-| lineStyle| Object |单条曲线默认配置|
-| secondYaxis | Object |第二坐标轴样式|
-| secondYAxisLine | Object |第二坐标轴轴体样式|
+| lineStyle| Object |单条曲线默认配置，详见[lineStyle](#linestyle)|
+| secondYaxis | Object |第二坐标轴样式，详见[secondYaxis](#secondyaxis)|
+| secondYAxisLine | Object |第二坐标轴轴体样式，详见[secondYAxisLine](#secondyaxisline)|
 
 ### padding配置
 
@@ -69,13 +65,14 @@ const linechart = new LineChart(
 | marginTop| Number   | X轴标签与X轴中轴线的间距，默认为10 |
 | color    | String   | X轴标签字体颜色，默认为#B8B8B8 |
 | fontSize | Number   | X轴标签字体大小，默认是11 |
+| xAxisCount | Number | X轴标签的数量(不包含原点标签)，默认为7 |
 
 ### xAxisLine配置
 
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
 | show     | Boolean | 是否展示X轴标签对应的线条，默认为false |
-| centerShow | Boolean | 是否需要展示X轴的中轴线，默认为true |
+| centerShow | Boolean | 是否需要展示原点处x轴标签的中轴线，默认为true |
 | width     | Number   | 线条的宽度，默认为0.6 |
 | color     | String    | 线条的颜色，默认为#C6C6C6 |
 | style     | String    | 线条的样式，默认为solid，可选的为dash |
@@ -84,12 +81,13 @@ const linechart = new LineChart(
 
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
-| show     | Boolean  | 是否需要展示Y轴标签，默认为true|
-| marginLeft | Number | Y轴标签与canvas左边缘的距离(不包含padding里面的设置），默认是0 |
+| show        | Boolean  | 是否需要展示Y轴标签，默认为true|
+| marginLeft  | Number | Y轴标签与canvas左边缘的距离(不包含padding里面的设置），默认是0 |
 | marginRight | Number | Y轴变迁与Y轴中轴线的距离，默认为10 |
 | color     | String  | Y轴标签的字体颜色 |
 | fontSize  | Number   | Y轴标签的字体大小 |
-
+| unit      | String | Y轴标签的单位，默认为'' |
+| yAxisCount | Number | Y轴标签数(不包含原点标签)，默认为4|
 
 ### yAxisLine配置
 
@@ -147,6 +145,7 @@ function formatY(max, min, yAxisCount) {
 | needFill |Boolean| 是否需要闭合填充颜色，默认为true|
 | fillColor |String| 闭合填充颜色，默认为rgba(117, 135, 219, 0.3)|
 | circle   |Object| 如果数据点为圆，圆样式的配置|
+| maxCircleCount | Number | 如果单条线的点很少，每个点会带上一个小圆环，当最长线条的点数量大于maxCircleCount的时候，不绘制小圆环，默认为30 |
 
 #### circle
 | keyName  | 类型     |  描述    |

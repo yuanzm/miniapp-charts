@@ -108,6 +108,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "extend", function() { return extend; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getDataRangeAndStep", function() { return getDataRangeAndStep; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "changeUnit", function() { return changeUnit; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatX", function() { return formatX; });
 /*
  * @author: zimyuan
  */
@@ -337,6 +338,25 @@ function changeUnit(value, fixed = 1) {
 }
 
 function none() {
+}
+
+function formatX(length, maxXPoint) {
+    let step  = Math.ceil(length /  maxXPoint );
+    let start = 0;
+
+    // 记录原始的step长度
+    let origin = step;
+
+    while ( step * ( maxXPoint - 1 ) >= length ) {
+        step--;
+    }
+
+    if ( step < origin ) {
+        start = Math.floor(( length - step * ( maxXPoint - 1 ) ) / 2);
+    }
+
+
+    return { step, start: start > 1 ? start - 1 : start };
 }
 
 

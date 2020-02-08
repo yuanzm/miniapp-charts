@@ -5,9 +5,6 @@ import {
 } from '../util.js';
 
 let linechartConfig = {
-    // Y轴标签的单位
-    unit       : '',
-
     /**
      * Y轴标签以及toolTip的单位换算函数
      * 组件内置了changeUnit函数，可以自行设置
@@ -52,18 +49,17 @@ let linechartConfig = {
      */
     maxCircleCount: 30,
 
-    /**
-     * 默认x轴打七个点
-     * 可以自行配置，但仍然会有保底逻辑
-     */
-    xAxisCount   : 7,
-
     // x轴文案的样式配置
     xAxis: {
         show     : true,
         marginTop: 10,
         color    : '#B8B8B8',
         fontSize : 11,
+        /**
+        * 默认x轴打七个点
+        * 可以自行配置，但仍然会有保底逻辑
+        */
+        xAxisCount   : 7,
     },
 
     /**
@@ -78,12 +74,6 @@ let linechartConfig = {
     },
 
     /**
-     * 默认Y轴打四个点
-     * 也可以自行配置，但仍然会有保底逻辑
-     */
-    yAxisCount  : 4,
-
-    /**
      * y轴的样式配置
      */
     yAxis: {
@@ -92,6 +82,12 @@ let linechartConfig = {
         marginRight: 10,
         color      : '#B8B8B8',
         fontSize   : 11,
+        unit       : '',
+        /**
+        * 默认Y轴打四个点
+        * 也可以自行配置，但仍然会有保底逻辑
+        */
+        yAxisCount  : 4,
     },
 
     // 第二Y轴
