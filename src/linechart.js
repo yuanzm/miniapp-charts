@@ -427,7 +427,7 @@ export default class LineChart extends Base {
             min = Math.min(this.getMinY(points), min);
         });
 
-        let formatFunc = this._config.formatY || getDataRangeAndStep;
+        let formatFunc = this._config.formatY !== none ? this._config.formatY : getDataRangeAndStep;
         let range = formatFunc(max, min, yAxisCount);
 
         return {

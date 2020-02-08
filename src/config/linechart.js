@@ -1,7 +1,8 @@
 import common from './common.js';
 import {
     extend,
-    none
+    none,
+    changeUnit
 } from '../util.js';
 
 let linechartConfig = {
@@ -9,9 +10,9 @@ let linechartConfig = {
      * Y轴标签以及toolTip的单位换算函数
      * 组件内置了changeUnit函数，可以自行设置
      */
-    changeUnit : null,
+    changeUnit : changeUnit,
 
-    secondChangeUnit: null,
+    secondChangeUnit: changeUnit,
 
     /**
      * 给定一组数据，Y轴标签的最大值最小值和每一步的值都是组件自动算出来的
@@ -25,7 +26,7 @@ let linechartConfig = {
      *      似的divider是大于1的数值，同时将放大的倍数告知组件，默认为1
      * }
      */
-    formatY    : null,
+    formatY    : none,
 
     // 折线图默认配置
     lineStyle: {
@@ -33,7 +34,7 @@ let linechartConfig = {
         lineColor : '#7587db',
         fillColor : 'rgba(117, 135, 219, 0.3)',
         // 是否需要背景颜色
-        needFill  : true,
+        needFill  : false,
         circle    : {
             show       : true,
             fillColor  : '#FFFFFF',

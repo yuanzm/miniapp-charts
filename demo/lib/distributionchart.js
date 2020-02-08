@@ -395,7 +395,7 @@ __webpack_require__.r(__webpack_exports__);
      * Y轴标签以及toolTip的单位换算函数
      * 组件内置了changeUnit函数，可以自行设置
      */
-    changeUnit : null,
+    changeUnit : _util_js__WEBPACK_IMPORTED_MODULE_0__["changeUnit"],
 
     /**
      * 图表内本身的padding

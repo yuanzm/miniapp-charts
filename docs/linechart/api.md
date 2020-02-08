@@ -124,6 +124,8 @@ function changeUnit(value) {
 给定一组数据，为了绘图的饱满，Y轴标签的最大值最小值和每一步的值都是组件自动算出来的
 有些场景组件算出来的可能不满足需求，或者调用者就是想自定义Y轴标签的数据，
 因此提供自定义的formatY(max, min, yAxisCount)函数，调用者按要求返回数据给组件处理即可
+
+可以参考[示例](/linechart/examples.html#formaty)
 ``` js
 function formatY(max, min, yAxisCount) {
     // 这里一顿处理之后按下面的格式返回
