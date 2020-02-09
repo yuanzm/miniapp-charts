@@ -16,7 +16,7 @@
 
 <canvas
     canvas-id="radar"
-    style="width:200px;height:200px;margin-top: 220px"
+    style="width:300px;height:300px;margin-top: 220px"
 />
 
 <canvas

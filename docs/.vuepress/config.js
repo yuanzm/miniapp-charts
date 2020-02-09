@@ -72,6 +72,7 @@ module.exports = {
                 children: [
                     '/radar/overview',
                     '/radar/api',
+                    '/radar/examples',
                 ]
             }
         ]

@@ -12,8 +12,8 @@ Page({
 
         this.radarchart = new RadarChart(context,
             {
-                width : 200,
-                height: 200,
+                width : 300,
+                height: 300,
                 debug : true,
                 padding: {
                     left: 5, right: 5, top:5, bottom: 5

@@ -1,0 +1,11 @@
+<view style="font-size: 16px; padding-left: 10px; margin-bottom: 20px;">startAngle</view>
+<canvas
+    canvas-id="radar"
+    style="width:300px;height:300px;"
+/>
+
+<view style="font-size: 16px; padding-left: 10px; margin-bottom: 20px;">multiLabels</view>
+<canvas
+    canvas-id="multiLabels"
+    style="width:300px;height:300px;"
+/>

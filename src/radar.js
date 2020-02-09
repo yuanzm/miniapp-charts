@@ -178,7 +178,7 @@ export default class RadarChart extends Base {
 
                         // 直接替换掉原始数据的值，方便后续使用
                         newItem.text  = item.text;
-                        label[lIndex] = label;
+                        label[lIndex] = newItem;
 
                         subSize  = this.calOneLabelSize(item.text, newItem);
                     }
@@ -351,10 +351,16 @@ export default class RadarChart extends Base {
         });
     }
 
-    /**
-     * 计算Y轴数据
-     */
-    calYAxisData() {
+    calOneLabel(style, label, x, y) {
+        return {
+            display : style.display,
+            fontSize: style.fontSize,
+            color   : style.color,
+            text    : label,
+            x       : x,
+            y       : y,
+            isbottom: true,
+        };
     }
 
     calLabelData() {
@@ -365,43 +371,41 @@ export default class RadarChart extends Base {
         this._render.labels.forEach((label, index) => {
             let pos = posData[index];
             if ( isType('string', label) ) {
-                result.push({
-                    display : style.display,
-                    fontSize: style.fontSize,
-                    color   : style.color,
-                    text    : label,
-                    x       : pos.startX + style.margin.left,
-                    y       : pos.startY + style.fontSize + style.margin.top,
-                    isbottom: true,
-                });
+                result.push( this.calOneLabel(
+                    style,
+                    label,
+                    pos.startX + style.margin.left,
+                    pos.startY + style.fontSize + style.margin.top,
+                ) );
             }
 
             else if ( isType('array', label) ) {
                 label.forEach(( item, index) => {
                     if ( isType('string', item ) ) {
-                        result.push({
-                            display : style.display,
-                            fontSize: style.fontSize,
-                            color   : style.color,
-                            text    : item,
-                            x       : pos.startX + style.margin.left,
-                            y       : pos.startY + ( style.fontSize +  style.margin.top ) * (index + 1 ),
-                            isbottom: true,
-                        });
+                        result.push( this.calOneLabel(
+                            style,
+                            item,
+                            pos.startX + style.margin.left,
+                            pos.startY + ( style.fontSize +  style.margin.top ) * (index + 1 ),
+                        ) );
+                    } else if ( isType('object', item) ) {
+                        result.push( this.calOneLabel(
+                            Object.assign(deepCopy(style), item),
+                            item.text,
+                            pos.startX + style.margin.left,
+                            pos.startY + ( style.fontSize +  style.margin.top ) * (index + 1 ),
+                        ) );
                     }
                 });
             }
 
             else if ( isType('object', label) ) {
-                result.push({
-                    display : label.display,
-                    fontSize: label.fontSize,
-                    color   : label.color,
-                    text    : label.text,
-                    x       : pos.startX + label.margin.left,
-                    y       : pos.startY + ( label.fontSize +  label.margin.top ),
-                    isbottom: true,
-                });
+                result.push( this.calOneLabel(
+                    Object.assign(deepCopy(style), label),
+                    label.text,
+                    pos.startX + label.margin.left,
+                    pos.startY + ( label.fontSize +  label.margin.top ),
+                ) );
             }
         });
 

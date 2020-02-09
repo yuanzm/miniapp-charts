@@ -1,4 +1,4 @@
-# 参数
+# 文档
 
 ## 图例
 由于配置过多，文字表达可能带来歧义，这里附上图例以供参考
@@ -22,8 +22,8 @@
 | height   | Number   | 同width，需要手动传入，默认为250 |
 | padding  | Object   | canvas的绘图区域的padding，与canvas本身样式的padding无关|
 | grid     | Object   | 雷达图网状图和边界值等配置 |
-| radiationLineStyle | Object | 从中心点往外辐射的线条配置|
-| label    |  Object | 雷达标签文案配置 |
+| radiationLineStyle  | Object | 从中心点往外辐射的线条配置|
+| label    |  Object  | 雷达标签文案配置 |
 | datasetStyle | Object | 单个雷达区域配置|
 | startAngle | Number | 雷达图的旋转角度，默认是0|
 | animation  | Boolean | 是否开启动画，默认为true|
@@ -93,6 +93,13 @@
 #### data配置详情
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
-| labels   | Array    | 雷达图顶点的标签数据，Array的每一项可以是String、Array和Object类型，具体配置下面会介绍|
+| labels   | Array    | 雷达图顶点的标签数据，Array的每一项称为labelItem，可以是String、Array和Object类型，详见[labelItem](#labelItem)|
 | datasets | Array    | Array的每一项为一个Object，这个Object本身是配置datasetStyle的结构，增加了一个Array类型的data属性，用于表示雷达图每个顶点的数据 |
+
+##### labelItem
+| 类型|   描述    |
+|----------|----------|
+| String   | 在该顶点附近添加一个文案，样式与[label配置详情](#label配置详情)相同|
+| Object   | 在该柱体上面添加一个文案，该对象属性与[label配置详情](#label配置详情)相同，新增一个text属性表示文案字符串|
+| Array    | 在该柱体上面添加多个文案，数组的每一项可以是String，也可以是Object类型的，与上述两种类型一致|
 
