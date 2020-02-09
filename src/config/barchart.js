@@ -17,7 +17,6 @@ let barchartConfig = {
      * }
      */
     formatY    : null,
-    maxY       : Infinity,
 
     // x轴文案的样式配置
     xAxis: {
@@ -39,12 +38,6 @@ let barchartConfig = {
     },
 
     /**
-     * 默认Y轴打四个点
-     * 也可以自行配置，但仍然会有保底逻辑
-     */
-    yAxisCount  : 4,
-
-    /**
      * y轴的样式配置
      */
     yAxis: {
@@ -53,6 +46,12 @@ let barchartConfig = {
         marginRight: 10,
         color      : '#B8B8B8',
         fontSize   : 11,
+        unit       : '',
+        /**
+        * 默认Y轴打四个点
+        * 也可以自行配置，但仍然会有保底逻辑
+        */
+        yAxisCount  : 4,
     },
 
     /**
@@ -67,12 +66,10 @@ let barchartConfig = {
 
     barStyle: {
         fillColor: '#6684C7',
+        compareBarMargin: 5,
+        barWidth: 30,
+        leftRightPadding: 10,
     },
-    barWidth: 30,
-
-    compareBarMargin: 5,
-
-    leftRightPadding: 10,
 
     barLabelStyle: {
         color      : '#B8B8B8',

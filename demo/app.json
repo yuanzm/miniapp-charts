@@ -1,7 +1,7 @@
 {
     "pages": [
-        "linechart/linechart",
-        "simple/simple"
+        "simple/simple",
+        "linechart/linechart"
     ],
     "window": {
         "backgroundTextStyle": "light",

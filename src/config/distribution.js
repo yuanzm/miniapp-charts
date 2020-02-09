@@ -29,10 +29,9 @@ let distributionConfig = {
         fillColor: '#6684C7',
         height   : 10,
         padding  : 12,
+        topBottomPadding: 5,
+        compareBarMargin: 3,
     },
-    compareBarMargin: 3,
-
-    topBottomPadding: 5,
 
     barLabelStyle: {
         color        : '#B8B8B8',

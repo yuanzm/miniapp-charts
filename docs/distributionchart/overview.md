@@ -15,6 +15,9 @@
     style="width: 414px; height: {{ totalHeight }}px;"
 />
 ```
+::: tip
+分布图比较特殊，图表总高度不是一开始决定的，而是根据配置对数据计算之后才得到的，因此需要根据组件的totalHeight属性后置设置。
+:::
 
 2. 在js里面实例化组件
 ``` js

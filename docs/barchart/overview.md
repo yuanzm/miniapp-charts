@@ -4,7 +4,7 @@
 
 ## 示意图
 
-<img :src="$withBase('/imgs/barchart.jpg')" width=400>
+<img :src="$withBase('/imgs/barchart.jpg')" width=600>
 
 ## 代码示例
 

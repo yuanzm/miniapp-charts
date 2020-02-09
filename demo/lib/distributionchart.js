@@ -1017,7 +1017,7 @@ class DistributionChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["def
         const render = this._render;
         const barStyle = config.barStyle;
 
-        let yStart = config.padding.top + config.topBottomPadding;
+        let yStart = config.padding.top + config.barStyle.topBottomPadding;
         let xStart = config.padding.left + render.yAxisWidth;
 
         let first  = this._datasets[0];
@@ -1058,7 +1058,7 @@ class DistributionChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["def
                 yStart += barStyle.height;
 
                 if ( second && barIndex === 0 ) {
-                    yStart += config.compareBarMargin;
+                    yStart += config.barStyle.compareBarMargin;
                 } else {
                     yStart += barStyle.padding;
                 }
@@ -1067,7 +1067,7 @@ class DistributionChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["def
             });
 
             let centerY = (  barArr.length > 1
-                           ? yStart - barStyle.padding - barStyle.height - config.compareBarMargin / 2
+                           ? yStart - barStyle.padding - barStyle.height - config.barStyle.compareBarMargin / 2
                            : yStart - barStyle.padding - barStyle.height / 2  );
 
             this._render.yAxisData[index].y = centerY;
@@ -1075,7 +1075,7 @@ class DistributionChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["def
 
         this._render.barData      = barData;
         this._render.barLabelData = barLabelData;
-        this._render.totalHeight  = yStart - barStyle.padding + config.padding.bottom + config.topBottomPadding;
+        this._render.totalHeight  = yStart - barStyle.padding + config.padding.bottom + config.barStyle.topBottomPadding;
         this.totalHeight          = this._render.totalHeight;
     }
 
@@ -1260,10 +1260,9 @@ let distributionConfig = {
         fillColor: '#6684C7',
         height   : 10,
         padding  : 12,
+        topBottomPadding: 5,
+        compareBarMargin: 3,
     },
-    compareBarMargin: 3,
-
-    topBottomPadding: 5,
 
     barLabelStyle: {
         color        : '#B8B8B8',

@@ -6,11 +6,21 @@
 <img :src="$withBase('/imgs/barcharttooltip.jpg')" width=800>
 
 ## 构造函数
-### Linechart(context, [cfg], [context2])
+### BarChart(context, [cfg])
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
 | context  | Object   | 小程序canvas的Context |
 | cfg      | Object   | 组件配置对象，cfg的属性值会替换默认配置对应属性的值|
+
+``` js
+const barchart= new BarChart(
+    wx.createCanvasContext('bar'),
+    {
+        width : 414,
+        height: 200,
+    },
+);
+```
 
 ### cfg
 组件完整的配置可见：[config/barchart.js](https://github.com/yuanzm/miniapp-charts/blob/master/src/config/barchart.js)
@@ -20,17 +30,12 @@
 | debug    | Boolean  | 是否开启调试模式，调试模式下面会打出一些调试信息，默认为false|
 | width    | Number   | canvas的宽度，因为小程序没有DOM，不能获取canvas的样式信息，需要手动传入, 默认为414 |
 | height   | Number   | 同width，需要手动传入，默认为200 |
-| unit     | String | Y轴标签的单位，默认为'' |
 | padding  | Object   | canvas的绘图区域的padding，与canvas本身样式的padding无关|
-| xAxis      | Object | X轴标签样式配置 |
-| xAxisLine  | Object | X中轴线样式配置 |
-| yAxisCount | Number | Y轴标签数(不包含原点标签)，默认为4|
-| yAxis     | Object | Y轴样式配置    |
-| yAxisLine | Object | Y轴中轴线样式配置 |
-| barStyle  | Object | 柱体的样式配置 |
-| barWidth         | Number| 柱体的宽度，默认为30|
-| compareBarMargin | Number| 每组数据有多个柱体的时候，柱体的间距，默认为5|
-| leftRightPadding | Number| X轴绘图区域的左右间距，默认为10|
+| xAxis      | Object | X轴标签样式配置，详见[xAxis配置](#xaxis配置) |
+| xAxisLine  | Object | xAxisLine为每个x轴标签对应的垂直线段，[xAxisLine配置](#xaxisline配置)  |
+| yAxis     | Object  | Y轴样式配置    |
+| yAxisLine | Object  | Y轴中轴线样式配置 |
+| barStyle  | Object  | 柱体的样式配置 |
 | barLabelStyle | Object |柱子上文字的样式配置 |
 
 ### padding配置
@@ -52,6 +57,9 @@
 | fontSize | Number   | X轴标签字体大小，默认是11 |
 
 ### xAxisLine配置
+::: tip
+仅原点处的X轴标签有对应的垂直线段
+:::
 
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
@@ -70,6 +78,8 @@
 | marginRight | Number | Y轴变迁与Y轴中轴线的距离，默认为10 |
 | color     | String  | Y轴标签的字体颜色 |
 | fontSize  | Number   | Y轴标签的字体大小 |
+| unit     | String | Y轴标签的单位，默认为'' |
+| yAxisCount | Number | Y轴标签数(不包含原点标签)，默认为4|
 
 ### yAxisLine配置
 
@@ -83,18 +93,29 @@
 
 ### changeUnit
 单位转换函数，组件内置了默认的单位转换函数，如果想采用自己的函数替换即可。
+``` js
+// changeUnit函数示例
+function changeUnit(value) {
+    return '段位' + value;
+}
+```
 
 ### formatY
-给定一组数据，Y轴标签的最大值最小值和每一步的值都是组件自动算出来的
+给定一组数据，为了绘图的饱满，Y轴标签的最大值最小值和每一步的值都是组件自动算出来的
 有些场景组件算出来的可能不满足需求，或者调用者就是想自定义Y轴标签的数据，
 因此提供自定义的formatY(max, min, yAxisCount)函数，调用者按要求返回数据给组件处理即可
-```
-@return {
-    max: 将原始的最大值处理之后的最大值
-    min: 将原始的最小值处理之后的最小值
-    divider: 每一步的值
-    multiple: 如果处理过程中发现divider是小于1的小数，需要将上面三个数值相对应放大一定倍数
-    似的divider是大于1的数值，同时将放大的倍数告知组件，默认为1
+
+可以参考[示例](/linechart/examples.html#formaty)
+``` js
+function formatY(max, min, yAxisCount) {
+    // 这里一顿处理之后按下面的格式返回
+    return {
+        max: 将原始的最大值处理之后的最大值
+        min: 将原始的最小值处理之后的最小值
+        divider: 每一步的值
+        multiple: 如果处理过程中发现divider是小于1的小数，需要将上面三个数值相对应放大一定倍数
+        似的divider是大于1的数值，同时将放大的倍数告知组件，默认为1
+    }
 }
 ```
 
@@ -102,6 +123,9 @@
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
 | fillColor| String  |柱体填充色，默认为#6684C7|
+| barWidth         | Number| 柱体的宽度，默认为30|
+| compareBarMargin | Number| 每组数据有多个柱体的时候，柱体的间距，默认为5|
+| leftRightPadding | Number| X轴绘图区域的左右间距，默认为10|
 
 ### barLabelStyle配置
 

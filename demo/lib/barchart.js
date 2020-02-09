@@ -1008,28 +1008,29 @@ class BarChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
         const config = this._config;
         const render = this._render;
 
+        const barWidth = config.barStyle.barWidth;
+
         const xCenterAxis   = render.xCenterAxis;
         const first         = this._datasets[0];
         const second        = this._datasets[1];
         const count         = first.points.length;
         let leftBottom      = this._boundary.leftBottom;
-        let totalBarWidth   = this._datasets.length * count * this._config.barWidth
+        let totalBarWidth   = this._datasets.length * count * barWidth
 
         if ( second ) {
-            totalBarWidth += this._config.compareBarMargin * count;
+            totalBarWidth += this._config.barStyle.compareBarMargin * count;
         }
 
         // 每组柱子的间距
-        const barPadding    = ( xCenterAxis.end.x - xCenterAxis.start.x - totalBarWidth - this._config.leftRightPadding * 2 ) / (count - 1);
+        const barPadding    = ( xCenterAxis.end.x - xCenterAxis.start.x - totalBarWidth - this._config.barStyle.leftRightPadding * 2 ) / (count - 1);
 
         // 柱子的X轴开始位置
-        let xStart = xCenterAxis.start.x + this._config.leftRightPadding;
+        let xStart = xCenterAxis.start.x + this._config.barStyle.leftRightPadding;
 
         render.bars         = [];
         render.barLabels    = [];
         render.topbarLabels = [];
 
-        const barWidth = config.barWidth;
         const xAxis    = config.xAxis;
         const bottom   = leftBottom.y + xAxis.marginTop + xAxis.fontSize;
         const barStyle = config.barStyle;
@@ -1051,21 +1052,21 @@ class BarChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
                     fillColor: bar.fillColor,
                     x        : xStart,
                     y        : y,
-                    width    : this._config.barWidth,
+                    width    : barWidth,
                     height   : height,
                 }
                 render.bars.push(rect);
                 if ( bar.barLabel ) {
-                    let { arr } = this.calLabelDataForItem(xStart + this._config.barWidth / 2 + 1, y, bar.barLabel);
+                    let { arr } = this.calLabelDataForItem(xStart + barWidth / 2 + 1, y, bar.barLabel);
 
                     render.topbarLabels = this._render.topbarLabels.concat(arr);
                 }
 
-                xStart += config.barWidth;
+                xStart += barWidth;
 
                 if ( second && barIndex === 0 ) {
-                    xStart += config.compareBarMargin;
-                    centerX += (barWidth / 2 + config.compareBarMargin / 2) + 0.5;
+                    xStart += config.barStyle.compareBarMargin;
+                    centerX += (barWidth / 2 + config.barStyle.compareBarMargin / 2) + 0.5;
                 } else {
                     xStart += barPadding;
                 }
@@ -1151,9 +1152,6 @@ class BarChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
     calYAxis() {
         let { max, min, yDivider, maxYPoint, longestLine } = this.calYAxisBoundary();
 
-            /*const height = ( bar.value - this._render.min) * this._render.unitY * this._render.yMultiple;
-            const y = leftBottom.y - height;*/
-
         let maxItem;
         this._datasets.forEach(dataset => {
             dataset.points.forEach(item => {
@@ -1179,7 +1177,7 @@ class BarChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
 
         let cHeight = this._boundary.leftBottom.y - this._boundary.leftTop.y;
         // 计算Y轴上两个点之间的像素值
-        let unitY =  cHeight / ( yDivider * this._render.yMultiple  * this._config.yAxisCount );
+        let unitY =  cHeight / ( yDivider * this._render.yMultiple  * this._config.yAxis.yAxisCount );
 
         /**
          * 计算最长的条加上label之后的高度,如果超过绘图边界，将unitY更改成刚好使得最长的条填充满绘图区
@@ -1200,9 +1198,9 @@ class BarChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
                            ? 2
                            : 1 );
 
-        for( let i = 0; i < this._config.yAxisCount + 1; i++ ) {
+        for( let i = 0; i < this._config.yAxis.yAxisCount + 1; i++ ) {
             let word = {
-                text    : changeFunc(min + i * yDivider, toFixed) + this._config.unit,
+                text    : changeFunc(min + i * yDivider, toFixed) + this._config.yAxis.unit,
                 color   : yAxis.color,
                 fontSize: yAxis.fontSize,
                 x       : leftStart,
@@ -1254,7 +1252,7 @@ class BarChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
         let datasets    = this._datasets;
         let maxYPoint   = 0;
         let longestLine = datasets[0];
-        let yAxisCount  = this._config.yAxisCount;
+        let yAxisCount  = this._config.yAxis.yAxisCount;
         let max         = -Infinity;
         let min         = Infinity;
 
@@ -1271,9 +1269,6 @@ class BarChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
         });
 
         let formatFunc = this._config.formatY || _util_js__WEBPACK_IMPORTED_MODULE_0__["getDataRangeAndStep"];
-        /*if ( max > this._config.maxY ) {
-            max = maxY;
-        }*/
         let range = formatFunc(max, min, yAxisCount);
 
         this._render.min       = range.min;
@@ -1445,7 +1440,6 @@ let barchartConfig = {
      * }
      */
     formatY    : null,
-    maxY       : Infinity,
 
     // x轴文案的样式配置
     xAxis: {
@@ -1467,12 +1461,6 @@ let barchartConfig = {
     },
 
     /**
-     * 默认Y轴打四个点
-     * 也可以自行配置，但仍然会有保底逻辑
-     */
-    yAxisCount  : 4,
-
-    /**
      * y轴的样式配置
      */
     yAxis: {
@@ -1481,6 +1469,12 @@ let barchartConfig = {
         marginRight: 10,
         color      : '#B8B8B8',
         fontSize   : 11,
+        unit       : '',
+        /**
+        * 默认Y轴打四个点
+        * 也可以自行配置，但仍然会有保底逻辑
+        */
+        yAxisCount  : 4,
     },
 
     /**
@@ -1495,12 +1489,10 @@ let barchartConfig = {
 
     barStyle: {
         fillColor: '#6684C7',
+        compareBarMargin: 5,
+        barWidth: 30,
+        leftRightPadding: 10,
     },
-    barWidth: 30,
-
-    compareBarMargin: 5,
-
-    leftRightPadding: 10,
 
     barLabelStyle: {
         color      : '#B8B8B8',
