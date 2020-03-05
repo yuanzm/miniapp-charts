@@ -23,8 +23,9 @@
   "bugs": {
     "url": "https://github.com/yuanzm/minapp-charts/issues"
   },
-  "homepage": "https://github.com/yuanzm/minapp-charts#readme",
+  "homepage": "https://github.com/yuanzm/miniapp-charts",
   "devDependencies": {
+    "cz-conventional-changelog": "^3.1.0",
     "eslint": "^5.16.0",
     "moment": "^2.24.0",
     "webpack": "^4.20.2",
@@ -32,5 +33,10 @@
   },
   "dependencies": {
     "vuepress": "^1.2.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }

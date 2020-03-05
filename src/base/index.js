@@ -97,6 +97,16 @@ export default class Base extends ChartBase {
             height: this._boundary.leftBottom.y - this._boundary.leftTop.y,
         };
 
+        this._area = {
+            ...this._boundary.size,
+            left: this._boundary.leftTop.x,
+            top: this._boundary.leftTop.y,
+            right: this._boundary.rightBottom.x,
+            bottom: this._boundary.rightBottom.y
+        }
+
+        console.log(this._area)
+
         this.log('calBoundaryPoint');
 
         return this._boundary;

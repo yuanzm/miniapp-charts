@@ -1,5 +1,3 @@
-const moment = require('moment');
-
 module.exports = {
     title: 'miniapp-charts',
     base:"/miniapp-charts/",
@@ -9,19 +7,6 @@ module.exports = {
         ["meta", {name: "robots", content: "all"}],
         ["meta", {name: "author", content: "yuanzm"}],
         ["meta", {name: "keywords", content: "miniapp-charts, charts, miniapp, js, canvas, github, components"}],
-    ],
-    plugins: [
-        [
-            '@vuepress/last-updated',
-            {
-                transformer: (timestamp, lang) => {
-                    // 不要忘了安装 moment
-                    const moment = require('moment')
-                    moment.locale(lang)
-                    return moment(timestamp).fromNow()
-                }
-            }
-        ]
     ],
     themeConfig: {
         repo: 'yuanzm/miniapp-charts',

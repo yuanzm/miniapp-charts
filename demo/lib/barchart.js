@@ -101,6 +101,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "splineCurve", function() { return splineCurve; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "_bezierCurveTo", function() { return _bezierCurveTo; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "_isPointInArea", function() { return _isPointInArea; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updateBezierControlPoints", function() { return updateBezierControlPoints; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "none", function() { return none; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isType", function() { return isType; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "deepCopy", function() { return deepCopy; });
@@ -111,8 +115,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatX", function() { return formatX; });
 /*
  * @author: zimyuan
- */
-
+ */ 
 /*
  * 判断JavaScript对象类型的函数
  * @param {}
@@ -359,6 +362,119 @@ function formatX(length, maxXPoint) {
     return { step, start: start > 1 ? start - 1 : start };
 }
 
+function splineCurve(firstPoint, middlePoint, afterPoint, t) {
+	// Props to Rob Spencer at scaled innovation for his post on splining between points
+	// http://scaledinnovation.com/analytics/splines/aboutSplines.html
+
+	// This function must also respect "skipped" points
+
+	const previous = firstPoint.skip ? middlePoint : firstPoint;
+	const current = middlePoint;
+	const next = afterPoint.skip ? middlePoint : afterPoint;
+
+	const d01 = Math.sqrt(Math.pow(current.x - previous.x, 2) + Math.pow(current.y - previous.y, 2));
+	const d12 = Math.sqrt(Math.pow(next.x - current.x, 2) + Math.pow(next.y - current.y, 2));
+
+	let s01 = d01 / (d01 + d12);
+	let s12 = d12 / (d01 + d12);
+
+	// If all points are the same, s01 & s02 will be inf
+	s01 = isNaN(s01) ? 0 : s01;
+	s12 = isNaN(s12) ? 0 : s12;
+
+	const fa = t * s01; // scaling factor for triangle Ta
+	const fb = t * s12;
+
+	return {
+		previous: {
+			x: current.x - fa * (next.x - previous.x),
+			y: current.y - fa * (next.y - previous.y)
+		},
+		next: {
+			x: current.x + fb * (next.x - previous.x),
+			y: current.y + fb * (next.y - previous.y)
+		}
+	};
+}
+
+
+/**
+ * @private
+ */
+function _bezierCurveTo(ctx, previous, target, flip) {
+	if (!previous) {
+		return ctx.lineTo(target.x, target.y);
+	}
+	ctx.bezierCurveTo(
+		flip ? previous.controlPointPreviousX : previous.controlPointNextX,
+		flip ? previous.controlPointPreviousY : previous.controlPointNextY,
+		flip ? target.controlPointNextX : target.controlPointPreviousX,
+		flip ? target.controlPointNextY : target.controlPointPreviousY,
+		target.x,
+		target.y);
+}
+
+
+function capControlPoint(pt, min, max) {
+	return Math.max(Math.min(pt, max), min);
+}
+
+/**
+ * Returns true if the point is inside the rectangle
+ * @param {object} point - The point to test
+ * @param {object} area - The rectangle
+ * @returns {boolean}
+ * @private
+ */
+function _isPointInArea(point, area) {
+	const epsilon = 0.5; // margin - to match rounded decimals
+
+	return point.x > area.left - epsilon && point.x < area.right + epsilon &&
+		point.y > area.top - epsilon && point.y < area.bottom + epsilon;
+}
+
+function capBezierPoints(points, area) {
+	let i, ilen, point;
+	for (i = 0, ilen = points.length; i < ilen; ++i) {
+		point = points[i];
+		if (!_isPointInArea(point, area)) {
+			continue;
+		}
+		if (i > 0 && _isPointInArea(points[i - 1], area)) {
+			point.controlPointPreviousX = capControlPoint(point.controlPointPreviousX, area.left, area.right);
+			point.controlPointPreviousY = capControlPoint(point.controlPointPreviousY, area.top, area.bottom);
+		}
+		if (i < points.length - 1 && _isPointInArea(points[i + 1], area)) {
+			point.controlPointNextX = capControlPoint(point.controlPointNextX, area.left, area.right);
+			point.controlPointNextY = capControlPoint(point.controlPointNextY, area.top, area.bottom);
+		}
+	}
+}
+
+function updateBezierControlPoints(points, area ) {
+	let i, ilen, point, controlPoints;
+    const loop = false;
+
+    let prev = loop ? points[points.length - 1] : points[0];
+    for (i = 0, ilen = points.length; i < ilen; ++i) {
+        point = points[i];
+        controlPoints = splineCurve(
+            prev,
+            point,
+            points[Math.min(i + 1, ilen - (loop ? 0 : 1)) % ilen],
+            /*options.tension*/
+            0.4
+        );
+        point.controlPointPreviousX = controlPoints.previous.x;
+        point.controlPointPreviousY = controlPoints.previous.y;
+        point.controlPointNextX = controlPoints.next.x;
+        point.controlPointNextY = controlPoints.next.y;
+        prev = point;
+    }
+
+	capBezierPoints(points, area);
+}
+
 
 
 
@@ -517,6 +633,16 @@ class Base extends _draw_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
             height: this._boundary.leftBottom.y - this._boundary.leftTop.y,
         };
 
+        this._area = {
+            ...this._boundary.size,
+            left: this._boundary.leftTop.x,
+            top: this._boundary.leftTop.y,
+            right: this._boundary.rightBottom.x,
+            bottom: this._boundary.rightBottom.y
+        }
+
+        console.log(this._area)
+
         this.log('calBoundaryPoint');
 
         return this._boundary;
@@ -580,11 +706,14 @@ class Base extends _draw_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return ChartBase; });
+/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /**
  * 图表组件基础类，封装一些canvas画图的基本方法
  * 这里可用于兼容H5和小程序
  * 因为小程序和H5的绘图API并不是完全一致的，通过基础类来兼容是最合适的
  */
+
+
 
 class ChartBase {
     wordWidth(words, fontSize) {
@@ -744,21 +873,32 @@ class ChartBase {
         let end   = points[points.length - 1];
 
         ctx.moveTo(start.x, start.y);
+        let prev;
 
         for ( let index = 1; index < points.length - 1; index++ ) {
             let point = points[index];
-            if ( index === 1 )
+            if ( index === 1 ) {
                 ctx.moveTo(point.x, point.y);
+            }
 
-            else
-                ctx.lineTo(point.x, point.y);
+            else {
+                if (opts.curve ) {
+                    Object(_util_js__WEBPACK_IMPORTED_MODULE_0__["_bezierCurveTo"])(ctx, prev, point);
+                } else {
+                    ctx.lineTo(point.x, point.y);
+                }
+            }
+
+            prev = point;
         }
 
         ctx.stroke();
 
+        // 闭合区域
         ctx.lineTo(end.x, end.y);
         ctx.lineTo(start.x, start.y);
 
+            ctx.fill();
         if ( opts.needFill !== false ) {
             ctx.fill();
         }

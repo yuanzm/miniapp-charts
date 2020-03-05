@@ -62,7 +62,7 @@ Page({
         this.linechart = linechart;
 
         let points = [];
-        for (let i = 0; i < 30; i++) {
+        for (let i = 0; i < 50; i++) {
             points.push({
                 x: i + 1,
                 y: Math.ceil( 50 + Math.random() * 10),

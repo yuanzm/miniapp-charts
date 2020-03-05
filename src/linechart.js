@@ -10,7 +10,7 @@ import {
     isPlainObject,
     getDataRangeAndStep,
     none,
-    formatX,
+    updateBezierControlPoints
 } from './util.js';
 
 import config    from './config/linechart.js';
@@ -116,6 +116,8 @@ export default class LineChart extends Base {
                     x           : _oneline.points[_oneline.points.length - 1].x,
                     y           : leftBottom.y,
                 });
+
+                updateBezierControlPoints(_oneline.points, this._area);
 
                 pointData.push(_oneline);
             }

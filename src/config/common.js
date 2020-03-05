@@ -1,5 +1,4 @@
 import {
-    none,
     changeUnit
 } from '../util.js';
 /**

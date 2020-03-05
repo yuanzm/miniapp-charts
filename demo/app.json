@@ -1,8 +1,8 @@
 {
     "pages": [
-        "radar/radar",
         "simple/simple",
-        "linechart/linechart"
+        "linechart/linechart",
+        "radar/radar"
     ],
     "window": {
         "backgroundTextStyle": "light",

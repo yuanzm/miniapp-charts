@@ -4,6 +4,8 @@
  * 因为小程序和H5的绘图API并不是完全一致的，通过基础类来兼容是最合适的
  */
 
+import { _bezierCurveTo } from '../util.js';
+
 export default class ChartBase {
     wordWidth(words, fontSize) {
         if ( words === undefined || words === null )
@@ -162,21 +164,32 @@ export default class ChartBase {
         let end   = points[points.length - 1];
 
         ctx.moveTo(start.x, start.y);
+        let prev;
 
         for ( let index = 1; index < points.length - 1; index++ ) {
             let point = points[index];
-            if ( index === 1 )
+            if ( index === 1 ) {
                 ctx.moveTo(point.x, point.y);
+            }
 
-            else
-                ctx.lineTo(point.x, point.y);
+            else {
+                if (opts.curve ) {
+                    _bezierCurveTo(ctx, prev, point);
+                } else {
+                    ctx.lineTo(point.x, point.y);
+                }
+            }
+
+            prev = point;
         }
 
         ctx.stroke();
 
+        // 闭合区域
         ctx.lineTo(end.x, end.y);
         ctx.lineTo(start.x, start.y);
 
+            ctx.fill();
         if ( opts.needFill !== false ) {
             ctx.fill();
         }

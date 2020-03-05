@@ -35,6 +35,7 @@ let linechartConfig = {
         fillColor : 'rgba(117, 135, 219, 0.3)',
         // 是否需要背景颜色
         needFill  : false,
+        curve     : true,
         circle    : {
             show       : true,
             fillColor  : '#FFFFFF',

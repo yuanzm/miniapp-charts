@@ -1,8 +1,3 @@
-/**
- * @author: zimyuan
- * @lase-edit-date: 2018-08-30
- */
-
 import {
     isType,
     deepCopy,
