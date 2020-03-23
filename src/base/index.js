@@ -105,8 +105,6 @@ export default class Base extends ChartBase {
             bottom: this._boundary.rightBottom.y
         }
 
-        console.log(this._area)
-
         this.log('calBoundaryPoint');
 
         return this._boundary;

@@ -1,6 +1,6 @@
 /*
  * @author: zimyuan
- */ 
+ */
 /*
  * 判断JavaScript对象类型的函数
  * @param {}
