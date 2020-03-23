@@ -348,7 +348,7 @@ export function updateBezierControlPoints(points, area ) {
             point,
             points[Math.min(i + 1, ilen - (loop ? 0 : 1)) % ilen],
             /*options.tension*/
-            0.4
+            0.1
         );
         point.controlPointPreviousX = controlPoints.previous.x;
         point.controlPointPreviousY = controlPoints.previous.y;
