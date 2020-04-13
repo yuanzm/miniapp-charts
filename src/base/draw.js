@@ -189,7 +189,6 @@ export default class ChartBase {
         ctx.lineTo(end.x, end.y);
         ctx.lineTo(start.x, start.y);
 
-            ctx.fill();
         if ( opts.needFill !== false ) {
             ctx.fill();
         }
