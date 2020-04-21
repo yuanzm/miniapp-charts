@@ -30,11 +30,11 @@ let linechartConfig = {
 
     // 折线图默认配置
     lineStyle: {
-        lineWidth : 1,
+        lineWidth : 1.5,
         lineColor : '#7587db',
         fillColor : 'rgba(117, 135, 219, 0.3)',
         // 是否需要背景颜色
-        needFill  : false,
+        needFill  : true,
         curve     : true,
         circle    : {
             show       : true,
