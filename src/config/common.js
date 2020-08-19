@@ -1,5 +1,5 @@
 import {
-    none
+    changeUnit
 } from '../util.js';
 /**
  * 所有组件通用配置
@@ -24,7 +24,7 @@ export default {
      * Y轴标签以及toolTip的单位换算函数
      * 组件内置了changeUnit函数，可以自行设置
      */
-    changeUnit : none,
+    changeUnit : changeUnit,
 
     /**
      * 图表内本身的padding

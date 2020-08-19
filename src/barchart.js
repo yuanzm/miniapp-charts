@@ -67,28 +67,29 @@ export default class BarChart extends Base {
         const config = this._config;
         const render = this._render;
 
+        const barWidth = config.barStyle.barWidth;
+
         const xCenterAxis   = render.xCenterAxis;
         const first         = this._datasets[0];
         const second        = this._datasets[1];
         const count         = first.points.length;
         let leftBottom      = this._boundary.leftBottom;
-        let totalBarWidth   = this._datasets.length * count * this._config.barWidth
+        let totalBarWidth   = this._datasets.length * count * barWidth
 
         if ( second ) {
-            totalBarWidth += this._config.compareBarMargin * count;
+            totalBarWidth += this._config.barStyle.compareBarMargin * count;
         }
 
         // 每组柱子的间距
-        const barPadding    = ( xCenterAxis.end.x - xCenterAxis.start.x - totalBarWidth - this._config.leftRightPadding * 2 ) / (count - 1);
+        const barPadding    = ( xCenterAxis.end.x - xCenterAxis.start.x - totalBarWidth - this._config.barStyle.leftRightPadding * 2 ) / (count - 1);
 
         // 柱子的X轴开始位置
-        let xStart = xCenterAxis.start.x + this._config.leftRightPadding;
+        let xStart = xCenterAxis.start.x + this._config.barStyle.leftRightPadding;
 
         render.bars         = [];
         render.barLabels    = [];
         render.topbarLabels = [];
 
-        const barWidth = config.barWidth;
         const xAxis    = config.xAxis;
         const bottom   = leftBottom.y + xAxis.marginTop + xAxis.fontSize;
         const barStyle = config.barStyle;
@@ -110,21 +111,21 @@ export default class BarChart extends Base {
                     fillColor: bar.fillColor,
                     x        : xStart,
                     y        : y,
-                    width    : this._config.barWidth,
+                    width    : barWidth,
                     height   : height,
                 }
                 render.bars.push(rect);
                 if ( bar.barLabel ) {
-                    let { arr } = this.calLabelDataForItem(xStart + this._config.barWidth / 2 + 1, y, bar.barLabel);
+                    let { arr } = this.calLabelDataForItem(xStart + barWidth / 2 + 1, y, bar.barLabel);
 
                     render.topbarLabels = this._render.topbarLabels.concat(arr);
                 }
 
-                xStart += config.barWidth;
+                xStart += barWidth;
 
                 if ( second && barIndex === 0 ) {
-                    xStart += config.compareBarMargin;
-                    centerX += (barWidth / 2 + config.compareBarMargin / 2) + 0.5;
+                    xStart += config.barStyle.compareBarMargin;
+                    centerX += (barWidth / 2 + config.barStyle.compareBarMargin / 2) + 0.5;
                 } else {
                     xStart += barPadding;
                 }
@@ -161,59 +162,6 @@ export default class BarChart extends Base {
             width: xAxisLine.width,
             color: xAxisLine.color,
         }
-    }
-
-    /**
-     * 计算用于X轴绘制需要的数据
-     */
-    calXAxis() {
-        let data        = this._render;
-
-        let length      = this._render.longestLinePointCnt;
-        let maxXPoint   = this._config.xAxisCount;
-        let points      = this._render.longestLine.points;
-        let xAxis       = this._config.xAxis;
-
-        let leftBottom  = this._boundary.leftBottom;
-        let rightBottom = this._boundary.rightBottom;
-
-        let xAxisData   = [];
-
-        // 计算X轴两个点之间的像素距离
-        let realWidth =  rightBottom.x - leftBottom.x - this._render.yAxisWidth;
-        let pointCount = (  points.length - 1 > 0
-                          ? points.length - 1
-                          : 1  );
-        data.unitX = realWidth  / pointCount;
-
-        let xDivider  = parseInt(length / ( maxXPoint) );
-        if ( xDivider === 0 ) {
-            xDivider = 1;
-        }
-
-        let leftStart = this._render.yAxisWidth + leftBottom.x;
-        let bottom    = leftBottom.y + xAxis.marginTop + xAxis.fontSize;
-
-        for ( let i = 0; i < length; i += xDivider ) {
-            let word = {
-                text    : points[i].x,
-                color   : xAxis.color,
-                fontSize: xAxis.fontSize,
-                x       : leftStart + i * data.unitX,
-                y       : bottom
-            }
-
-            let width = this.getWordWidth(word);
-            word.x -= width / 2;
-
-            // 防止超边界
-            if ( word.x + width > this._config.width )
-                word.x = this._config.width - width - 1;
-
-            xAxisData.push(word);
-        }
-
-        this._render.xAxisData = xAxisData;
     }
 
     calYAxisLines() {
@@ -263,9 +211,6 @@ export default class BarChart extends Base {
     calYAxis() {
         let { max, min, yDivider, maxYPoint, longestLine } = this.calYAxisBoundary();
 
-            /*const height = ( bar.value - this._render.min) * this._render.unitY * this._render.yMultiple;
-            const y = leftBottom.y - height;*/
-
         let maxItem;
         this._datasets.forEach(dataset => {
             dataset.points.forEach(item => {
@@ -291,7 +236,7 @@ export default class BarChart extends Base {
 
         let cHeight = this._boundary.leftBottom.y - this._boundary.leftTop.y;
         // 计算Y轴上两个点之间的像素值
-        let unitY =  cHeight / ( yDivider * this._render.yMultiple  * this._config.yAxisCount );
+        let unitY =  cHeight / ( yDivider * this._render.yMultiple  * this._config.yAxis.yAxisCount );
 
         /**
          * 计算最长的条加上label之后的高度,如果超过绘图边界，将unitY更改成刚好使得最长的条填充满绘图区
@@ -312,9 +257,9 @@ export default class BarChart extends Base {
                            ? 2
                            : 1 );
 
-        for( let i = 0; i < this._config.yAxisCount + 1; i++ ) {
+        for( let i = 0; i < this._config.yAxis.yAxisCount + 1; i++ ) {
             let word = {
-                text    : changeFunc(min + i * yDivider, toFixed) + this._config.unit,
+                text    : changeFunc(min + i * yDivider, toFixed) + this._config.yAxis.unit,
                 color   : yAxis.color,
                 fontSize: yAxis.fontSize,
                 x       : leftStart,
@@ -366,7 +311,7 @@ export default class BarChart extends Base {
         let datasets    = this._datasets;
         let maxYPoint   = 0;
         let longestLine = datasets[0];
-        let yAxisCount  = this._config.yAxisCount;
+        let yAxisCount  = this._config.yAxis.yAxisCount;
         let max         = -Infinity;
         let min         = Infinity;
 
@@ -383,9 +328,6 @@ export default class BarChart extends Base {
         });
 
         let formatFunc = this._config.formatY || getDataRangeAndStep;
-        /*if ( max > this._config.maxY ) {
-            max = maxY;
-        }*/
         let range = formatFunc(max, min, yAxisCount);
 
         this._render.min       = range.min;

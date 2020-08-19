@@ -1,7 +1,6 @@
 /*
  * @author: zimyuan
  */
-
 /*
  * 判断JavaScript对象类型的函数
  * @param {}
@@ -229,6 +228,138 @@ function changeUnit(value, fixed = 1) {
 function none() {
 }
 
+function formatX(length, maxXPoint) {
+    let step  = Math.ceil(length /  maxXPoint );
+    let start = 0;
+
+    // 记录原始的step长度
+    let origin = step;
+
+    while ( step * ( maxXPoint - 1 ) >= length ) {
+        step--;
+    }
+
+    if ( step < origin ) {
+        start = Math.floor(( length - step * ( maxXPoint - 1 ) ) / 2);
+    }
+
+
+    return { step, start: start > 1 ? start - 1 : start };
+}
+
+export function splineCurve(firstPoint, middlePoint, afterPoint, t) {
+	// Props to Rob Spencer at scaled innovation for his post on splining between points
+	// http://scaledinnovation.com/analytics/splines/aboutSplines.html
+
+	// This function must also respect "skipped" points
+
+	const previous = firstPoint.skip ? middlePoint : firstPoint;
+	const current = middlePoint;
+	const next = afterPoint.skip ? middlePoint : afterPoint;
+
+	const d01 = Math.sqrt(Math.pow(current.x - previous.x, 2) + Math.pow(current.y - previous.y, 2));
+	const d12 = Math.sqrt(Math.pow(next.x - current.x, 2) + Math.pow(next.y - current.y, 2));
+
+	let s01 = d01 / (d01 + d12);
+	let s12 = d12 / (d01 + d12);
+
+	// If all points are the same, s01 & s02 will be inf
+	s01 = isNaN(s01) ? 0 : s01;
+	s12 = isNaN(s12) ? 0 : s12;
+
+	const fa = t * s01; // scaling factor for triangle Ta
+	const fb = t * s12;
+
+	return {
+		previous: {
+			x: current.x - fa * (next.x - previous.x),
+			y: current.y - fa * (next.y - previous.y)
+		},
+		next: {
+			x: current.x + fb * (next.x - previous.x),
+			y: current.y + fb * (next.y - previous.y)
+		}
+	};
+}
+
+
+/**
+ * @private
+ */
+export function _bezierCurveTo(ctx, previous, target, flip) {
+	if (!previous) {
+		return ctx.lineTo(target.x, target.y);
+	}
+	ctx.bezierCurveTo(
+		flip ? previous.controlPointPreviousX : previous.controlPointNextX,
+		flip ? previous.controlPointPreviousY : previous.controlPointNextY,
+		flip ? target.controlPointNextX : target.controlPointPreviousX,
+		flip ? target.controlPointNextY : target.controlPointPreviousY,
+		target.x,
+		target.y);
+}
+
+
+function capControlPoint(pt, min, max) {
+	return Math.max(Math.min(pt, max), min);
+}
+
+/**
+ * Returns true if the point is inside the rectangle
+ * @param {object} point - The point to test
+ * @param {object} area - The rectangle
+ * @returns {boolean}
+ * @private
+ */
+export function _isPointInArea(point, area) {
+	const epsilon = 0.5; // margin - to match rounded decimals
+
+	return point.x > area.left - epsilon && point.x < area.right + epsilon &&
+		point.y > area.top - epsilon && point.y < area.bottom + epsilon;
+}
+
+function capBezierPoints(points, area) {
+	let i, ilen, point;
+	for (i = 0, ilen = points.length; i < ilen; ++i) {
+		point = points[i];
+		if (!_isPointInArea(point, area)) {
+			continue;
+		}
+		if (i > 0 && _isPointInArea(points[i - 1], area)) {
+			point.controlPointPreviousX = capControlPoint(point.controlPointPreviousX, area.left, area.right);
+			point.controlPointPreviousY = capControlPoint(point.controlPointPreviousY, area.top, area.bottom);
+		}
+		if (i < points.length - 1 && _isPointInArea(points[i + 1], area)) {
+			point.controlPointNextX = capControlPoint(point.controlPointNextX, area.left, area.right);
+			point.controlPointNextY = capControlPoint(point.controlPointNextY, area.top, area.bottom);
+		}
+	}
+}
+
+export function updateBezierControlPoints(points, area ) {
+	let i, ilen, point, controlPoints;
+    const loop = false;
+
+    let prev = loop ? points[points.length - 1] : points[0];
+    for (i = 0, ilen = points.length; i < ilen; ++i) {
+        point = points[i];
+        controlPoints = splineCurve(
+            prev,
+            point,
+            points[Math.min(i + 1, ilen - (loop ? 0 : 1)) % ilen],
+            /*options.tension*/
+            0.1
+        );
+        point.controlPointPreviousX = controlPoints.previous.x;
+        point.controlPointPreviousY = controlPoints.previous.y;
+        point.controlPointNextX = controlPoints.next.x;
+        point.controlPointNextY = controlPoints.next.y;
+        prev = point;
+    }
+
+	capBezierPoints(points, area);
+}
+
 export {
     none,
     isType,
@@ -237,5 +368,6 @@ export {
     extend,
     getDataRangeAndStep,
     changeUnit,
+    formatX,
 }
 

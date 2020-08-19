@@ -1,19 +1,9 @@
 import common from './common.js';
 import {
     extend,
-    none
 } from '../util.js';
 
-let linechartConfig = {
-    // Y轴标签的单位
-    unit       : '',
-
-    /**
-     * Y轴标签以及toolTip的单位换算函数
-     * 组件内置了changeUnit函数，可以自行设置
-     */
-    changeUnit : none,
-
+let barchartConfig = {
     /**
      * 给定一组数据，Y轴标签的最大值最小值和每一步的值都是组件自动算出来的
      * 有些场景组件算出来的可能不满足需求，或者调用者就是想自定义Y轴标签的数据，
@@ -27,7 +17,6 @@ let linechartConfig = {
      * }
      */
     formatY    : null,
-    maxY       : Infinity,
 
     // x轴文案的样式配置
     xAxis: {
@@ -49,12 +38,6 @@ let linechartConfig = {
     },
 
     /**
-     * 默认Y轴打四个点
-     * 也可以自行配置，但仍然会有保底逻辑
-     */
-    yAxisCount  : 4,
-
-    /**
      * y轴的样式配置
      */
     yAxis: {
@@ -63,6 +46,12 @@ let linechartConfig = {
         marginRight: 10,
         color      : '#B8B8B8',
         fontSize   : 11,
+        unit       : '',
+        /**
+        * 默认Y轴打四个点
+        * 也可以自行配置，但仍然会有保底逻辑
+        */
+        yAxisCount  : 4,
     },
 
     /**
@@ -77,12 +66,10 @@ let linechartConfig = {
 
     barStyle: {
         fillColor: '#6684C7',
+        compareBarMargin: 5,
+        barWidth: 30,
+        leftRightPadding: 10,
     },
-    barWidth: 30,
-
-    compareBarMargin: 5,
-
-    leftRightPadding: 10,
 
     barLabelStyle: {
         color      : '#B8B8B8',
@@ -91,5 +78,5 @@ let linechartConfig = {
     }
 }
 
-export default extend(linechartConfig, common);
+export default extend(barchartConfig, common);
 

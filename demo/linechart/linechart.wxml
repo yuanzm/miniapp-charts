@@ -1,0 +1,17 @@
+<view style="font-size: 16px; padding-left: 10px; margin-bottom: 20px;">双坐标轴</view>
+<canvas
+    canvas-id="axisdemo"
+    style="width:414px;height:200px"
+/>
+
+<view style="font-size: 16px; padding-left: 10px; margin-bottom: 20px;margin-top: 20px;">changeUnit</view>
+<canvas
+    canvas-id="changeUnit"
+    style="width:414px;height:200px"
+/>
+
+<view style="font-size: 16px; padding-left: 10px; margin-bottom: 20px;margin-top: 20px;">formatY</view>
+<canvas
+    canvas-id="formatY"
+    style="width:414px;height:200px"
+/>

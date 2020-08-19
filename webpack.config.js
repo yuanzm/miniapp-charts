@@ -3,12 +3,19 @@ const path = require('path');
 
 module.exports = {
     entry: {
-		index: "./index.js",
+		linechart: "./src/linechart.js",
+		rardar: "./src/radar.js",
+		barchart: "./src/barchart.js",
+		distributionchart: "./src/distribution.js",
 	},
     output: {
-        path    : path.resolve(__dirname, 'examples/libs'),
+        path    : path.resolve(__dirname, 'demo/lib'),
         filename: "[name].js",
+        libraryTarget: 'umd'
     },
-    mode: "production"
+    mode: "none",
+    amd: {
+        miniappcharts: true
+    }
 };
 

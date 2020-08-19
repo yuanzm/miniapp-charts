@@ -1,18 +1,18 @@
 import common from './common.js';
 import {
     extend,
-    none
+    none,
+    changeUnit
 } from '../util.js';
 
 let linechartConfig = {
-    // Y轴标签的单位
-    unit       : '',
-
     /**
      * Y轴标签以及toolTip的单位换算函数
      * 组件内置了changeUnit函数，可以自行设置
      */
-    changeUnit : none,
+    changeUnit : changeUnit,
+
+    secondChangeUnit: changeUnit,
 
     /**
      * 给定一组数据，Y轴标签的最大值最小值和每一步的值都是组件自动算出来的
@@ -26,35 +26,30 @@ let linechartConfig = {
      *      似的divider是大于1的数值，同时将放大的倍数告知组件，默认为1
      * }
      */
-    formatY    : null,
+    formatY    : none,
 
     // 折线图默认配置
     lineStyle: {
-        lineWidth : 1,
+        lineWidth : 1.5,
         lineColor : '#7587db',
         fillColor : 'rgba(117, 135, 219, 0.3)',
         // 是否需要背景颜色
         needFill  : true,
+        curve     : true,
         circle    : {
             show       : true,
             fillColor  : '#FFFFFF',
             strokeColor: '#FFAA00',
             lineWidth  : 1,
             radius     : 1.2,
-        }
+        },
+        /**
+        * 在数据点很多的时候，如果每个点都要画个圆圈会大大影响性能
+        * 同时圆圈过于多也会影响美观，因此设定阀值，大于此阀值的情况不绘制圆圈
+        */
+        maxCircleCount: 30,
     },
 
-    /**
-     * 在数据点很多的时候，如果每个点都要画个圆圈会大大影响性能
-     * 同时圆圈过于多也会影响美观，因此设定阀值，大于此阀值的情况不绘制圆圈
-     */
-    maxCircleCount: 30,
-
-    /**
-     * 默认x轴打七个点
-     * 可以自行配置，但仍然会有保底逻辑
-     */
-    xAxisCount   : 7,
 
     // x轴文案的样式配置
     xAxis: {
@@ -62,6 +57,11 @@ let linechartConfig = {
         marginTop: 10,
         color    : '#B8B8B8',
         fontSize : 11,
+        /**
+        * 默认x轴打七个点
+        * 可以自行配置，但仍然会有保底逻辑
+        */
+        xAxisCount   : 7,
     },
 
     /**
@@ -76,12 +76,6 @@ let linechartConfig = {
     },
 
     /**
-     * 默认Y轴打四个点
-     * 也可以自行配置，但仍然会有保底逻辑
-     */
-    yAxisCount  : 4,
-
-    /**
      * y轴的样式配置
      */
     yAxis: {
@@ -90,13 +84,18 @@ let linechartConfig = {
         marginRight: 10,
         color      : '#B8B8B8',
         fontSize   : 11,
+        unit       : '',
+        /**
+        * 默认Y轴打四个点
+        * 也可以自行配置，但仍然会有保底逻辑
+        */
+        yAxisCount  : 4,
     },
 
     // 第二Y轴
     secondYaxis: {
         show       : true,
         marginLeft : 5,
-        marginRight: 0,
         color      : '#B8B8B8',
         fontSize   : 11,
         unit       : '',
@@ -128,7 +127,6 @@ let linechartConfig = {
         fontSize   : 11,
         color      : '#FFFFFF',
         fillColor  : 'rgba(136, 136, 136, 0.6)',
-        //needCircle : true,
         linePadding: 5,
         needTitle  : false,
         needX      : true,

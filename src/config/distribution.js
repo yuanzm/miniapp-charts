@@ -1,19 +1,9 @@
 import common from './common.js';
 import {
     extend,
-    none
 } from '../util.js';
 
 let distributionConfig = {
-    // Y轴标签的单位
-    unit       : '',
-
-    /**
-     * Y轴标签以及toolTip的单位换算函数
-     * 组件内置了changeUnit函数，可以自行设置
-     */
-    changeUnit : none,
-
     /**
      * y轴的样式配置
      */
@@ -39,10 +29,9 @@ let distributionConfig = {
         fillColor: '#6684C7',
         height   : 10,
         padding  : 12,
+        topBottomPadding: 5,
+        compareBarMargin: 3,
     },
-    compareBarMargin: 3,
-
-    topBottomPadding: 5,
 
     barLabelStyle: {
         color        : '#B8B8B8',

@@ -9,7 +9,8 @@ import {
     changeUnit,
     isPlainObject,
     getDataRangeAndStep,
-    none
+    none,
+    updateBezierControlPoints
 } from './util.js';
 
 import config    from './config/linechart.js';
@@ -57,9 +58,8 @@ export default class LineChart extends Base {
         let longestLine    = this._render.longestLine;
 
         // 为了提高性能，会限制单条线最多圆的数量
-        let needCircle     = (  this._config.maxCircleCount >= longestLine.points.length
-                              ? true
-                              : false  );
+        let needCircle     = !!(  this._config.lineStyle.maxCircleCount >= longestLine.points.length )
+
         // 原点
         let origin     = {
             x: leftBottom.x + yAxisWidth,
@@ -117,6 +117,8 @@ export default class LineChart extends Base {
                     y           : leftBottom.y,
                 });
 
+                updateBezierControlPoints(_oneline.points, this._area);
+
                 pointData.push(_oneline);
             }
         });
@@ -157,7 +159,7 @@ export default class LineChart extends Base {
         let data        = this._render;
 
         let length      = this._render.longestLinePointCnt;
-        let maxXPoint   = this._config.xAxisCount;
+        let maxXPoint   = this._config.xAxis.xAxisCount;
         let points      = this._render.longestLine.points;
         let xAxis       = this._config.xAxis;
 
@@ -171,12 +173,15 @@ export default class LineChart extends Base {
         if ( this._render.second ) {
             realWidth -= this._render.second.width;
         }
+
         let pointCount = (  points.length - 1 > 0
                           ? points.length - 1
                           : 1  );
         data.unitX = realWidth  / pointCount;
 
-        let xDivider  = Math.ceil(length / ( maxXPoint) );
+        let xDivider  = Math.ceil(length / ( maxXPoint ) );
+
+        // 考虑只有一个点的情况
         if ( xDivider === 0 ) {
             xDivider = 1;
         }
@@ -184,16 +189,20 @@ export default class LineChart extends Base {
         let leftStart = this._render.yAxisWidth + leftBottom.x;
         let bottom    = leftBottom.y + xAxis.marginTop + xAxis.fontSize;
 
-        for ( let i = 0; i < length; i += xDivider ) {
+        for ( let i = 0; i < maxXPoint; i++ ) {
+            let index = (  i * xDivider >= length
+                         ? length - 1
+                         : i * xDivider  );
+
             let word = {
-                text    : points[i].x,
+                text    : points[index].x,
                 color   : xAxis.color,
                 fontSize: xAxis.fontSize,
-                x       : leftStart + i * data.unitX,
+                x       : leftStart + index * data.unitX,
                 y       : bottom
             }
 
-            let width = this.getWordWidth(word);
+            let width = this.measureText(this.ctx1, word);
             word.x -= width / 2;
 
             // 防止超边界
@@ -269,31 +278,28 @@ export default class LineChart extends Base {
         // 计算Y轴上两个点之间的像素值
         let unitY = (  (  this._boundary.leftBottom.y
                         - this._boundary.leftTop.y  )
-                     / ( yDivider * yMultiple  * this._config.yAxisCount )
+                     / ( yDivider * yMultiple  * this._config.yAxis.yAxisCount )
                     );
 
-
-        //let changeFunc  = this._config.changeUnit || changeUnit;
-        let changeFunc  = (  this._config.changeUnit && this._config.changeUnit !== none
-                           ? this._config.changeUnit
-                           : changeUnit  );
+        let changeFunc = this._config.secondChangeUnit || this._config.changeUnit || changeUnit;
         let toFixed     = (  ( max < 1 || max > 1e7 )
                            ? 2
                            : 1 );
 
+        let bottomStart = this._boundary.leftBottom.y;
 
-        let bottomStart = this._boundary.leftBottom.y
-
-        for( let i = 0; i < this._config.yAxisCount + 1; i++ ) {
+        for( let i = 0; i < this._config.yAxis.yAxisCount + 1; i++ ) {
             let word = {
-                text    : changeFunc(min + i * yDivider, toFixed) + (yAxis.unit || this._config.unit),
-                color   : yAxis.color,
-                fontSize: yAxis.fontSize,
-                y       : bottomStart - ( i * yDivider * unitY * yMultiple ),
+                text     : changeFunc(min + i * yDivider, toFixed) + (yAxis.unit || ''),
+                color    : yAxis.color,
+                fontSize : yAxis.fontSize,
+                y        : bottomStart - ( i * yDivider * unitY * yMultiple ),
                 textAlign: yAxis.textAlign,
             };
 
-            yAxisWidth = Math.max(this.getWordWidth(word), yAxisWidth);
+            yAxisWidth = Math.max(this.measureText(this.ctx1, word), yAxisWidth);
+
+            this.measureText(this.ctx1, word);
 
             yAxisData.push(word);
         }
@@ -303,12 +309,12 @@ export default class LineChart extends Base {
                       ? yAxisWidth
                       : 0  );
 
-        let leftStart = this._boundary.rightTop.x - yAxis.marginRight - yAxisWidth;
+        let leftStart = this._boundary.rightTop.x - yAxisWidth;
         if ( yAxis.textAlign === 'right' ) {
             leftStart += yAxisWidth;
         }
 
-        for( let i = 0; i < this._config.yAxisCount + 1; i++ ) {
+        for( let i = 0; i < this._config.yAxis.yAxisCount + 1; i++ ) {
             yAxisData[i].x  = leftStart;
         }
 
@@ -317,7 +323,7 @@ export default class LineChart extends Base {
         second.yAxisData           = yAxisData;
         second.longestLinePointCnt = maxYPoint;
         second.longestLine         = longestLine;
-        second.width               = yAxisWidth + yAxis.marginLeft + yAxis.marginRight;
+        second.width               = yAxisWidth + yAxis.marginLeft;
 
         this.log('calSecondYAxis');
     }
@@ -343,30 +349,27 @@ export default class LineChart extends Base {
         // 计算Y轴上两个点之间的像素值
         let unitY = (  (  this._boundary.leftBottom.y
                         - this._boundary.leftTop.y  )
-                     / ( yDivider * this._render.yMultiple  * this._config.yAxisCount )
+                     / ( yDivider * this._render.yMultiple  * this._config.yAxis.yAxisCount )
                     );
 
         let leftStart   = this._boundary.leftTop.x + yAxis.marginLeft;
         let bottomStart = this._boundary.leftBottom.y
 
-        //let changeFunc  = this._config.changeUnit || changeUnit;
-        let changeFunc  = (  this._config.changeUnit && this._config.changeUnit !== none
-                           ? this._config.changeUnit
-                           : changeUnit  );
+        let changeFunc  = this._config.changeUnit || changeUnit;
         let toFixed     = (  ( max < 1 || max > 1e7 )
                            ? 2
                            : 1 );
 
-        for( let i = 0; i < this._config.yAxisCount + 1; i++ ) {
+        for( let i = 0; i < this._config.yAxis.yAxisCount + 1; i++ ) {
             let word = {
-                text    : changeFunc(min + i * yDivider, toFixed) + (yAxis.unit || this._config.unit),
+                text    : changeFunc(min + i * yDivider, toFixed) + (yAxis.unit || ''),
                 color   : yAxis.color,
                 fontSize: yAxis.fontSize,
                 x       : leftStart,
                 y       : bottomStart - ( i * yDivider * unitY * this._render.yMultiple )
             };
 
-            yAxisWidth = Math.max(this.getWordWidth(word), yAxisWidth);
+            yAxisWidth = Math.max(this.measureText(this.ctx1, word), yAxisWidth);
 
             yAxisData.push(word);
         }
@@ -410,7 +413,7 @@ export default class LineChart extends Base {
     calYAxisBoundary(datasets) {
         let maxYPoint   = 0;
         let longestLine = datasets[0];
-        let yAxisCount  = this._config.yAxisCount;
+        let yAxisCount  = this._config.yAxis.yAxisCount;
         let max         = -Infinity;
         let min         = Infinity;
 
@@ -426,9 +429,8 @@ export default class LineChart extends Base {
             min = Math.min(this.getMinY(points), min);
         });
 
-        let formatFunc = this._config.formatY || getDataRangeAndStep;
+        let formatFunc = this._config.formatY !== none ? this._config.formatY : getDataRangeAndStep;
         let range = formatFunc(max, min, yAxisCount);
-
 
         return {
             max      : range.max,
@@ -599,10 +601,7 @@ export default class LineChart extends Base {
 
         this._render.toolTipData.words = [];
 
-        //let changeFunc  = this._config.changeUnit || changeUnit;
-        let changeFunc  = (  this._config.changeUnit && this._config.changeUnit !== none
-                           ? this._config.changeUnit
-                           : changeUnit  );
+        let changeFunc  = this._config.secondChangeUnit || this._config.changeUnit || changeUnit;
         let toFixed     = (  ( this._render.max < 1 || this._render > 1e7 )
                            ? 2
                            : 1 );
@@ -616,7 +615,7 @@ export default class LineChart extends Base {
 
             if ( curr ) {
                 let word = {
-                    text    : title + changeFunc(curr.y, toFixed) + (oneline.unit || this._config.unit),
+                    text    : title + changeFunc(curr.y, toFixed) + (oneline.unit || ''),
                     fontSize: style.fontSize,
                     color   : style.color,
                     x       : 0,
@@ -626,7 +625,7 @@ export default class LineChart extends Base {
                 };
 
                 // 计算当前时刻最长单词的宽度
-                maxWidth = Math.max(maxWidth, this.getWordWidth(word));
+                maxWidth = Math.max(maxWidth, this.measureText(this.ctx1, word));
 
                 // 加上每行文字的行高和行间距
                 height += ( style.fontSize + style.linePadding );
@@ -675,8 +674,9 @@ export default class LineChart extends Base {
             this.drawWord(this.ctx1, item);
         });
 
-        if ( this._config.xAxisLine.centerShow )
+        if ( this._config.xAxisLine.centerShow ) {
             this.drawLine(this.ctx1, this._render.xCenterAxis);
+        }
     }
 
     // 绘制Y轴
@@ -804,7 +804,8 @@ export default class LineChart extends Base {
         // 原始调用者传入的数据
         this.initDataSets(data);
 
-        if ( !this._datasets.length && !this._secondDatasets.length ) {
+        // 如果没有有效数据，不执行绘制
+        if ( !this._alldatasets.length ) {
             return;
         }
 
