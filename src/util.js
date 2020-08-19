@@ -134,6 +134,16 @@ function getDataRangeAndStep(max, min, step) {
 
     let divider = Math.round(( max - min ) / step);
 
+    // 如果divider为0，说明值放大后，最大值和最小值差值过小；后续过程没有意义，直接返回
+    if (divider === 0) {
+        return {
+            max     : 4,
+            min     : 0,
+            divider : 1,
+            multiple: 1
+        }
+    }
+
     //console.log(3, divider);
 
     // 先将divider降低一点，后面慢慢增加逼近满意值
