@@ -80,14 +80,52 @@ export default class ChartBase {
     }
 
     /**
-     * 绘制一个矩形
+     * 绘制一个矩形 支持圆角矩形
+     * rect = {
+     *      fillColor
+     *      x
+     *      y
+     *      widht
+     *      height
+     *      r
+     * }
      */
     drawRect(ctx, rect) {
-        ctx.beginPath();
-        ctx.setStrokeStyle(rect.fillColor);
-        ctx.setFillStyle(rect.fillColor);
-        ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
-        ctx.closePath();
+        if(rect['r'] && rect['r'] > 0){
+            ctx.save()
+            ctx.beginPath()
+        
+            // 左上弧线
+            ctx.arc(rect.x + rect.r, rect.y + rect.r, rect.r, 1 * Math.PI, 1.5 * Math.PI)
+            // 左直线
+            ctx.moveTo(rect.x, rect.y + rect.r)
+            ctx.lineTo(rect.x, rect.y + rect.height - rect.r)
+            // 左下弧线
+            ctx.arc(rect.x + rect.r, rect.y + rect.height - rect.r, rect.r, 0.5 * Math.PI, 1 * Math.PI)
+            // 下直线
+            ctx.lineTo(rect.x + rect.r, rect.y + rect.height)
+            ctx.lineTo(rect.x + rect.width - rect.r, rect.y + rect.height)
+            // 右下弧线
+            ctx.arc(rect.x + rect.width - rect.r, rect.y + rect.height - rect.r, rect.r, 0 * Math.PI, 0.5 * Math.PI)
+            // 右直线
+            ctx.lineTo(rect.x + rect.width, rect.y + rect.height - rect.r)
+            ctx.lineTo(rect.x + rect.width, rect.y + rect.r)
+            // 右上弧线
+            ctx.arc(rect.x + rect.width - rect.r, rect.y + rect.r, rect.r, 1.5 * Math.PI, 2 * Math.PI)
+            // 上直线
+            ctx.lineTo(rect.x + rect.width - rect.r, rect.y)
+            ctx.lineTo(rect.x + rect.r, rect.y)
+        
+            ctx.setFillStyle(rect.fillColor)
+            ctx.fill()
+        }else{
+            ctx.beginPath();
+            ctx.setStrokeStyle(rect.fillColor);
+            ctx.setFillStyle(rect.fillColor);
+            ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
+            ctx.closePath();
+        }
+
     }
 
     /**
@@ -202,15 +240,18 @@ export default class ChartBase {
      * 根据给定样式绘制一个圆
      */
     drawCircle(ctx, circle) {
+
         ctx.beginPath();
 
         ctx.setStrokeStyle(circle.strokeColor);
-        ctx.setFillStyle(circle.fillColor);
+        if(circle.fillColor)
+            ctx.setFillStyle(circle.fillColor);
         ctx.setLineWidth(circle.lineWidth || 1);
         ctx.arc(circle.x, circle.y, circle.r, 0, 2 * Math.PI);
 
         ctx.stroke();
-        ctx.fill();
+        if(circle.fillColor)
+            ctx.fill();
         ctx.closePath();
     }
 

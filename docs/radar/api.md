@@ -29,6 +29,7 @@
 | animation  | Boolean | 是否开启动画，默认为true|
 | animationStep  | Number| 动画执行的步骤, 默认为50|
 | animationEasing | String| 动画的缓动函数, 所有配置见[easing.js](https://github.com/yuanzm/miniapp-charts/blob/master/src/base/easing.js)|
+| toolTip | Object | 悬浮信息框配置 |
 
 ::: tip
 startAngle配置可以参考[示例](/radar/examples.html#startangle)
@@ -55,6 +56,10 @@ startAngle配置可以参考[示例](/radar/examples.html#startangle)
 | style    | String   | 线条的样式，暂时只支持line和dash，默认为line|
 | dashPattern | Array | 线条为虚线的配置，详情可看[小程序文档](https://developers.weixin.qq.com/miniprogram/dev/api/canvas/set-line-dash.html)|
 | dashOffset  | Number | 线条为虚线的配置，详情可看[小程序文档](https://developers.weixin.qq.com/miniprogram/dev/api/canvas/set-line-dash.html)|
+| marginLineStyle | String | 网格最外圈的样式，默认为 default（蜘蛛网状），可选配为 circle（圆环状） |
+| marginLineColor | Sting | 网格最外圈的颜色，默认为default（跟随内部颜色），可使用颜色字符串自定义颜色 |
+| marginLinePointRadius | Number | 网格最外圈与辐射线焦点的“高亮点”半径，默认为2 |
+| marginLinePointColor | String | 网格最外圈与辐射线焦点的“高亮点”颜色 |
 
 ###  radiationLineStyle配置详情
 | keyName  | 类型     |  描述    |
@@ -85,6 +90,28 @@ startAngle配置可以参考[示例](/radar/examples.html#startangle)
 | pointBorderColor | String | 数据点上圆圈圆周线条颜色，默认为#8dd364 |
 | pointBorderWidth | Number | 数据点上圆圈圆周线条的宽度，默认为1 |
 | pointRadius   | Number | 数据点上圆圈的半径，默认为2 |
+| focusStyle | Object | 交互时的焦点样式 |
+
+### focusStyle配置详情
+
+| keyName              | 类型   | 描述                                                   |
+| -------------------- | ------ | ------------------------------------------------------ |
+| pointBackgroundColor | String | 焦点背景颜色                                           |
+| pointBorderColor     | String | 焦点的边框颜色（可配合pointBackgroundColor实现空心圆） |
+| pointBorderWidth     | Number | 焦点的边框宽度                                         |
+| pointRadius          | Number | 焦点的半径                                             |
+
+### toolTip配置详情
+
+| keyName     | 类型   | 描述                                                         |
+| ----------- | ------ | ------------------------------------------------------------ |
+| lineColor   | Sring  | toolTip中轴线的颜色，默认为#C6C6C6                           |
+| lineWidth   | Number | toolTip中轴线的宽度，默认为0.5                               |
+| fontSize    | Number | toolTip的字体大小，默认为11                                  |
+| color       | String | toolTip的字体颜色，默认为#FFFFFF                             |
+| fillColor   | String | toolTip的背景颜色，默认为rgba(136, 136, 136, 0.6)            |
+| linePadding | Number | 文案行间距，默认为5                                          |
+| padding     | Object | toolTip的padding，默认padding.left = 5, padding.right = 5,padding.top = 5, padding.bottom = 5 |
 
 ## RadarChart API
 
@@ -122,3 +149,10 @@ startAngle配置可以参考[示例](/radar/examples.html#startangle)
 
 label配置可以参考[示例](/radar/examples.html#一个顶点多个标签)
 
+### touch(e)
+
+处理小程序的触摸事件，e为bindtouchstart和bindtouchmove事件获取到的事件对象。
+
+### touchEnd()
+
+处理bindtouchend的触摸事件
