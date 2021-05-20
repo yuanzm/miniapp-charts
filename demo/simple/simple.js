@@ -36,9 +36,49 @@ Page({
 
         this.radarchart.draw(
             {
-                labels  : ['输出', 'KDA', '发育', '团战', '生存'],
+                labels  : ['输出', 'KDA', '发育', '团战', '生存' ,'随便写'],
                 datasets: [ {
-                        data: [71, 65, 67, 63, 72],
+                  data                : [71, 100, 13, 15, 82, 10],
+                  dataStr                : ['71s', '100s', '13s', '15s', '82s', '10s'],
+                  label               : '同段位',
+                  backgroundColor     : 'rgba(255,255,255,0)',
+                  borderColor         : 'rgb(242,190,86)',
+                  borderWidth         : 2,
+                  borderLineStyle     : 'dash',  //line || dash
+                  borderDashPattern   : [5,5], // [ [dashPattern] , dashOffset ]
+                  borderDashOffset    : 5 ,
+                  pointShow           : false,
+                  pointBackgroundColor: 'rgb(108,132,194)',
+                  pointBorderColor    : 'rgb(108,132,194)',
+                  pointBorderWidth    : 1,
+                  pointRadius         : 5,
+                  focusStyle          :{
+                                      pointBackgroundColor: 'rgb(242,190,86)',
+                                      pointBorderColor    : 'rgb(242,190,86)',
+                                      pointBorderWidth    : 1,
+                                      pointRadius         : 2,
+                  }
+              },{
+                        data                : [71, 65, 67, 63, 72, 100],
+                        // dataStr             : ['71s', '100s', '13s', '15s', '82s', '10s'],
+                        label               : '本人',
+                        backgroundColor     : 'rgba(108,132,194,0.5)',
+                        borderColor         : 'rgb(108,132,194)',
+                        borderWidth         : 2,
+                        borderLineStyle     : 'line',  //line || dash
+                        borderDashPattern   : [10,20], // [ [dashPattern] , dashOffset ]
+                        borderDashOffset    : 5 ,
+                        pointShow           : true,
+                        pointBackgroundColor: 'rgb(255,255,255)',
+                        pointBorderColor    : 'rgb(108,132,194)',
+                        pointBorderWidth    : 3,
+                        pointRadius         : 5,
+                        focusStyle          :{
+                                            pointBackgroundColor: 'rgb(108,132,194)',
+                                            pointBorderColor    : 'rgb(108,132,194)',
+                                            pointBorderWidth    : 1,
+                                            pointRadius         : 5,
+                        }
                     },
                 ]
             },
@@ -90,6 +130,15 @@ Page({
 
     bindtouchend(e) {
         this.linechart.touchEnd(e);
+    },
+    bindtouchstart2(e) {
+        this.radarchart.touch(e);
+    },
+    bindtouchmove2(e) {
+        this.radarchart.touch(e);
+    },
+    bindtouchend2(e) {
+        this.radarchart.touchEnd(e);
     },
 
     renderBarChart() {

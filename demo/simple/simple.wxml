@@ -17,6 +17,9 @@
 <canvas
     canvas-id="radar"
     style="width:300px;height:300px;margin-top: 220px"
+    bindtouchstart="bindtouchstart2"
+    bindtouchmove="bindtouchmove2"
+    bindtouchend="bindtouchend2"
 />
 
 <canvas

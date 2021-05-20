@@ -115,7 +115,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatX", function() { return formatX; });
 /*
  * @author: zimyuan
- */ 
+ */
 /*
  * 判断JavaScript对象类型的函数
  * @param {}
@@ -248,6 +248,16 @@ function getDataRangeAndStep(max, min, step) {
     //console.log(2, max, min, step);
 
     let divider = Math.round(( max - min ) / step);
+
+    // 如果divider为0，说明值放大后，最大值和最小值差值过小；后续过程没有意义，直接返回
+    if (divider === 0) {
+        return {
+            max     : 4,
+            min     : 0,
+            divider : 1,
+            multiple: 1
+        }
+    }
 
     //console.log(3, divider);
 
@@ -463,7 +473,7 @@ function updateBezierControlPoints(points, area ) {
             point,
             points[Math.min(i + 1, ilen - (loop ? 0 : 1)) % ilen],
             /*options.tension*/
-            0.4
+            0.1
         );
         point.controlPointPreviousX = controlPoints.previous.x;
         point.controlPointPreviousY = controlPoints.previous.y;
@@ -641,8 +651,6 @@ class Base extends _draw_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
             bottom: this._boundary.rightBottom.y
         }
 
-        console.log(this._area)
-
         this.log('calBoundaryPoint');
 
         return this._boundary;
@@ -789,14 +797,52 @@ class ChartBase {
     }
 
     /**
-     * 绘制一个矩形
+     * 绘制一个矩形 支持圆角矩形
+     * rect = {
+     *      fillColor
+     *      x
+     *      y
+     *      widht
+     *      height
+     *      r
+     * }
      */
     drawRect(ctx, rect) {
-        ctx.beginPath();
-        ctx.setStrokeStyle(rect.fillColor);
-        ctx.setFillStyle(rect.fillColor);
-        ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
-        ctx.closePath();
+        if(rect['r'] && rect['r'] > 0){
+            ctx.save()
+            ctx.beginPath()
+        
+            // 左上弧线
+            ctx.arc(rect.x + rect.r, rect.y + rect.r, rect.r, 1 * Math.PI, 1.5 * Math.PI)
+            // 左直线
+            ctx.moveTo(rect.x, rect.y + rect.r)
+            ctx.lineTo(rect.x, rect.y + rect.height - rect.r)
+            // 左下弧线
+            ctx.arc(rect.x + rect.r, rect.y + rect.height - rect.r, rect.r, 0.5 * Math.PI, 1 * Math.PI)
+            // 下直线
+            ctx.lineTo(rect.x + rect.r, rect.y + rect.height)
+            ctx.lineTo(rect.x + rect.width - rect.r, rect.y + rect.height)
+            // 右下弧线
+            ctx.arc(rect.x + rect.width - rect.r, rect.y + rect.height - rect.r, rect.r, 0 * Math.PI, 0.5 * Math.PI)
+            // 右直线
+            ctx.lineTo(rect.x + rect.width, rect.y + rect.height - rect.r)
+            ctx.lineTo(rect.x + rect.width, rect.y + rect.r)
+            // 右上弧线
+            ctx.arc(rect.x + rect.width - rect.r, rect.y + rect.r, rect.r, 1.5 * Math.PI, 2 * Math.PI)
+            // 上直线
+            ctx.lineTo(rect.x + rect.width - rect.r, rect.y)
+            ctx.lineTo(rect.x + rect.r, rect.y)
+        
+            ctx.setFillStyle(rect.fillColor)
+            ctx.fill()
+        }else{
+            ctx.beginPath();
+            ctx.setStrokeStyle(rect.fillColor);
+            ctx.setFillStyle(rect.fillColor);
+            ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
+            ctx.closePath();
+        }
+
     }
 
     /**
@@ -898,7 +944,6 @@ class ChartBase {
         ctx.lineTo(end.x, end.y);
         ctx.lineTo(start.x, start.y);
 
-            ctx.fill();
         if ( opts.needFill !== false ) {
             ctx.fill();
         }
@@ -912,15 +957,18 @@ class ChartBase {
      * 根据给定样式绘制一个圆
      */
     drawCircle(ctx, circle) {
+
         ctx.beginPath();
 
         ctx.setStrokeStyle(circle.strokeColor);
-        ctx.setFillStyle(circle.fillColor);
+        if(circle.fillColor)
+            ctx.setFillStyle(circle.fillColor);
         ctx.setLineWidth(circle.lineWidth || 1);
         ctx.arc(circle.x, circle.y, circle.r, 0, 2 * Math.PI);
 
         ctx.stroke();
-        ctx.fill();
+        if(circle.fillColor)
+            ctx.fill();
         ctx.closePath();
     }
 
