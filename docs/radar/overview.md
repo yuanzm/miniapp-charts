@@ -42,6 +42,15 @@ Page({
                 ]
             },
         );
+    },
+    bindtouchstart(e) {
+        this.radarchart.touch(e);
+    },
+    bindtouchmove(e) {
+        this.radarchart.touch(e);
+    },
+    bindtouchend(e) {
+        this.radarchart.touchEnd(e);
     }
 });
 ```
