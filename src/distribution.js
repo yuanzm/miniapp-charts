@@ -99,7 +99,7 @@ export default class DistributionChart extends Base {
                     fillColor: bar.fillColor,
                     x        : xStart,
                     y        : yStart,
-                    width    : (bar.value / maxItem.value) * maxBarWidth,
+                    width    : maxItem.value ? (bar.value / maxItem.value) * maxBarWidth : 0,
                     height   : barStyle.height,
                 }
 

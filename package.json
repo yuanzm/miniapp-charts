@@ -1,6 +1,6 @@
 {
   "name": "miniapp-charts",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "chart",
   "main": "index.js",
   "scripts": {
