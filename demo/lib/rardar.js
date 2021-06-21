@@ -1788,12 +1788,11 @@ class RadarChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] 
                 x: this._render.center.x,
                 y: this._render.center.y,
                 r: _ps.r,
-
             });
             //最外圈的高亮点
             if (this._config.grid.marginLinePointRadius > 0) //高亮点半径 > 0时
-                for (let i in _ps) {
-                    let item = _ps[i];
+                for (let i in _ps.points) {
+                    let item = _ps.points[i];
                     this.drawCircle(this.ctx, {
                         strokeColor: this._config.grid.marginLinePointColor,
                         fillColor: this._config.grid.marginLinePointColor,
