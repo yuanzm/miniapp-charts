@@ -189,9 +189,10 @@ function formatY(max, min, yAxisCount) {
 | cfg      | Object   | 组件配置对象，cfg的属性值会替换组件示例已有配置的属性值 |
 
 #### data
-| keyName  | 类型     |  描述    |
-|----------|----------| ---------|
-| datasets | Array    | 数组的每一项为一条曲线，曲线又可以独立配置，见下面[dataset](#dataset配置)|
+| keyName     | 类型  | 描述                                                         |
+| ----------- | ----- | ------------------------------------------------------------ |
+| datasets    | Array | 数组的每一项为一条曲线，曲线又可以独立配置，见下面[dataset](#dataset配置) |
+| sublinesets | Array | 辅助线配置项，见下面[sublineset](#sublineset配置)            |
 
 #####  dataset配置
 | keyName  | 类型     |  描述    |
@@ -200,9 +201,21 @@ function formatY(max, min, yAxisCount) {
 | lineName | String   | 曲线的名称，绘制toolTip需要用到，默认为空|
 | style    | Object   | 曲线的样式配置，会覆盖组件实的lineStyle对应的属性值|
 | unit     | String   | 相应触摸事件绘制tooltip的时候可以自定义unit覆盖配置的unit，默认为空|
-| axis     | Number   | 最多支持两个坐标轴，如果axis为2，代表改曲线使用右边的坐标轴|
+| axis     | Number   | 最多支持两个坐标轴，如果axis为2，代表该曲线使用右边的坐标轴 |
+
+#####  sublineset配置
+
+| keyName         | 类型    | 描述                                                         |
+| --------------- | ------- | ------------------------------------------------------------ |
+| y               | Number  | 辅助线的y值                                                  |
+| lineName        | String  | 辅助线的名称，绘制toolTip需要用到，默认为空                  |
+| style           | Object  | 辅助线的样式配置，会覆盖组件实的lineStyle对应的属性值        |
+| unit            | String  | 相应触摸事件绘制tooltip的时候可以自定义unit覆盖配置的unit，默认为空 |
+| axis            | Number  | 最多支持两个坐标轴，如果axis为2，代表该辅助线使用右边的坐标轴。注意：必须dateset中存在右边坐标轴数据时，sublineset的axis才会生效，否则依然以左坐标轴模式。 |
+| effectDataRange | Boolean | 辅助线是否影响Y轴区间，默认 false（不影响）                  |
 
 ###### point
+
 | keyName  | 类型     |  描述    |
 |----------|----------| ---------|
 | x | String/Number  | X轴标签字符串|

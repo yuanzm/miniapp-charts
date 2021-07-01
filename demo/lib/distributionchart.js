@@ -1233,7 +1233,7 @@ class DistributionChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["def
                     fillColor: bar.fillColor,
                     x        : xStart,
                     y        : yStart,
-                    width    : (bar.value / maxItem.value) * maxBarWidth,
+                    width    : maxItem.value ? (bar.value / maxItem.value) * maxBarWidth : 0,
                     height   : barStyle.height,
                 }
 

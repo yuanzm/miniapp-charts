@@ -105,6 +105,14 @@ Page({
         for (let i = 0; i < 50; i++) {
             points.push({
                 x: i + 1,
+                y: Math.ceil( 150 + Math.random() * 10),
+            });
+        }
+
+        let points2 = [];
+        for (let i = 0; i < 50; i++) {
+            points2.push({
+                x: i + 1,
                 y: Math.ceil( 50 + Math.random() * 10),
             });
         }
@@ -115,6 +123,23 @@ Page({
                     points  : points,
                     lineName: 'test',
                 },
+                {
+                    points  : points2,
+                    lineName: 'test2',
+                    axis:2
+                },
+            ],
+            sublinesets: [
+                {
+                    y: 100,
+                    lineName:'行业标准',
+                    effectDataRange:true,
+                    style:{
+                        lineColor:'#f6c444',
+                        lineWidth: 1
+                    },
+                    axis:2
+                }
             ]
         });
 
