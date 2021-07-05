@@ -296,6 +296,31 @@ Page({
                             value: 34,
                         },
                     ],
+                },
+                {
+                    name: '行业2',
+                    fillColor: '#3AC6D5',
+                    independentAxis: true,
+                    points: [
+                        {
+                            label: '新增',
+                            value: 10,
+                            barLabel: [{
+                                name: '不同单位',
+                                style: {
+                                    color: '#6684C7',
+                                }
+                            }, '50%'],
+                        },
+                        {
+                            label: '活跃',
+                            value: 5,
+                        },
+                        {
+                            label: '留存',
+                            value: 1,
+                        },
+                    ],
                 }
             ]
         });

@@ -6,11 +6,11 @@
  * @param {}
  */
 function is(obj, type) {
-	var toString = Object.prototype.toString, undefined;
+  var toString = Object.prototype.toString, undefined;
 
-	return (type === 'Null' && obj === null) ||
-		(type === "Undefined" && obj === undefined) ||
-		toString.call(obj).slice(8, -1) === type;
+  return (type === 'Null' && obj === null) ||
+    (type === "Undefined" && obj === undefined) ||
+    toString.call(obj).slice(8, -1) === type;
 }
 
 /*
@@ -20,39 +20,39 @@ function is(obj, type) {
  * @ return {Object} newObj: 拷贝之后的对象
  */
 function deepCopy(oldObj = {}, newObj={}) {
-    for (var key in oldObj) {
-        var copy = oldObj[key];
-        if (oldObj === copy) continue; //如window.window === window，会陷入死循环，需要处理一下
-        if (is(copy, "Object")) {
-            newObj[key] = deepCopy(copy, newObj[key] || {});
-        } else if (is(copy, "Array")) {
-            newObj[key] = []
-            newObj[key] = deepCopy(copy, newObj[key] || []);
-        } else {
-            newObj[key] = copy;
-        }
+  for (var key in oldObj) {
+    var copy = oldObj[key];
+    if (oldObj === copy) continue; //如window.window === window，会陷入死循环，需要处理一下
+    if (is(copy, "Object")) {
+      newObj[key] = deepCopy(copy, newObj[key] || {});
+    } else if (is(copy, "Array")) {
+      newObj[key] = []
+      newObj[key] = deepCopy(copy, newObj[key] || []);
+    } else {
+      newObj[key] = copy;
     }
-    return newObj;
+  }
+  return newObj;
 }
 
 function isType (type, value) {
-	let _type = Object.prototype.toString.call(value).match(/\s(\w+)/)[1].toLowerCase();
+  let _type = Object.prototype.toString.call(value).match(/\s(\w+)/)[1].toLowerCase();
 
-    return _type === type;
+  return _type === type;
 }
 
 function isPlainObject (value) {
-	return ( !!value && isType('object', value) );
+  return ( !!value && isType('object', value) );
 }
 
 function extend(destination, source) {
-	if ( !isPlainObject(destination) || !isPlainObject(source) )
-		throw 'destination and source must be type of object';
+  if ( !isPlainObject(destination) || !isPlainObject(source) )
+    throw 'destination and source must be type of object';
 
-	for ( let property in source )
-		destination[property] = source[property];
+  for ( let property in source )
+    destination[property] = source[property];
 
-	return destination;
+  return destination;
 }
 
 /**
@@ -61,128 +61,128 @@ function extend(destination, source) {
  * 这里根据数字的大小定义取整逻辑
  */
 function getRoundForNumber(number) {
-    let round;
+  let round;
 
-    // 计算出当前数组位数减一的最小数字
-    if ( number  >= 100 )
-        round = String(number).split('')
-                              .reduce((sum) => sum * 10, 0.01);
+  // 计算出当前数组位数减一的最小数字
+  if ( number  >= 100 )
+    round = String(number).split('')
+      .reduce((sum) => sum * 10, 0.01);
 
-    // 数字介于10-100之间，逢5为整
-    else if ( number >= 10 )
-        round = 5;
+  // 数字介于10-100之间，逢5为整
+  else if ( number >= 10 )
+    round = 5;
 
-    else if ( number > 1 )
-        round = 1;
+  else if ( number > 1 )
+    round = 1;
 
-    else
-        round = 0.1;
+  else
+    round = 0.1;
 
-    return round;
+  return round;
 }
 
 function roundForNumber(number, direction) {
-    let result;
-    let round = getRoundForNumber(number);
+  let result;
+  let round = getRoundForNumber(number);
 
-    if( number === 0 )
-        return 0;
+  if( number === 0 )
+    return 0;
 
-    if ( direction === 'up' )
-        result = number + ( round - ( number % round ));
+  if ( direction === 'up' )
+    result = number + ( round - ( number % round ));
 
-    else if ( direction === 'down' )
-        result = number  - number % round;
+  else if ( direction === 'down' )
+    result = number  - number % round;
 
-    return result;
+  return result;
 }
 
 /**
  * 给定最大值最小值和区间个数，给出优化后的最大最小值和单step值
  */
 function getDataRangeAndStep(max, min, step) {
-    if ( max === 0 ) {
-        return {
-            max     : 4,
-            min     : 0,
-            divider : 1,
-            multiple: 1
-        }
-    }
-
-    if ( max === min ) {
-        return {
-            max: max + 2,
-            min: ( min - 2 >= 0 ? min - 2 : 0 ),
-            divider: 1,
-            multiple: 1
-        }
-    }
-
-    //console.log(1, max, min, step);
-    let multiple = 1;
-
-    // 每一步的值小于1的情况，先放大100倍方便计算
-    if (  ( max - min ) / step < 1 ) {
-        multiple = 10000;
-        max *= multiple;
-        min *= multiple;
-    }
-
-    let originMax = max;
-    //console.log(2, max, min, step);
-
-    let divider = Math.round(( max - min ) / step);
-
-    // 如果divider为0，说明值放大后，最大值和最小值差值过小；后续过程没有意义，直接返回
-    if (divider === 0) {
-        return {
-            max     : 4,
-            min     : 0,
-            divider : 1,
-            multiple: 1
-        }
-    }
-
-    //console.log(3, divider);
-
-    // 先将divider降低一点，后面慢慢增加逼近满意值
-    divider = roundForNumber(divider, 'down');
-    //console.log(4, divider);
-
-    // 尽量保证整个图是居中而不是贴边的
-    max = max + ( max % divider );
-    min = min - ( min % divider );
-
-    //console.log(5, max, min);
-
-    // 最小值取整，因为divider也是取整的，所以最后max也是取整的
-    min = roundForNumber(min, 'down');
-
-    //console.log(6, min);
-
-    // 逼近求理想值
-    let round = getRoundForNumber(divider);
-
-    //console.log(8, round)
-    let flag = true;
-    while ( flag ) {
-        //console.log( min + divider * step , originMax, max, );
-        let temp = min + divider * step;
-        if ( temp >= max || temp - originMax >= round * 10 )
-            flag = false;
-
-        divider += round;
-    }
-
-    //console.log(9, max, min, divider);
-
+  if ( max === 0 ) {
     return {
-        max    :( min + divider * step ) / multiple,
-        min    : min / multiple,
-        divider: divider / multiple,
-        multiple
-    };
+      max     : 4,
+      min     : 0,
+      divider : 1,
+      multiple: 1
+    }
+  }
+
+  if ( max === min ) {
+    return {
+      max: max + 2,
+      min: ( min - 2 >= 0 ? min - 2 : 0 ),
+      divider: 1,
+      multiple: 1
+    }
+  }
+
+  //console.log(1, max, min, step);
+  let multiple = 1;
+
+  // 每一步的值小于1的情况，先放大100倍方便计算
+  if (  ( max - min ) / step < 1 ) {
+    multiple = 10000;
+    max *= multiple;
+    min *= multiple;
+  }
+
+  let originMax = max;
+  //console.log(2, max, min, step);
+
+  let divider = Math.round(( max - min ) / step);
+
+  // 如果divider为0，说明值放大后，最大值和最小值差值过小；后续过程没有意义，直接返回
+  if (divider === 0) {
+    return {
+      max     : 4,
+      min     : 0,
+      divider : 1,
+      multiple: 1
+    }
+  }
+
+  //console.log(3, divider);
+
+  // 先将divider降低一点，后面慢慢增加逼近满意值
+  divider = roundForNumber(divider, 'down');
+  //console.log(4, divider);
+
+  // 尽量保证整个图是居中而不是贴边的
+  max = max + ( max % divider );
+  min = min - ( min % divider );
+
+  //console.log(5, max, min);
+
+  // 最小值取整，因为divider也是取整的，所以最后max也是取整的
+  min = roundForNumber(min, 'down');
+
+  //console.log(6, min);
+
+  // 逼近求理想值
+  let round = getRoundForNumber(divider);
+
+  //console.log(8, round)
+  let flag = true;
+  while ( flag ) {
+    //console.log( min + divider * step , originMax, max, );
+    let temp = min + divider * step;
+    if ( temp >= max || temp - originMax >= round * 10 )
+      flag = false;
+
+    divider += round;
+  }
+
+  //console.log(9, max, min, divider);
+
+  return {
+    max    :( min + divider * step ) / multiple,
+    min    : min / multiple,
+    divider: divider / multiple,
+    multiple
+  };
 }
 
 function isNumeric(n) {
@@ -190,106 +190,106 @@ function isNumeric(n) {
 }
 
 function isFloat(n){
-    return Number(n) === n && n % 1 !== 0;
+  return Number(n) === n && n % 1 !== 0;
 }
 
 function changeUnit(value, fixed = 1) {
-    // value是非数字的情况，直接返回value
-    if ( !isNumeric(value) )
-        return value;
+  // value是非数字的情况，直接返回value
+  if ( !isNumeric(value) )
+    return value;
 
-    let number  = parseFloat(value);
-    let unit    = '';
-    let divider = 1;
+  let number  = parseFloat(value);
+  let unit    = '';
+  let divider = 1;
 
-    // 小于1000的值，保留小数点
-    if ( isFloat(value) && number < 1000 )
-        return number.toFixed(fixed);
+  // 小于1000的值，保留小数点
+  if ( isFloat(value) && number < 1000 )
+    return number.toFixed(fixed);
 
-    if ( number < 1e3 ) {
-        unit    = '';
-        divider = 1;
-    }
+  if ( number < 1e3 ) {
+    unit    = '';
+    divider = 1;
+  }
 
-    else if (number >= 1e3 &&  number < 1e4) {
-        unit    = 'k';
-        divider = 1e3;
-    }
+  else if (number >= 1e3 &&  number < 1e4) {
+    unit    = 'k';
+    divider = 1e3;
+  }
 
-    else if ( number < 1e7 ) {
-        unit    = 'w';
-        divider = 1e4;
-    }
+  else if ( number < 1e7 ) {
+    unit    = 'w';
+    divider = 1e4;
+  }
 
-    else {
-        unit    = 'kw';
-        divider = 1e7;
-    }
+  else {
+    unit    = 'kw';
+    divider = 1e7;
+  }
 
-    let temp = number / divider;
+  let temp = number / divider;
 
-    // 如果达不到保留小数的基本要求，取整
-    if ( temp - Math.floor(temp) < 0.5 * Math.pow(0.1, fixed) )
-        fixed = 0;
+  // 如果达不到保留小数的基本要求，取整
+  if ( temp - Math.floor(temp) < 0.5 * Math.pow(0.1, fixed) )
+    fixed = 0;
 
-    return temp.toFixed(fixed) + unit;
+  return temp.toFixed(fixed) + unit;
 }
 
 function none() {
 }
 
 function formatX(length, maxXPoint) {
-    let step  = Math.ceil(length /  maxXPoint );
-    let start = 0;
+  let step  = Math.ceil(length /  maxXPoint );
+  let start = 0;
 
-    // 记录原始的step长度
-    let origin = step;
+  // 记录原始的step长度
+  let origin = step;
 
-    while ( step * ( maxXPoint - 1 ) >= length ) {
-        step--;
-    }
+  while ( step * ( maxXPoint - 1 ) >= length ) {
+    step--;
+  }
 
-    if ( step < origin ) {
-        start = Math.floor(( length - step * ( maxXPoint - 1 ) ) / 2);
-    }
+  if ( step < origin ) {
+    start = Math.floor(( length - step * ( maxXPoint - 1 ) ) / 2);
+  }
 
 
-    return { step, start: start > 1 ? start - 1 : start };
+  return { step, start: start > 1 ? start - 1 : start };
 }
 
 export function splineCurve(firstPoint, middlePoint, afterPoint, t) {
-	// Props to Rob Spencer at scaled innovation for his post on splining between points
-	// http://scaledinnovation.com/analytics/splines/aboutSplines.html
+  // Props to Rob Spencer at scaled innovation for his post on splining between points
+  // http://scaledinnovation.com/analytics/splines/aboutSplines.html
 
-	// This function must also respect "skipped" points
+  // This function must also respect "skipped" points
 
-	const previous = firstPoint.skip ? middlePoint : firstPoint;
-	const current = middlePoint;
-	const next = afterPoint.skip ? middlePoint : afterPoint;
+  const previous = firstPoint.skip ? middlePoint : firstPoint;
+  const current = middlePoint;
+  const next = afterPoint.skip ? middlePoint : afterPoint;
 
-	const d01 = Math.sqrt(Math.pow(current.x - previous.x, 2) + Math.pow(current.y - previous.y, 2));
-	const d12 = Math.sqrt(Math.pow(next.x - current.x, 2) + Math.pow(next.y - current.y, 2));
+  const d01 = Math.sqrt(Math.pow(current.x - previous.x, 2) + Math.pow(current.y - previous.y, 2));
+  const d12 = Math.sqrt(Math.pow(next.x - current.x, 2) + Math.pow(next.y - current.y, 2));
 
-	let s01 = d01 / (d01 + d12);
-	let s12 = d12 / (d01 + d12);
+  let s01 = d01 / (d01 + d12);
+  let s12 = d12 / (d01 + d12);
 
-	// If all points are the same, s01 & s02 will be inf
-	s01 = isNaN(s01) ? 0 : s01;
-	s12 = isNaN(s12) ? 0 : s12;
+  // If all points are the same, s01 & s02 will be inf
+  s01 = isNaN(s01) ? 0 : s01;
+  s12 = isNaN(s12) ? 0 : s12;
 
-	const fa = t * s01; // scaling factor for triangle Ta
-	const fb = t * s12;
+  const fa = t * s01; // scaling factor for triangle Ta
+  const fb = t * s12;
 
-	return {
-		previous: {
-			x: current.x - fa * (next.x - previous.x),
-			y: current.y - fa * (next.y - previous.y)
-		},
-		next: {
-			x: current.x + fb * (next.x - previous.x),
-			y: current.y + fb * (next.y - previous.y)
-		}
-	};
+  return {
+    previous: {
+      x: current.x - fa * (next.x - previous.x),
+      y: current.y - fa * (next.y - previous.y)
+    },
+    next: {
+      x: current.x + fb * (next.x - previous.x),
+      y: current.y + fb * (next.y - previous.y)
+    }
+  };
 }
 
 
@@ -297,21 +297,21 @@ export function splineCurve(firstPoint, middlePoint, afterPoint, t) {
  * @private
  */
 export function _bezierCurveTo(ctx, previous, target, flip) {
-	if (!previous) {
-		return ctx.lineTo(target.x, target.y);
-	}
-	ctx.bezierCurveTo(
-		flip ? previous.controlPointPreviousX : previous.controlPointNextX,
-		flip ? previous.controlPointPreviousY : previous.controlPointNextY,
-		flip ? target.controlPointNextX : target.controlPointPreviousX,
-		flip ? target.controlPointNextY : target.controlPointPreviousY,
-		target.x,
-		target.y);
+  if (!previous) {
+    return ctx.lineTo(target.x, target.y);
+  }
+  ctx.bezierCurveTo(
+    flip ? previous.controlPointPreviousX : previous.controlPointNextX,
+    flip ? previous.controlPointPreviousY : previous.controlPointNextY,
+    flip ? target.controlPointNextX : target.controlPointPreviousX,
+    flip ? target.controlPointNextY : target.controlPointPreviousY,
+    target.x,
+    target.y);
 }
 
 
 function capControlPoint(pt, min, max) {
-	return Math.max(Math.min(pt, max), min);
+  return Math.max(Math.min(pt, max), min);
 }
 
 /**
@@ -322,62 +322,62 @@ function capControlPoint(pt, min, max) {
  * @private
  */
 export function _isPointInArea(point, area) {
-	const epsilon = 0.5; // margin - to match rounded decimals
+  const epsilon = 0.5; // margin - to match rounded decimals
 
-	return point.x > area.left - epsilon && point.x < area.right + epsilon &&
-		point.y > area.top - epsilon && point.y < area.bottom + epsilon;
+  return point.x > area.left - epsilon && point.x < area.right + epsilon &&
+    point.y > area.top - epsilon && point.y < area.bottom + epsilon;
 }
 
 function capBezierPoints(points, area) {
-	let i, ilen, point;
-	for (i = 0, ilen = points.length; i < ilen; ++i) {
-		point = points[i];
-		if (!_isPointInArea(point, area)) {
-			continue;
-		}
-		if (i > 0 && _isPointInArea(points[i - 1], area)) {
-			point.controlPointPreviousX = capControlPoint(point.controlPointPreviousX, area.left, area.right);
-			point.controlPointPreviousY = capControlPoint(point.controlPointPreviousY, area.top, area.bottom);
-		}
-		if (i < points.length - 1 && _isPointInArea(points[i + 1], area)) {
-			point.controlPointNextX = capControlPoint(point.controlPointNextX, area.left, area.right);
-			point.controlPointNextY = capControlPoint(point.controlPointNextY, area.top, area.bottom);
-		}
-	}
+  let i, ilen, point;
+  for (i = 0, ilen = points.length; i < ilen; ++i) {
+    point = points[i];
+    if (!_isPointInArea(point, area)) {
+      continue;
+    }
+    if (i > 0 && _isPointInArea(points[i - 1], area)) {
+      point.controlPointPreviousX = capControlPoint(point.controlPointPreviousX, area.left, area.right);
+      point.controlPointPreviousY = capControlPoint(point.controlPointPreviousY, area.top, area.bottom);
+    }
+    if (i < points.length - 1 && _isPointInArea(points[i + 1], area)) {
+      point.controlPointNextX = capControlPoint(point.controlPointNextX, area.left, area.right);
+      point.controlPointNextY = capControlPoint(point.controlPointNextY, area.top, area.bottom);
+    }
+  }
 }
 
 export function updateBezierControlPoints(points, area ) {
-	let i, ilen, point, controlPoints;
-    const loop = false;
+  let i, ilen, point, controlPoints;
+  const loop = false;
 
-    let prev = loop ? points[points.length - 1] : points[0];
-    for (i = 0, ilen = points.length; i < ilen; ++i) {
-        point = points[i];
-        controlPoints = splineCurve(
-            prev,
-            point,
-            points[Math.min(i + 1, ilen - (loop ? 0 : 1)) % ilen],
-            /*options.tension*/
-            0.1
-        );
-        point.controlPointPreviousX = controlPoints.previous.x;
-        point.controlPointPreviousY = controlPoints.previous.y;
-        point.controlPointNextX = controlPoints.next.x;
-        point.controlPointNextY = controlPoints.next.y;
-        prev = point;
-    }
+  let prev = loop ? points[points.length - 1] : points[0];
+  for (i = 0, ilen = points.length; i < ilen; ++i) {
+    point = points[i];
+    controlPoints = splineCurve(
+      prev,
+      point,
+      points[Math.min(i + 1, ilen - (loop ? 0 : 1)) % ilen],
+      /*options.tension*/
+      0.1
+    );
+    point.controlPointPreviousX = controlPoints.previous.x;
+    point.controlPointPreviousY = controlPoints.previous.y;
+    point.controlPointNextX = controlPoints.next.x;
+    point.controlPointNextY = controlPoints.next.y;
+    prev = point;
+  }
 
-	capBezierPoints(points, area);
+  capBezierPoints(points, area);
 }
 
 export {
-    none,
-    isType,
-    deepCopy,
-    isPlainObject,
-    extend,
-    getDataRangeAndStep,
-    changeUnit,
-    formatX,
+  none,
+  isType,
+  deepCopy,
+  isPlainObject,
+  extend,
+  getDataRangeAndStep,
+  changeUnit,
+  formatX,
 }
 

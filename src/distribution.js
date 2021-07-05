@@ -75,31 +75,35 @@ export default class DistributionChart extends Base {
     let xStart = config.padding.left + render.yAxisWidth;
 
     let first  = this._datasets[0];
-    let second = this._datasets[1];
+    let others = this._datasets.slice(1);
 
-    const maxItem   = this.getMaxItem();
-    const { width } = this.calLabelDataForItem(0, 0, maxItem.barLabel);
-
-    const maxBarWidth = config.width - config.padding.right - xStart - width;
+    const maxItemMap = this.getMaxItem();
 
     const barData      = [];
     let barLabelData   = [];
 
-    first.points.forEach((point, index) => {
-      point.fillColor = first.fillColor || barStyle.fillColor;
-      const barArr = [point];
-      if ( second ) {
-        let cBar = second.points[index];
-        cBar.fillColor = second.fillColor || barStyle.fillColor;
-        barArr.push(cBar);
-      }
+    let maxBarWidthMap = [];
 
-      barArr.forEach( (bar, barIndex)  => {
+    first.points.forEach((point, index) => {
+      let barArr = this._datasets.map(dataset => {
+        let bar = dataset.points[index];
+        bar.fillColor = dataset.fillColor || barStyle.fillColor;
+
+        return bar;
+      });
+
+      barArr.forEach((bar, barIndex) => {
+        let maxItem = maxItemMap[barIndex];
+        if (!maxBarWidthMap[barIndex]) {
+          const { width } = this.calLabelDataForItem(0, 0, maxItem.barLabel);
+          maxBarWidthMap[barIndex] = config.width - config.padding.right - xStart - width;
+        }
+
         const rect = {
           fillColor: bar.fillColor,
           x        : xStart,
           y        : yStart,
-          width    : maxItem.value ? (bar.value / maxItem.value) * maxBarWidth : 0,
+          width    : maxItem.value ? (bar.value / maxItem.value) * maxBarWidthMap[barIndex]: 0,
           height   : barStyle.height,
         }
 
@@ -111,7 +115,7 @@ export default class DistributionChart extends Base {
 
         yStart += barStyle.height;
 
-        if ( second && barIndex === 0 ) {
+        if ( others.length && barIndex < barArr.length - 1 ) {
           yStart += config.barStyle.compareBarMargin;
         } else {
           yStart += barStyle.padding;
@@ -154,21 +158,46 @@ export default class DistributionChart extends Base {
     }
   }
 
-  getMaxItem() {
+  getDatasetMaxItem(dataset) {
     let maxItem;
-    this._datasets.forEach(dataset => {
-      dataset.points.forEach(item => {
-        if ( !maxItem ) {
+    dataset.points.forEach(item => {
+      if ( !maxItem ) {
+        maxItem = item;
+      } else {
+        if ( item.value > maxItem.value ) {
           maxItem = item;
-        } else {
-          if ( item.value > maxItem.value ) {
-            maxItem = item;
-          }
         }
-      });
+      }
     });
 
     return maxItem;
+  }
+
+  getMaxItem() {
+    let maxItem;
+    let maxItemMap = [];
+
+    this._datasets.forEach((dataset, index) => {
+      let item = this.getDatasetMaxItem(dataset);
+
+      maxItemMap[index] = item;
+
+      if ( !maxItem ) {
+        maxItem = item;
+      } else {
+        if ( item.value > maxItem.value ) {
+          maxItem = item;
+        }
+      }
+    });
+
+    let maxBarWidthMap = this._datasets.forEach((dataset, index) => {
+      if (!dataset.independentAxis) {
+        maxItemMap[index] = maxItem;
+      }
+    });
+
+    return maxItemMap;
   }
 
   /**

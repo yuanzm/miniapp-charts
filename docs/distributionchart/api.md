@@ -43,25 +43,6 @@ const distribution = new DistributionChart(
 | top      | Number   | 上边距，默认为10 |
 | bottom   | Number   | 下边距，默认为5  |
 
-### xAxis配置
-
-| keyName  | 类型     |  描述    |
-|----------|----------| ---------|
-| show     | Boolean  | 是否需要展示X轴标签，默认为true|
-| marginTop| Number   | X轴标签与X轴中轴线的间距，默认为10 |
-| color    | String   | X轴标签字体颜色，默认为#B8B8B8 |
-| fontSize | Number   | X轴标签字体大小，默认是11 |
-
-### xAxisLine配置
-
-| keyName  | 类型     |  描述    |
-|----------|----------| ---------|
-| show     | Boolean | 是否展示X轴标签对应的线条，默认为false |
-| centerShow | Boolean | 是否需要展示X轴的中轴线，默认为true |
-| width     | Number   | 线条的宽度，默认为0.6 |
-| color     | String    | 线条的颜色，默认为#C6C6C6 |
-| style     | String    | 线条的样式，默认为solid，可选的为dash |
-
 ### yAxis配置
 
 | keyName  | 类型     |  描述    |
@@ -118,6 +99,7 @@ const distribution = new DistributionChart(
 |----------|----------| ---------|
 | points   | Array    | 由数据点构成的数组，points的每一项配置见point|
 | barStyle | Object   | 柱状体样式配置，会覆盖组件实例的barStyle对应的属性值|
+| independentAxis | Boolean | 该组数据是否需要独立计算最大值，默认为false，该配置为应对不同单位数据放在同一分布图的需求|
 
 ###### point
 | keyName  | 类型     |  描述    |

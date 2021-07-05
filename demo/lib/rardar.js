@@ -121,11 +121,11 @@ __webpack_require__.r(__webpack_exports__);
  * @param {}
  */
 function is(obj, type) {
-	var toString = Object.prototype.toString, undefined;
+  var toString = Object.prototype.toString, undefined;
 
-	return (type === 'Null' && obj === null) ||
-		(type === "Undefined" && obj === undefined) ||
-		toString.call(obj).slice(8, -1) === type;
+  return (type === 'Null' && obj === null) ||
+    (type === "Undefined" && obj === undefined) ||
+    toString.call(obj).slice(8, -1) === type;
 }
 
 /*
@@ -135,39 +135,39 @@ function is(obj, type) {
  * @ return {Object} newObj: 拷贝之后的对象
  */
 function deepCopy(oldObj = {}, newObj={}) {
-    for (var key in oldObj) {
-        var copy = oldObj[key];
-        if (oldObj === copy) continue; //如window.window === window，会陷入死循环，需要处理一下
-        if (is(copy, "Object")) {
-            newObj[key] = deepCopy(copy, newObj[key] || {});
-        } else if (is(copy, "Array")) {
-            newObj[key] = []
-            newObj[key] = deepCopy(copy, newObj[key] || []);
-        } else {
-            newObj[key] = copy;
-        }
+  for (var key in oldObj) {
+    var copy = oldObj[key];
+    if (oldObj === copy) continue; //如window.window === window，会陷入死循环，需要处理一下
+    if (is(copy, "Object")) {
+      newObj[key] = deepCopy(copy, newObj[key] || {});
+    } else if (is(copy, "Array")) {
+      newObj[key] = []
+      newObj[key] = deepCopy(copy, newObj[key] || []);
+    } else {
+      newObj[key] = copy;
     }
-    return newObj;
+  }
+  return newObj;
 }
 
 function isType (type, value) {
-	let _type = Object.prototype.toString.call(value).match(/\s(\w+)/)[1].toLowerCase();
+  let _type = Object.prototype.toString.call(value).match(/\s(\w+)/)[1].toLowerCase();
 
-    return _type === type;
+  return _type === type;
 }
 
 function isPlainObject (value) {
-	return ( !!value && isType('object', value) );
+  return ( !!value && isType('object', value) );
 }
 
 function extend(destination, source) {
-	if ( !isPlainObject(destination) || !isPlainObject(source) )
-		throw 'destination and source must be type of object';
+  if ( !isPlainObject(destination) || !isPlainObject(source) )
+    throw 'destination and source must be type of object';
 
-	for ( let property in source )
-		destination[property] = source[property];
+  for ( let property in source )
+    destination[property] = source[property];
 
-	return destination;
+  return destination;
 }
 
 /**
@@ -176,128 +176,128 @@ function extend(destination, source) {
  * 这里根据数字的大小定义取整逻辑
  */
 function getRoundForNumber(number) {
-    let round;
+  let round;
 
-    // 计算出当前数组位数减一的最小数字
-    if ( number  >= 100 )
-        round = String(number).split('')
-                              .reduce((sum) => sum * 10, 0.01);
+  // 计算出当前数组位数减一的最小数字
+  if ( number  >= 100 )
+    round = String(number).split('')
+      .reduce((sum) => sum * 10, 0.01);
 
-    // 数字介于10-100之间，逢5为整
-    else if ( number >= 10 )
-        round = 5;
+  // 数字介于10-100之间，逢5为整
+  else if ( number >= 10 )
+    round = 5;
 
-    else if ( number > 1 )
-        round = 1;
+  else if ( number > 1 )
+    round = 1;
 
-    else
-        round = 0.1;
+  else
+    round = 0.1;
 
-    return round;
+  return round;
 }
 
 function roundForNumber(number, direction) {
-    let result;
-    let round = getRoundForNumber(number);
+  let result;
+  let round = getRoundForNumber(number);
 
-    if( number === 0 )
-        return 0;
+  if( number === 0 )
+    return 0;
 
-    if ( direction === 'up' )
-        result = number + ( round - ( number % round ));
+  if ( direction === 'up' )
+    result = number + ( round - ( number % round ));
 
-    else if ( direction === 'down' )
-        result = number  - number % round;
+  else if ( direction === 'down' )
+    result = number  - number % round;
 
-    return result;
+  return result;
 }
 
 /**
  * 给定最大值最小值和区间个数，给出优化后的最大最小值和单step值
  */
 function getDataRangeAndStep(max, min, step) {
-    if ( max === 0 ) {
-        return {
-            max     : 4,
-            min     : 0,
-            divider : 1,
-            multiple: 1
-        }
-    }
-
-    if ( max === min ) {
-        return {
-            max: max + 2,
-            min: ( min - 2 >= 0 ? min - 2 : 0 ),
-            divider: 1,
-            multiple: 1
-        }
-    }
-
-    //console.log(1, max, min, step);
-    let multiple = 1;
-
-    // 每一步的值小于1的情况，先放大100倍方便计算
-    if (  ( max - min ) / step < 1 ) {
-        multiple = 10000;
-        max *= multiple;
-        min *= multiple;
-    }
-
-    let originMax = max;
-    //console.log(2, max, min, step);
-
-    let divider = Math.round(( max - min ) / step);
-
-    // 如果divider为0，说明值放大后，最大值和最小值差值过小；后续过程没有意义，直接返回
-    if (divider === 0) {
-        return {
-            max     : 4,
-            min     : 0,
-            divider : 1,
-            multiple: 1
-        }
-    }
-
-    //console.log(3, divider);
-
-    // 先将divider降低一点，后面慢慢增加逼近满意值
-    divider = roundForNumber(divider, 'down');
-    //console.log(4, divider);
-
-    // 尽量保证整个图是居中而不是贴边的
-    max = max + ( max % divider );
-    min = min - ( min % divider );
-
-    //console.log(5, max, min);
-
-    // 最小值取整，因为divider也是取整的，所以最后max也是取整的
-    min = roundForNumber(min, 'down');
-
-    //console.log(6, min);
-
-    // 逼近求理想值
-    let round = getRoundForNumber(divider);
-
-    //console.log(8, round)
-    let flag = true;
-    while ( flag ) {
-        //console.log( min + divider * step , originMax, max, );
-        let temp = min + divider * step;
-        if ( temp >= max || temp - originMax >= round * 10 )
-            flag = false;
-
-        divider += round;
-    }
-
-    //console.log(9, max, min, divider);
-
+  if ( max === 0 ) {
     return {
-        max    :( min + divider * step ) / multiple,
-        min    : min / multiple,
-        divider: divider / multiple,
-        multiple
-    };
+      max     : 4,
+      min     : 0,
+      divider : 1,
+      multiple: 1
+    }
+  }
+
+  if ( max === min ) {
+    return {
+      max: max + 2,
+      min: ( min - 2 >= 0 ? min - 2 : 0 ),
+      divider: 1,
+      multiple: 1
+    }
+  }
+
+  //console.log(1, max, min, step);
+  let multiple = 1;
+
+  // 每一步的值小于1的情况，先放大100倍方便计算
+  if (  ( max - min ) / step < 1 ) {
+    multiple = 10000;
+    max *= multiple;
+    min *= multiple;
+  }
+
+  let originMax = max;
+  //console.log(2, max, min, step);
+
+  let divider = Math.round(( max - min ) / step);
+
+  // 如果divider为0，说明值放大后，最大值和最小值差值过小；后续过程没有意义，直接返回
+  if (divider === 0) {
+    return {
+      max     : 4,
+      min     : 0,
+      divider : 1,
+      multiple: 1
+    }
+  }
+
+  //console.log(3, divider);
+
+  // 先将divider降低一点，后面慢慢增加逼近满意值
+  divider = roundForNumber(divider, 'down');
+  //console.log(4, divider);
+
+  // 尽量保证整个图是居中而不是贴边的
+  max = max + ( max % divider );
+  min = min - ( min % divider );
+
+  //console.log(5, max, min);
+
+  // 最小值取整，因为divider也是取整的，所以最后max也是取整的
+  min = roundForNumber(min, 'down');
+
+  //console.log(6, min);
+
+  // 逼近求理想值
+  let round = getRoundForNumber(divider);
+
+  //console.log(8, round)
+  let flag = true;
+  while ( flag ) {
+    //console.log( min + divider * step , originMax, max, );
+    let temp = min + divider * step;
+    if ( temp >= max || temp - originMax >= round * 10 )
+      flag = false;
+
+    divider += round;
+  }
+
+  //console.log(9, max, min, divider);
+
+  return {
+    max    :( min + divider * step ) / multiple,
+    min    : min / multiple,
+    divider: divider / multiple,
+    multiple
+  };
 }
 
 function isNumeric(n) {
@@ -305,106 +305,106 @@ function isNumeric(n) {
 }
 
 function isFloat(n){
-    return Number(n) === n && n % 1 !== 0;
+  return Number(n) === n && n % 1 !== 0;
 }
 
 function changeUnit(value, fixed = 1) {
-    // value是非数字的情况，直接返回value
-    if ( !isNumeric(value) )
-        return value;
+  // value是非数字的情况，直接返回value
+  if ( !isNumeric(value) )
+    return value;
 
-    let number  = parseFloat(value);
-    let unit    = '';
-    let divider = 1;
+  let number  = parseFloat(value);
+  let unit    = '';
+  let divider = 1;
 
-    // 小于1000的值，保留小数点
-    if ( isFloat(value) && number < 1000 )
-        return number.toFixed(fixed);
+  // 小于1000的值，保留小数点
+  if ( isFloat(value) && number < 1000 )
+    return number.toFixed(fixed);
 
-    if ( number < 1e3 ) {
-        unit    = '';
-        divider = 1;
-    }
+  if ( number < 1e3 ) {
+    unit    = '';
+    divider = 1;
+  }
 
-    else if (number >= 1e3 &&  number < 1e4) {
-        unit    = 'k';
-        divider = 1e3;
-    }
+  else if (number >= 1e3 &&  number < 1e4) {
+    unit    = 'k';
+    divider = 1e3;
+  }
 
-    else if ( number < 1e7 ) {
-        unit    = 'w';
-        divider = 1e4;
-    }
+  else if ( number < 1e7 ) {
+    unit    = 'w';
+    divider = 1e4;
+  }
 
-    else {
-        unit    = 'kw';
-        divider = 1e7;
-    }
+  else {
+    unit    = 'kw';
+    divider = 1e7;
+  }
 
-    let temp = number / divider;
+  let temp = number / divider;
 
-    // 如果达不到保留小数的基本要求，取整
-    if ( temp - Math.floor(temp) < 0.5 * Math.pow(0.1, fixed) )
-        fixed = 0;
+  // 如果达不到保留小数的基本要求，取整
+  if ( temp - Math.floor(temp) < 0.5 * Math.pow(0.1, fixed) )
+    fixed = 0;
 
-    return temp.toFixed(fixed) + unit;
+  return temp.toFixed(fixed) + unit;
 }
 
 function none() {
 }
 
 function formatX(length, maxXPoint) {
-    let step  = Math.ceil(length /  maxXPoint );
-    let start = 0;
+  let step  = Math.ceil(length /  maxXPoint );
+  let start = 0;
 
-    // 记录原始的step长度
-    let origin = step;
+  // 记录原始的step长度
+  let origin = step;
 
-    while ( step * ( maxXPoint - 1 ) >= length ) {
-        step--;
-    }
+  while ( step * ( maxXPoint - 1 ) >= length ) {
+    step--;
+  }
 
-    if ( step < origin ) {
-        start = Math.floor(( length - step * ( maxXPoint - 1 ) ) / 2);
-    }
+  if ( step < origin ) {
+    start = Math.floor(( length - step * ( maxXPoint - 1 ) ) / 2);
+  }
 
 
-    return { step, start: start > 1 ? start - 1 : start };
+  return { step, start: start > 1 ? start - 1 : start };
 }
 
 function splineCurve(firstPoint, middlePoint, afterPoint, t) {
-	// Props to Rob Spencer at scaled innovation for his post on splining between points
-	// http://scaledinnovation.com/analytics/splines/aboutSplines.html
+  // Props to Rob Spencer at scaled innovation for his post on splining between points
+  // http://scaledinnovation.com/analytics/splines/aboutSplines.html
 
-	// This function must also respect "skipped" points
+  // This function must also respect "skipped" points
 
-	const previous = firstPoint.skip ? middlePoint : firstPoint;
-	const current = middlePoint;
-	const next = afterPoint.skip ? middlePoint : afterPoint;
+  const previous = firstPoint.skip ? middlePoint : firstPoint;
+  const current = middlePoint;
+  const next = afterPoint.skip ? middlePoint : afterPoint;
 
-	const d01 = Math.sqrt(Math.pow(current.x - previous.x, 2) + Math.pow(current.y - previous.y, 2));
-	const d12 = Math.sqrt(Math.pow(next.x - current.x, 2) + Math.pow(next.y - current.y, 2));
+  const d01 = Math.sqrt(Math.pow(current.x - previous.x, 2) + Math.pow(current.y - previous.y, 2));
+  const d12 = Math.sqrt(Math.pow(next.x - current.x, 2) + Math.pow(next.y - current.y, 2));
 
-	let s01 = d01 / (d01 + d12);
-	let s12 = d12 / (d01 + d12);
+  let s01 = d01 / (d01 + d12);
+  let s12 = d12 / (d01 + d12);
 
-	// If all points are the same, s01 & s02 will be inf
-	s01 = isNaN(s01) ? 0 : s01;
-	s12 = isNaN(s12) ? 0 : s12;
+  // If all points are the same, s01 & s02 will be inf
+  s01 = isNaN(s01) ? 0 : s01;
+  s12 = isNaN(s12) ? 0 : s12;
 
-	const fa = t * s01; // scaling factor for triangle Ta
-	const fb = t * s12;
+  const fa = t * s01; // scaling factor for triangle Ta
+  const fb = t * s12;
 
-	return {
-		previous: {
-			x: current.x - fa * (next.x - previous.x),
-			y: current.y - fa * (next.y - previous.y)
-		},
-		next: {
-			x: current.x + fb * (next.x - previous.x),
-			y: current.y + fb * (next.y - previous.y)
-		}
-	};
+  return {
+    previous: {
+      x: current.x - fa * (next.x - previous.x),
+      y: current.y - fa * (next.y - previous.y)
+    },
+    next: {
+      x: current.x + fb * (next.x - previous.x),
+      y: current.y + fb * (next.y - previous.y)
+    }
+  };
 }
 
 
@@ -412,21 +412,21 @@ function splineCurve(firstPoint, middlePoint, afterPoint, t) {
  * @private
  */
 function _bezierCurveTo(ctx, previous, target, flip) {
-	if (!previous) {
-		return ctx.lineTo(target.x, target.y);
-	}
-	ctx.bezierCurveTo(
-		flip ? previous.controlPointPreviousX : previous.controlPointNextX,
-		flip ? previous.controlPointPreviousY : previous.controlPointNextY,
-		flip ? target.controlPointNextX : target.controlPointPreviousX,
-		flip ? target.controlPointNextY : target.controlPointPreviousY,
-		target.x,
-		target.y);
+  if (!previous) {
+    return ctx.lineTo(target.x, target.y);
+  }
+  ctx.bezierCurveTo(
+    flip ? previous.controlPointPreviousX : previous.controlPointNextX,
+    flip ? previous.controlPointPreviousY : previous.controlPointNextY,
+    flip ? target.controlPointNextX : target.controlPointPreviousX,
+    flip ? target.controlPointNextY : target.controlPointPreviousY,
+    target.x,
+    target.y);
 }
 
 
 function capControlPoint(pt, min, max) {
-	return Math.max(Math.min(pt, max), min);
+  return Math.max(Math.min(pt, max), min);
 }
 
 /**
@@ -437,52 +437,52 @@ function capControlPoint(pt, min, max) {
  * @private
  */
 function _isPointInArea(point, area) {
-	const epsilon = 0.5; // margin - to match rounded decimals
+  const epsilon = 0.5; // margin - to match rounded decimals
 
-	return point.x > area.left - epsilon && point.x < area.right + epsilon &&
-		point.y > area.top - epsilon && point.y < area.bottom + epsilon;
+  return point.x > area.left - epsilon && point.x < area.right + epsilon &&
+    point.y > area.top - epsilon && point.y < area.bottom + epsilon;
 }
 
 function capBezierPoints(points, area) {
-	let i, ilen, point;
-	for (i = 0, ilen = points.length; i < ilen; ++i) {
-		point = points[i];
-		if (!_isPointInArea(point, area)) {
-			continue;
-		}
-		if (i > 0 && _isPointInArea(points[i - 1], area)) {
-			point.controlPointPreviousX = capControlPoint(point.controlPointPreviousX, area.left, area.right);
-			point.controlPointPreviousY = capControlPoint(point.controlPointPreviousY, area.top, area.bottom);
-		}
-		if (i < points.length - 1 && _isPointInArea(points[i + 1], area)) {
-			point.controlPointNextX = capControlPoint(point.controlPointNextX, area.left, area.right);
-			point.controlPointNextY = capControlPoint(point.controlPointNextY, area.top, area.bottom);
-		}
-	}
+  let i, ilen, point;
+  for (i = 0, ilen = points.length; i < ilen; ++i) {
+    point = points[i];
+    if (!_isPointInArea(point, area)) {
+      continue;
+    }
+    if (i > 0 && _isPointInArea(points[i - 1], area)) {
+      point.controlPointPreviousX = capControlPoint(point.controlPointPreviousX, area.left, area.right);
+      point.controlPointPreviousY = capControlPoint(point.controlPointPreviousY, area.top, area.bottom);
+    }
+    if (i < points.length - 1 && _isPointInArea(points[i + 1], area)) {
+      point.controlPointNextX = capControlPoint(point.controlPointNextX, area.left, area.right);
+      point.controlPointNextY = capControlPoint(point.controlPointNextY, area.top, area.bottom);
+    }
+  }
 }
 
 function updateBezierControlPoints(points, area ) {
-	let i, ilen, point, controlPoints;
-    const loop = false;
+  let i, ilen, point, controlPoints;
+  const loop = false;
 
-    let prev = loop ? points[points.length - 1] : points[0];
-    for (i = 0, ilen = points.length; i < ilen; ++i) {
-        point = points[i];
-        controlPoints = splineCurve(
-            prev,
-            point,
-            points[Math.min(i + 1, ilen - (loop ? 0 : 1)) % ilen],
-            /*options.tension*/
-            0.1
-        );
-        point.controlPointPreviousX = controlPoints.previous.x;
-        point.controlPointPreviousY = controlPoints.previous.y;
-        point.controlPointNextX = controlPoints.next.x;
-        point.controlPointNextY = controlPoints.next.y;
-        prev = point;
-    }
+  let prev = loop ? points[points.length - 1] : points[0];
+  for (i = 0, ilen = points.length; i < ilen; ++i) {
+    point = points[i];
+    controlPoints = splineCurve(
+      prev,
+      point,
+      points[Math.min(i + 1, ilen - (loop ? 0 : 1)) % ilen],
+      /*options.tension*/
+      0.1
+    );
+    point.controlPointPreviousX = controlPoints.previous.x;
+    point.controlPointPreviousY = controlPoints.previous.y;
+    point.controlPointNextX = controlPoints.next.x;
+    point.controlPointNextY = controlPoints.next.y;
+    prev = point;
+  }
 
-	capBezierPoints(points, area);
+  capBezierPoints(points, area);
 }
 
 
@@ -502,36 +502,36 @@ __webpack_require__.r(__webpack_exports__);
  * 所有组件通用配置
  */
 /* harmony default export */ __webpack_exports__["default"] = ({
-    debug: false,
+  debug: false,
 
-    /**
-     * 默认的图表宽度
-     */
-    width : 414,
+  /**
+   * 默认的图表宽度
+   */
+  width : 414,
 
-    /**
-     * 默认的图表高度
-     */
-    height: 200,
+  /**
+   * 默认的图表高度
+   */
+  height: 200,
 
-    // Y轴标签的单位
-    unit  : '',
+  // Y轴标签的单位
+  unit  : '',
 
-    /**
-     * Y轴标签以及toolTip的单位换算函数
-     * 组件内置了changeUnit函数，可以自行设置
-     */
-    changeUnit : _util_js__WEBPACK_IMPORTED_MODULE_0__["changeUnit"],
+  /**
+   * Y轴标签以及toolTip的单位换算函数
+   * 组件内置了changeUnit函数，可以自行设置
+   */
+  changeUnit : _util_js__WEBPACK_IMPORTED_MODULE_0__["changeUnit"],
 
-    /**
-     * 图表内本身的padding
-     */
-    padding: {
-        left  : 10,
-        right : 10,
-        top   : 10,
-        bottom: 5
-    },
+  /**
+   * 图表内本身的padding
+   */
+  padding: {
+    left  : 10,
+    right : 10,
+    top   : 10,
+    bottom: 5
+  },
 });
 
 
@@ -553,156 +553,156 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class Base extends _draw_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
-    constructor() {
-        super();
+  constructor() {
+    super();
 
-        // 用于性能数据打点
-        this._start = 0;
+    // 用于性能数据打点
+    this._start = 0;
 
-        // 寄存最终用于渲染的数据
-        this._render = {};
+    // 寄存最终用于渲染的数据
+    this._render = {};
 
-        // 为了方便调试，在调试模式下会打出性能信息
-        this._performance = {};
+    // 为了方便调试，在调试模式下会打出性能信息
+    this._performance = {};
 
-        // 实际绘图区域边界点信息
-        this._boundary = {};
+    // 实际绘图区域边界点信息
+    this._boundary = {};
 
-        this.aniTimer = null;
+    this.aniTimer = null;
+  }
+
+  /**
+   * 性能数据打点
+   */
+  log(performancePointName) {
+    this._performance[performancePointName] = new Date() - this._start;
+  }
+
+  /**
+   * 获取本实例的配置
+   */
+  getConfig(cfg, sourceConfig) {
+    if ( !Object(_util_js__WEBPACK_IMPORTED_MODULE_1__["isPlainObject"])(cfg) )
+      throw new Error('options must be type of Object');
+
+    for ( let key in sourceConfig ) {
+      if ( cfg[key] !== undefined ) {
+        if ( typeof sourceConfig[key] !== typeof cfg[key] )
+          throw new Error(`TypeMismatch：${key} must be type of ${ typeof sourceConfig[key]}`);
+
+        // 对于对象类型的属性，递归调用来替换
+        if ( Object(_util_js__WEBPACK_IMPORTED_MODULE_1__["isPlainObject"])(cfg[key]) )
+          this.getConfig(cfg[key], sourceConfig[key]);
+
+        else
+          sourceConfig[key] = cfg[key];
+      }
     }
 
-    /**
-     * 性能数据打点
-     */
-    log(performancePointName) {
-        this._performance[performancePointName] = new Date() - this._start;
+    return sourceConfig;
+  }
+
+  /**
+   * 因为可以设置padding样式，所以需要维护真实的边界点
+   * 才可以实现精确绘制
+   */
+  calBoundaryPoint() {
+    let _config = this._config;
+    let padding = this._config.padding;
+
+    // 实际绘图区域的左上角
+    this._boundary.leftTop = {
+      x: padding.left,
+      y: padding.top
+    };
+
+    // 计算实际绘图区域的左下角信息
+    this._boundary.leftBottom = {
+      x: padding.left,
+      y: (   _config.height
+        - padding.bottom  )
+    };
+
+    if ( _config.xAxis ) {
+      this._boundary.leftBottom.y -= ( _config.xAxis.fontSize + _config.xAxis.marginTop  );
     }
 
-    /**
-     * 获取本实例的配置
-     */
-    getConfig(cfg, sourceConfig) {
-        if ( !Object(_util_js__WEBPACK_IMPORTED_MODULE_1__["isPlainObject"])(cfg) )
-            throw new Error('options must be type of Object');
+    // 计算实际绘图区域的右上角信息
+    this._boundary.rightTop =  {
+      x: _config.width - padding.right,
+      y: padding.top
+    };
 
-        for ( let key in sourceConfig ) {
-            if ( cfg[key] !== undefined ) {
-                if ( typeof sourceConfig[key] !== typeof cfg[key] )
-                    throw new Error(`TypeMismatch：${key} must be type of ${ typeof sourceConfig[key]}`);
+    this._boundary.rightBottom = {
+      x: _config.width - padding.right,
+      y: this._boundary.leftBottom.y
+    };
 
-                // 对于对象类型的属性，递归调用来替换
-                if ( Object(_util_js__WEBPACK_IMPORTED_MODULE_1__["isPlainObject"])(cfg[key]) )
-                    this.getConfig(cfg[key], sourceConfig[key]);
+    this._boundary.size = {
+      width : this._boundary.rightTop.x - this._boundary.leftTop.x,
+      height: this._boundary.leftBottom.y - this._boundary.leftTop.y,
+    };
 
-                else
-                    sourceConfig[key] = cfg[key];
-            }
-        }
-
-        return sourceConfig;
+    this._area = {
+      ...this._boundary.size,
+      left: this._boundary.leftTop.x,
+      top: this._boundary.leftTop.y,
+      right: this._boundary.rightBottom.x,
+      bottom: this._boundary.rightBottom.y
     }
 
-    /**
-     * 因为可以设置padding样式，所以需要维护真实的边界点
-     * 才可以实现精确绘制
-     */
-    calBoundaryPoint() {
-        let _config = this._config;
-        let padding = this._config.padding;
+    this.log('calBoundaryPoint');
 
-        // 实际绘图区域的左上角
-        this._boundary.leftTop = {
-            x: padding.left,
-            y: padding.top
-        };
+    return this._boundary;
+  }
 
-        // 计算实际绘图区域的左下角信息
-        this._boundary.leftBottom = {
-            x: padding.left,
-            y: (   _config.height
-                - padding.bottom  )
-        };
+  // 计算用于绘制的点的信息
 
-        if ( _config.xAxis ) {
-            this._boundary.leftBottom.y -= ( _config.xAxis.fontSize + _config.xAxis.marginTop  );
-        }
-
-        // 计算实际绘图区域的右上角信息
-        this._boundary.rightTop =  {
-            x: _config.width - padding.right,
-            y: padding.top
-        };
-
-        this._boundary.rightBottom = {
-            x: _config.width - padding.right,
-            y: this._boundary.leftBottom.y
-        };
-
-        this._boundary.size = {
-            width : this._boundary.rightTop.x - this._boundary.leftTop.x,
-            height: this._boundary.leftBottom.y - this._boundary.leftTop.y,
-        };
-
-        this._area = {
-            ...this._boundary.size,
-            left: this._boundary.leftTop.x,
-            top: this._boundary.leftTop.y,
-            right: this._boundary.rightBottom.x,
-            bottom: this._boundary.rightBottom.y
-        }
-
-        this.log('calBoundaryPoint');
-
-        return this._boundary;
+  requestAnimFrame(callback) {
+    if ( typeof requestAnimationFrame !== 'undefined' ) {
+      requestAnimationFrame(callback);
     }
 
-    // 计算用于绘制的点的信息
+    else {
+      setTimeout(callback, 1000 / 60);
+    }
+  }
 
-    requestAnimFrame(callback) {
-        if ( typeof requestAnimationFrame !== 'undefined' ) {
-            requestAnimationFrame(callback);
-        }
+  animationLopp(config, draw) {
+    let animationCount = 1 / ( config.animationStep || 1 );
+    let easingFunction = _easing_js__WEBPACK_IMPORTED_MODULE_2__["default"][config.animationEasing];
 
-        else {
-            setTimeout(callback, 1000 / 60);
-        }
+    // 动画完成的百分比
+    let percentComplete = (  config.animation
+      ? 0
+      : 1  );
+
+    let animationFrame = () => {
+      let easeAdjustedAnimationPercent = (  config.animation
+        ? easingFunction(percentComplete)
+        : 1  );
+
+      if ( easeAdjustedAnimationPercent > 1 ) {
+        easeAdjustedAnimationPercent = 1;
+      }
+
+      draw.call(this, easeAdjustedAnimationPercent);
     }
 
-    animationLopp(config, draw) {
-        let animationCount = 1 / ( config.animationStep || 1 );
-        let easingFunction = _easing_js__WEBPACK_IMPORTED_MODULE_2__["default"][config.animationEasing];
+    let animationLoop = () => {
+      percentComplete += animationCount;
 
-        // 动画完成的百分比
-        let percentComplete = (  config.animation
-                               ? 0
-                               : 1  );
+      animationFrame();
 
-        let animationFrame = () => {
-            let easeAdjustedAnimationPercent = (  config.animation
-                                                ? easingFunction(percentComplete)
-                                                : 1  );
-
-            if ( easeAdjustedAnimationPercent > 1 ) {
-                easeAdjustedAnimationPercent = 1;
-            }
-
-            draw.call(this, easeAdjustedAnimationPercent);
-        }
-
-        let animationLoop = () => {
-            percentComplete += animationCount;
-
-            animationFrame();
-
-            if ( percentComplete <= 1 ) {
-                this.requestAnimFrame(animationLoop);
-            } else {
-                config.onAnimationComplete && config.onAnimationComplete();
-            }
-        }
-
+      if ( percentComplete <= 1 ) {
         this.requestAnimFrame(animationLoop);
+      } else {
+        config.onAnimationComplete && config.onAnimationComplete();
+      }
     }
+
+    this.requestAnimFrame(animationLoop);
+  }
 }
 
 
@@ -724,258 +724,258 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class ChartBase {
-    wordWidth(words, fontSize) {
-        if ( words === undefined || words === null )
-            return 0;
+  wordWidth(words, fontSize) {
+    if ( words === undefined || words === null )
+      return 0;
 
-        let totLength = 0;
+    let totLength = 0;
 
-        for ( let i = 0; i < words.length; i++ ) {
-            let strCode = words.charCodeAt(i);
+    for ( let i = 0; i < words.length; i++ ) {
+      let strCode = words.charCodeAt(i);
 
-            if ( strCode > 128 )
-                totLength += fontSize;
+      if ( strCode > 128 )
+        totLength += fontSize;
 
-            else
-                totLength += fontSize / 2;
-        }
-
-        return totLength;
+      else
+        totLength += fontSize / 2;
     }
 
-    measureText(ctx, word) {
-        // 低版本兼容处理
-        if ( !ctx.measureText ) {
-            return this.getWordWidth(word);
-        }
+    return totLength;
+  }
 
-        ctx.save();
-        if ( typeof(word.text) === 'number' ) {
-            word.text = word.text.toString();
-        }
-        ctx.font = word.fontSize + 'px sans-serif';
-        const metrics = ctx.measureText(word.text);
-
-        ctx.restore();
-
-        return metrics.width;
+  measureText(ctx, word) {
+    // 低版本兼容处理
+    if ( !ctx.measureText ) {
+      return this.getWordWidth(word);
     }
 
-    getWordWidth(word) {
-        if ( typeof(word.text) === 'number' ) {
-            word.text = word.text.toString();
+    ctx.save();
+    if ( typeof(word.text) === 'number' ) {
+      word.text = word.text.toString();
+    }
+    ctx.font = word.fontSize + 'px sans-serif';
+    const metrics = ctx.measureText(word.text);
+
+    ctx.restore();
+
+    return metrics.width;
+  }
+
+  getWordWidth(word) {
+    if ( typeof(word.text) === 'number' ) {
+      word.text = word.text.toString();
+    }
+
+    let w = this.wordWidth(word.text, word.fontSize);
+
+    return Math.ceil(w);
+  }
+
+  /**
+   * 根据给定样式绘制文字
+   */
+  drawWord(ctx, word) {
+    if ( typeof(word.text) === 'number' )
+      word.text = word.text.toString();
+
+    ctx.beginPath();
+
+    if ( word.isbottom )
+      ctx.setTextBaseline('bottom')
+
+    if ( word.baseline ) {
+      ctx.setTextBaseline(word.baseline)
+    }
+
+    ctx.setFontSize(word.fontSize);
+    ctx.setFillStyle(word.color);
+    ctx.setTextAlign(word.textAlign || 'left');
+    ctx.fillText(word.text, word.x, word.y);
+
+    ctx.stroke();
+    ctx.closePath();
+  }
+
+  /**
+   * 绘制一个矩形 支持圆角矩形
+   * rect = {
+   *      fillColor
+   *      x
+   *      y
+   *      widht
+   *      height
+   *      r
+   * }
+   */
+  drawRect(ctx, rect) {
+    if(rect['r'] && rect['r'] > 0){
+      ctx.save()
+      ctx.beginPath()
+
+      // 左上弧线
+      ctx.arc(rect.x + rect.r, rect.y + rect.r, rect.r, 1 * Math.PI, 1.5 * Math.PI)
+      // 左直线
+      ctx.moveTo(rect.x, rect.y + rect.r)
+      ctx.lineTo(rect.x, rect.y + rect.height - rect.r)
+      // 左下弧线
+      ctx.arc(rect.x + rect.r, rect.y + rect.height - rect.r, rect.r, 0.5 * Math.PI, 1 * Math.PI)
+      // 下直线
+      ctx.lineTo(rect.x + rect.r, rect.y + rect.height)
+      ctx.lineTo(rect.x + rect.width - rect.r, rect.y + rect.height)
+      // 右下弧线
+      ctx.arc(rect.x + rect.width - rect.r, rect.y + rect.height - rect.r, rect.r, 0 * Math.PI, 0.5 * Math.PI)
+      // 右直线
+      ctx.lineTo(rect.x + rect.width, rect.y + rect.height - rect.r)
+      ctx.lineTo(rect.x + rect.width, rect.y + rect.r)
+      // 右上弧线
+      ctx.arc(rect.x + rect.width - rect.r, rect.y + rect.r, rect.r, 1.5 * Math.PI, 2 * Math.PI)
+      // 上直线
+      ctx.lineTo(rect.x + rect.width - rect.r, rect.y)
+      ctx.lineTo(rect.x + rect.r, rect.y)
+
+      ctx.setFillStyle(rect.fillColor)
+      ctx.fill()
+    }else{
+      ctx.beginPath();
+      ctx.setStrokeStyle(rect.fillColor);
+      ctx.setFillStyle(rect.fillColor);
+      ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
+      ctx.closePath();
+    }
+
+  }
+
+  /**
+   * 根据给定样式绘制线条
+   */
+  drawLine(ctx, line) {
+    ctx.beginPath();
+    ctx.setLineWidth(line.width || 1);
+    ctx.setStrokeStyle(line.color);
+
+    if ( line.isDash )
+      ctx.setLineDash(line.dashPattern, line.dashOffset);
+
+    ctx.moveTo(line.start.x, line.start.y);
+    ctx.lineTo(line.end.x, line.end.y);
+
+    ctx.stroke();
+    ctx.closePath();
+
+    ctx.setLineDash([0], 0);
+  }
+
+  drawLongLine(ctx, line) {
+    ctx.beginPath();
+    ctx.setLineWidth(line.width || 1);
+    ctx.setStrokeStyle(line.color);
+
+    if ( line.isDash )
+      ctx.setLineDash(line.dashPattern, line.dashOffset);
+
+    let points = line.points || [];
+
+    for ( let index = 0; index < points.length; index++ ) {
+      let point = points[index];
+      if ( index === 0 )
+        ctx.moveTo(point.x, point.y);
+
+      else
+        ctx.lineTo(point.x, point.y);
+    }
+
+    // 需要填充背景颜色要在stroke之前填充，否则边界线会发虚
+    if ( line.fill ) {
+      ctx.setFillStyle(line.fillColor);
+      ctx.fill();
+    }
+
+    ctx.stroke();
+    ctx.closePath();
+
+    ctx.setLineDash([0], 0);
+  }
+
+  /**
+   * 绘制一条由线段连接在一起的长线
+   * 绘制多个线条时，效率更高的做法是，创建一个包含所有线条的路径，
+   * 然后通过单个绘制调用进行绘制。也就是说，无需分别绘制各个线条。
+   * 当这条线由很多线段组成的时候，可以非常显著提升性能!
+   */
+  drawLongLineWithFill(ctx, points, opts = {
+    lineWidth: 1,
+    lineColor: '#7587db',
+    fillColor: 'rgba(117, 135, 219, 0.3)',
+    needFill : false,
+  }) {
+    ctx.save();
+
+    ctx.beginPath();
+    ctx.setFillStyle(opts.fillColor);
+    ctx.setLineWidth(opts.lineWidth);
+    ctx.setStrokeStyle(opts.lineColor);
+
+    let start = points[0];
+    let end   = points[points.length - 1];
+
+    ctx.moveTo(start.x, start.y);
+    let prev;
+
+    for ( let index = 1; index < points.length - 1; index++ ) {
+      let point = points[index];
+      if ( index === 1 ) {
+        ctx.moveTo(point.x, point.y);
+      }
+
+      else {
+        if (opts.curve ) {
+          Object(_util_js__WEBPACK_IMPORTED_MODULE_0__["_bezierCurveTo"])(ctx, prev, point);
+        } else {
+          ctx.lineTo(point.x, point.y);
         }
+      }
 
-        let w = this.wordWidth(word.text, word.fontSize);
-
-        return Math.ceil(w);
+      prev = point;
     }
 
-    /**
-     * 根据给定样式绘制文字
-     */
-    drawWord(ctx, word) {
-        if ( typeof(word.text) === 'number' )
-            word.text = word.text.toString();
+    ctx.stroke();
 
-        ctx.beginPath();
+    // 闭合区域
+    ctx.lineTo(end.x, end.y);
+    ctx.lineTo(start.x, start.y);
 
-        if ( word.isbottom )
-            ctx.setTextBaseline('bottom')
-
-        if ( word.baseline ) {
-            ctx.setTextBaseline(word.baseline)
-        }
-
-        ctx.setFontSize(word.fontSize);
-        ctx.setFillStyle(word.color);
-        ctx.setTextAlign(word.textAlign || 'left');
-        ctx.fillText(word.text, word.x, word.y);
-
-        ctx.stroke();
-        ctx.closePath();
+    if ( opts.needFill !== false ) {
+      ctx.fill();
     }
 
-    /**
-     * 绘制一个矩形 支持圆角矩形
-     * rect = {
-     *      fillColor
-     *      x
-     *      y
-     *      widht
-     *      height
-     *      r
-     * }
-     */
-    drawRect(ctx, rect) {
-        if(rect['r'] && rect['r'] > 0){
-            ctx.save()
-            ctx.beginPath()
-        
-            // 左上弧线
-            ctx.arc(rect.x + rect.r, rect.y + rect.r, rect.r, 1 * Math.PI, 1.5 * Math.PI)
-            // 左直线
-            ctx.moveTo(rect.x, rect.y + rect.r)
-            ctx.lineTo(rect.x, rect.y + rect.height - rect.r)
-            // 左下弧线
-            ctx.arc(rect.x + rect.r, rect.y + rect.height - rect.r, rect.r, 0.5 * Math.PI, 1 * Math.PI)
-            // 下直线
-            ctx.lineTo(rect.x + rect.r, rect.y + rect.height)
-            ctx.lineTo(rect.x + rect.width - rect.r, rect.y + rect.height)
-            // 右下弧线
-            ctx.arc(rect.x + rect.width - rect.r, rect.y + rect.height - rect.r, rect.r, 0 * Math.PI, 0.5 * Math.PI)
-            // 右直线
-            ctx.lineTo(rect.x + rect.width, rect.y + rect.height - rect.r)
-            ctx.lineTo(rect.x + rect.width, rect.y + rect.r)
-            // 右上弧线
-            ctx.arc(rect.x + rect.width - rect.r, rect.y + rect.r, rect.r, 1.5 * Math.PI, 2 * Math.PI)
-            // 上直线
-            ctx.lineTo(rect.x + rect.width - rect.r, rect.y)
-            ctx.lineTo(rect.x + rect.r, rect.y)
-        
-            ctx.setFillStyle(rect.fillColor)
-            ctx.fill()
-        }else{
-            ctx.beginPath();
-            ctx.setStrokeStyle(rect.fillColor);
-            ctx.setFillStyle(rect.fillColor);
-            ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
-            ctx.closePath();
-        }
+    ctx.closePath();
 
-    }
+    ctx.restore();
+  }
 
-    /**
-     * 根据给定样式绘制线条
-     */
-    drawLine(ctx, line) {
-        ctx.beginPath();
-        ctx.setLineWidth(line.width || 1);
-        ctx.setStrokeStyle(line.color);
+  /**
+   * 根据给定样式绘制一个圆
+   */
+  drawCircle(ctx, circle) {
 
-        if ( line.isDash )
-            ctx.setLineDash(line.dashPattern, line.dashOffset);
+    ctx.beginPath();
 
-        ctx.moveTo(line.start.x, line.start.y);
-        ctx.lineTo(line.end.x, line.end.y);
+    ctx.setStrokeStyle(circle.strokeColor);
+    if(circle.fillColor)
+      ctx.setFillStyle(circle.fillColor);
+    ctx.setLineWidth(circle.lineWidth || 1);
+    ctx.arc(circle.x, circle.y, circle.r, 0, 2 * Math.PI);
 
-        ctx.stroke();
-        ctx.closePath();
+    ctx.stroke();
+    if(circle.fillColor)
+      ctx.fill();
+    ctx.closePath();
+  }
 
-        ctx.setLineDash([0], 0);
-    }
-
-    drawLongLine(ctx, line) {
-        ctx.beginPath();
-        ctx.setLineWidth(line.width || 1);
-        ctx.setStrokeStyle(line.color);
-
-        if ( line.isDash )
-            ctx.setLineDash(line.dashPattern, line.dashOffset);
-
-        let points = line.points || [];
-
-        for ( let index = 0; index < points.length; index++ ) {
-            let point = points[index];
-            if ( index === 0 )
-                ctx.moveTo(point.x, point.y);
-
-            else
-                ctx.lineTo(point.x, point.y);
-        }
-
-        // 需要填充背景颜色要在stroke之前填充，否则边界线会发虚
-        if ( line.fill ) {
-            ctx.setFillStyle(line.fillColor);
-            ctx.fill();
-        }
-
-        ctx.stroke();
-        ctx.closePath();
-
-        ctx.setLineDash([0], 0);
-    }
-
-    /**
-     * 绘制一条由线段连接在一起的长线
-     * 绘制多个线条时，效率更高的做法是，创建一个包含所有线条的路径，
-     * 然后通过单个绘制调用进行绘制。也就是说，无需分别绘制各个线条。
-     * 当这条线由很多线段组成的时候，可以非常显著提升性能!
-     */
-    drawLongLineWithFill(ctx, points, opts = {
-        lineWidth: 1,
-        lineColor: '#7587db',
-        fillColor: 'rgba(117, 135, 219, 0.3)',
-        needFill : false,
-    }) {
-        ctx.save();
-
-        ctx.beginPath();
-        ctx.setFillStyle(opts.fillColor);
-        ctx.setLineWidth(opts.lineWidth);
-        ctx.setStrokeStyle(opts.lineColor);
-
-        let start = points[0];
-        let end   = points[points.length - 1];
-
-        ctx.moveTo(start.x, start.y);
-        let prev;
-
-        for ( let index = 1; index < points.length - 1; index++ ) {
-            let point = points[index];
-            if ( index === 1 ) {
-                ctx.moveTo(point.x, point.y);
-            }
-
-            else {
-                if (opts.curve ) {
-                    Object(_util_js__WEBPACK_IMPORTED_MODULE_0__["_bezierCurveTo"])(ctx, prev, point);
-                } else {
-                    ctx.lineTo(point.x, point.y);
-                }
-            }
-
-            prev = point;
-        }
-
-        ctx.stroke();
-
-        // 闭合区域
-        ctx.lineTo(end.x, end.y);
-        ctx.lineTo(start.x, start.y);
-
-        if ( opts.needFill !== false ) {
-            ctx.fill();
-        }
-
-        ctx.closePath();
-
-        ctx.restore();
-    }
-
-    /**
-     * 根据给定样式绘制一个圆
-     */
-    drawCircle(ctx, circle) {
-
-        ctx.beginPath();
-
-        ctx.setStrokeStyle(circle.strokeColor);
-        if(circle.fillColor)
-            ctx.setFillStyle(circle.fillColor);
-        ctx.setLineWidth(circle.lineWidth || 1);
-        ctx.arc(circle.x, circle.y, circle.r, 0, 2 * Math.PI);
-
-        ctx.stroke();
-        if(circle.fillColor)
-            ctx.fill();
-        ctx.closePath();
-    }
-
-    clearCanvas(ctx, width, height) {
-        ctx.clearRect(0, 0, width, height);
-        ctx.draw();
-    }
+  clearCanvas(ctx, width, height) {
+    ctx.clearRect(0, 0, width, height);
+    ctx.draw();
+  }
 }
 
 
@@ -990,134 +990,134 @@ __webpack_require__.r(__webpack_exports__);
 //http://www.robertpenner.com/easing/
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    linear: function (t) {
-        return t;
-    },
-    easeInQuad: function (t) {
-        return t * t;
-    },
-    easeOutQuad: function (t) {
-        return -1 * t * (t - 2);
-    },
-    easeInOutQuad: function (t) {
-        if ((t /= 1 / 2) < 1) return 1 / 2 * t * t;
-        return -1 / 2 * ((--t) * (t - 2) - 1);
-    },
-    easeInCubic: function (t) {
-        return t * t * t;
-    },
-    easeOutCubic: function (t) {
-        return 1 * ((t = t / 1 - 1) * t * t + 1);
-    },
-    easeInOutCubic: function (t) {
-        if ((t /= 1 / 2) < 1) return 1 / 2 * t * t * t;
-        return 1 / 2 * ((t -= 2) * t * t + 2);
-    },
-    easeInQuart: function (t) {
-        return t * t * t * t;
-    },
-    easeOutQuart: function (t) {
-        return -1 * ((t = t / 1 - 1) * t * t * t - 1);
-    },
-    easeInOutQuart: function (t) {
-        if ((t /= 1 / 2) < 1) return 1 / 2 * t * t * t * t;
-        return -1 / 2 * ((t -= 2) * t * t * t - 2);
-    },
-    easeInQuint: function (t) {
-        return 1 * (t /= 1) * t * t * t * t;
-    },
-    easeOutQuint: function (t) {
-        return 1 * ((t = t / 1 - 1) * t * t * t * t + 1);
-    },
-    easeInOutQuint: function (t) {
-        if ((t /= 1 / 2) < 1) return 1 / 2 * t * t * t * t * t;
-        return 1 / 2 * ((t -= 2) * t * t * t * t + 2);
-    },
-    easeInSine: function (t) {
-        return -1 * Math.cos(t / 1 * (Math.PI / 2)) + 1;
-    },
-    easeOutSine: function (t) {
-        return 1 * Math.sin(t / 1 * (Math.PI / 2));
-    },
-    easeInOutSine: function (t) {
-        return -1 / 2 * (Math.cos(Math.PI * t / 1) - 1);
-    },
-    easeInExpo: function (t) {
-        return (t == 0) ? 1 : 1 * Math.pow(2, 10 * (t / 1 - 1));
-    },
-    easeOutExpo: function (t) {
-        return (t == 1) ? 1 : 1 * (-Math.pow(2, -10 * t / 1) + 1);
-    },
-    easeInOutExpo: function (t) {
-        if (t == 0) return 0;
-        if (t == 1) return 1;
-        if ((t /= 1 / 2) < 1) return 1 / 2 * Math.pow(2, 10 * (t - 1));
-        return 1 / 2 * (-Math.pow(2, -10 * --t) + 2);
-    },
-    easeInCirc: function (t) {
-        if (t >= 1) return t;
-        return -1 * (Math.sqrt(1 - (t /= 1) * t) - 1);
-    },
-    easeOutCirc: function (t) {
-        return 1 * Math.sqrt(1 - (t = t / 1 - 1) * t);
-    },
-    easeInOutCirc: function (t) {
-        if ((t /= 1 / 2) < 1) return -1 / 2 * (Math.sqrt(1 - t * t) - 1);
-        return 1 / 2 * (Math.sqrt(1 - (t -= 2) * t) + 1);
-    },
-    easeInElastic: function (t) {
-        var s = 1.70158; var p = 0; var a = 1;
-        if (t == 0) return 0; if ((t /= 1) == 1) return 1; if (!p) p = 1 * .3;
-        if (a < Math.abs(1)) { a = 1; s = p / 4; }
-        else s = p / (2 * Math.PI) * Math.asin(1 / a);
-        return -(a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * 1 - s) * (2 * Math.PI) / p));
-    },
-    easeOutElastic: function (t) {
-        var s = 1.70158; var p = 0; var a = 1;
-        if (t == 0) return 0; if ((t /= 1) == 1) return 1; if (!p) p = 1 * .3;
-        if (a < Math.abs(1)) { a = 1; s = p / 4; }
-        else s = p / (2 * Math.PI) * Math.asin(1 / a);
-        return a * Math.pow(2, -10 * t) * Math.sin((t * 1 - s) * (2 * Math.PI) / p) + 1;
-    },
-    easeInOutElastic: function (t) {
-        var s = 1.70158; var p = 0; var a = 1;
-        if (t == 0) return 0; if ((t /= 1 / 2) == 2) return 1; if (!p) p = 1 * (.3 * 1.5);
-        if (a < Math.abs(1)) { a = 1; s = p / 4; }
-        else s = p / (2 * Math.PI) * Math.asin(1 / a);
-        if (t < 1) return -.5 * (a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * 1 - s) * (2 * Math.PI) / p));
-        return a * Math.pow(2, -10 * (t -= 1)) * Math.sin((t * 1 - s) * (2 * Math.PI) / p) * .5 + 1;
-    },
-    easeInBack: function (t) {
-        var s = 1.70158;
-        return 1 * (t /= 1) * t * ((s + 1) * t - s);
-    },
-    easeOutBack: function (t) {
-        var s = 1.70158;
-        return 1 * ((t = t / 1 - 1) * t * ((s + 1) * t + s) + 1);
-    },
-    easeInOutBack: function (t) {
-        var s = 1.70158;
-        if ((t /= 1 / 2) < 1) return 1 / 2 * (t * t * (((s *= (1.525)) + 1) * t - s));
-        return 1 / 2 * ((t -= 2) * t * (((s *= (1.525)) + 1) * t + s) + 2);
-    },
-    easeInBounce: function (t) {
-        return 1 - animationOptions.easeOutBounce(1 - t);
-    },
-    easeOutBounce: function (t) {
-        if ((t /= 1) < (1 / 2.75)) {
-            return 1 * (7.5625 * t * t);
-        } else if (t < (2 / 2.75)) {
-            return 1 * (7.5625 * (t -= (1.5 / 2.75)) * t + .75);
-        } else if (t < (2.5 / 2.75)) {
-            return 1 * (7.5625 * (t -= (2.25 / 2.75)) * t + .9375);
-        } else {
-            return 1 * (7.5625 * (t -= (2.625 / 2.75)) * t + .984375);
-        }
-    },
-    easeInOutBounce: function (t) {
-        if (t < 1 / 2) return animationOptions.easeInBounce(t * 2) * .5;
-        return animationOptions.easeOutBounce(t * 2 - 1) * .5 + 1 * .5;
+  linear: function (t) {
+    return t;
+  },
+  easeInQuad: function (t) {
+    return t * t;
+  },
+  easeOutQuad: function (t) {
+    return -1 * t * (t - 2);
+  },
+  easeInOutQuad: function (t) {
+    if ((t /= 1 / 2) < 1) return 1 / 2 * t * t;
+    return -1 / 2 * ((--t) * (t - 2) - 1);
+  },
+  easeInCubic: function (t) {
+    return t * t * t;
+  },
+  easeOutCubic: function (t) {
+    return 1 * ((t = t / 1 - 1) * t * t + 1);
+  },
+  easeInOutCubic: function (t) {
+    if ((t /= 1 / 2) < 1) return 1 / 2 * t * t * t;
+    return 1 / 2 * ((t -= 2) * t * t + 2);
+  },
+  easeInQuart: function (t) {
+    return t * t * t * t;
+  },
+  easeOutQuart: function (t) {
+    return -1 * ((t = t / 1 - 1) * t * t * t - 1);
+  },
+  easeInOutQuart: function (t) {
+    if ((t /= 1 / 2) < 1) return 1 / 2 * t * t * t * t;
+    return -1 / 2 * ((t -= 2) * t * t * t - 2);
+  },
+  easeInQuint: function (t) {
+    return 1 * (t /= 1) * t * t * t * t;
+  },
+  easeOutQuint: function (t) {
+    return 1 * ((t = t / 1 - 1) * t * t * t * t + 1);
+  },
+  easeInOutQuint: function (t) {
+    if ((t /= 1 / 2) < 1) return 1 / 2 * t * t * t * t * t;
+    return 1 / 2 * ((t -= 2) * t * t * t * t + 2);
+  },
+  easeInSine: function (t) {
+    return -1 * Math.cos(t / 1 * (Math.PI / 2)) + 1;
+  },
+  easeOutSine: function (t) {
+    return 1 * Math.sin(t / 1 * (Math.PI / 2));
+  },
+  easeInOutSine: function (t) {
+    return -1 / 2 * (Math.cos(Math.PI * t / 1) - 1);
+  },
+  easeInExpo: function (t) {
+    return (t == 0) ? 1 : 1 * Math.pow(2, 10 * (t / 1 - 1));
+  },
+  easeOutExpo: function (t) {
+    return (t == 1) ? 1 : 1 * (-Math.pow(2, -10 * t / 1) + 1);
+  },
+  easeInOutExpo: function (t) {
+    if (t == 0) return 0;
+    if (t == 1) return 1;
+    if ((t /= 1 / 2) < 1) return 1 / 2 * Math.pow(2, 10 * (t - 1));
+    return 1 / 2 * (-Math.pow(2, -10 * --t) + 2);
+  },
+  easeInCirc: function (t) {
+    if (t >= 1) return t;
+    return -1 * (Math.sqrt(1 - (t /= 1) * t) - 1);
+  },
+  easeOutCirc: function (t) {
+    return 1 * Math.sqrt(1 - (t = t / 1 - 1) * t);
+  },
+  easeInOutCirc: function (t) {
+    if ((t /= 1 / 2) < 1) return -1 / 2 * (Math.sqrt(1 - t * t) - 1);
+    return 1 / 2 * (Math.sqrt(1 - (t -= 2) * t) + 1);
+  },
+  easeInElastic: function (t) {
+    var s = 1.70158; var p = 0; var a = 1;
+    if (t == 0) return 0; if ((t /= 1) == 1) return 1; if (!p) p = 1 * .3;
+    if (a < Math.abs(1)) { a = 1; s = p / 4; }
+    else s = p / (2 * Math.PI) * Math.asin(1 / a);
+    return -(a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * 1 - s) * (2 * Math.PI) / p));
+  },
+  easeOutElastic: function (t) {
+    var s = 1.70158; var p = 0; var a = 1;
+    if (t == 0) return 0; if ((t /= 1) == 1) return 1; if (!p) p = 1 * .3;
+    if (a < Math.abs(1)) { a = 1; s = p / 4; }
+    else s = p / (2 * Math.PI) * Math.asin(1 / a);
+    return a * Math.pow(2, -10 * t) * Math.sin((t * 1 - s) * (2 * Math.PI) / p) + 1;
+  },
+  easeInOutElastic: function (t) {
+    var s = 1.70158; var p = 0; var a = 1;
+    if (t == 0) return 0; if ((t /= 1 / 2) == 2) return 1; if (!p) p = 1 * (.3 * 1.5);
+    if (a < Math.abs(1)) { a = 1; s = p / 4; }
+    else s = p / (2 * Math.PI) * Math.asin(1 / a);
+    if (t < 1) return -.5 * (a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * 1 - s) * (2 * Math.PI) / p));
+    return a * Math.pow(2, -10 * (t -= 1)) * Math.sin((t * 1 - s) * (2 * Math.PI) / p) * .5 + 1;
+  },
+  easeInBack: function (t) {
+    var s = 1.70158;
+    return 1 * (t /= 1) * t * ((s + 1) * t - s);
+  },
+  easeOutBack: function (t) {
+    var s = 1.70158;
+    return 1 * ((t = t / 1 - 1) * t * ((s + 1) * t + s) + 1);
+  },
+  easeInOutBack: function (t) {
+    var s = 1.70158;
+    if ((t /= 1 / 2) < 1) return 1 / 2 * (t * t * (((s *= (1.525)) + 1) * t - s));
+    return 1 / 2 * ((t -= 2) * t * (((s *= (1.525)) + 1) * t + s) + 2);
+  },
+  easeInBounce: function (t) {
+    return 1 - animationOptions.easeOutBounce(1 - t);
+  },
+  easeOutBounce: function (t) {
+    if ((t /= 1) < (1 / 2.75)) {
+      return 1 * (7.5625 * t * t);
+    } else if (t < (2 / 2.75)) {
+      return 1 * (7.5625 * (t -= (1.5 / 2.75)) * t + .75);
+    } else if (t < (2.5 / 2.75)) {
+      return 1 * (7.5625 * (t -= (2.25 / 2.75)) * t + .9375);
+    } else {
+      return 1 * (7.5625 * (t -= (2.625 / 2.75)) * t + .984375);
     }
+  },
+  easeInOutBounce: function (t) {
+    if (t < 1 / 2) return animationOptions.easeInBounce(t * 2) * .5;
+    return animationOptions.easeOutBounce(t * 2 - 1) * .5 + 1 * .5;
+  }
 });
 
 
@@ -1940,107 +1940,107 @@ __webpack_require__.r(__webpack_exports__);
 
 
 let radarConfig = {
-    width : 250,
-    height: 250,
+  width : 250,
+  height: 250,
 
-    animation      : true,
-    animationStep  : 0,
-    animationEasing: 'linear',
+  animation      : true,
+  animationStep  : 0,
+  animationEasing: 'linear',
+
+  padding: {
+    left  : 5,
+    right : 5,
+    top   : 5,
+    bottom: 5
+  },
+
+  // 有些雷达图会有Y轴，一般不展示，这里提供功能
+  // TODO
+  yAxisLine: {
+    display: false,
+    color  : '#B8B8B8',
+  },
+
+  grid: {
+    display    : true,
+    min        : 0,
+    max        : 100,
+    stepSize   : 20,
+    width      : 1,
+    color      : '#e3e3e3',
+    marginLineStyle : 'circle',   //最外边网格样式  default: 默认蜘蛛网  circle: 圆环
+    marginLineColor : 'rgb(200,200,200)',    //最外边网格颜色 default: 默认跟随内部颜色  rgb string 自定义颜色
+    marginLinePointRadius : 2,         //最外边网格与辐射线焦点高亮点半径
+    marginLinePointColor : 'rgb(140,140,140)',         //最外边网格与辐射线焦点高亮点颜色
+    style      : 'line',
+    // 线条是虚线的默认配置
+    dashPattern: [10,10],
+    dashOffset : 10,
+  },
+
+  // 从原点往外辐射线的样式
+  radiationLineStyle: {
+    display    : true,
+    dashPattern: [10,10],
+    width      : 1,
+    dashOffset : 10,
+    color      : '#e3e3e3',
+    style      : 'line',
+  },
+
+  label: {
+    display   : true,
+    color   : '#888888',
+    fontSize: 12,
+    margin: {
+      left  : 3,
+      right : 3,
+      top   : 3,
+      bottom: 3,
+    }
+  },
+
+  // 单个雷达区域的配置
+  datasetStyle: {
+    label               : '',
+    backgroundColor     : 'rgba(108,132,194,0.5)',
+    borderColor         : 'rgb(108,132,194)',
+    borderWidth         : 2,
+    borderLineStyle     : 'line',  //line || dash
+    borderDashPattern   : [10,20], // [ [dashPattern] , dashOffset ]
+    borderDashOffset    : 5 ,
+    pointShow           : true,
+    pointBackgroundColor: 'rgb(108,132,194)',
+    pointBorderColor    : 'rgb(108,132,194)',
+    pointBorderWidth    : 1,
+    pointRadius         : 5,
+    focusStyle          :{
+      pointBackgroundColor: 'rgb(108,132,194)',
+      pointBorderColor    : 'rgb(108,132,194)',
+      pointBorderWidth    : 1,
+      pointRadius         : 2,
+    }
+  },
+
+  // 雷达图的旋转角度
+  startAngle: 0,
+
+  //信息框配置
+  toolTip: {
+    lineColor  : '#C6C6C6',
+    lineWidth  : 0.5,
+    fontSize   : 11,
+    color      : '#FFFFFF',
+    fillColor  : 'rgba(136, 136, 136, 0.6)',
+    linePadding: 5,
 
     padding: {
-        left  : 5,
-        right : 5,
-        top   : 5,
-        bottom: 5
+      left  : 5,
+      right : 5,
+      top   : 5,
+      bottom: 5,
     },
-
-    // 有些雷达图会有Y轴，一般不展示，这里提供功能
-    // TODO
-    yAxisLine: {
-        display: false,
-        color  : '#B8B8B8',
-    },
-
-    grid: {
-        display    : true,
-        min        : 0,
-        max        : 100,
-        stepSize   : 20,
-        width      : 1,
-        color      : '#e3e3e3',
-        marginLineStyle : 'circle',   //最外边网格样式  default: 默认蜘蛛网  circle: 圆环
-        marginLineColor : 'rgb(200,200,200)',    //最外边网格颜色 default: 默认跟随内部颜色  rgb string 自定义颜色
-        marginLinePointRadius : 2,         //最外边网格与辐射线焦点高亮点半径
-        marginLinePointColor : 'rgb(140,140,140)',         //最外边网格与辐射线焦点高亮点颜色
-        style      : 'line',
-        // 线条是虚线的默认配置
-        dashPattern: [10,10],
-        dashOffset : 10,
-    },
-
-    // 从原点往外辐射线的样式
-    radiationLineStyle: {
-        display    : true,
-        dashPattern: [10,10],
-        width      : 1,
-        dashOffset : 10,
-        color      : '#e3e3e3',
-        style      : 'line',
-    },
-
-    label: {
-        display   : true,
-        color   : '#888888',
-        fontSize: 12,
-        margin: {
-            left  : 3,
-            right : 3,
-            top   : 3,
-            bottom: 3,
-        }
-    },
-
-    // 单个雷达区域的配置
-    datasetStyle: {
-        label               : '',
-        backgroundColor     : 'rgba(108,132,194,0.5)',
-        borderColor         : 'rgb(108,132,194)',
-        borderWidth         : 2,
-        borderLineStyle     : 'line',  //line || dash
-        borderDashPattern   : [10,20], // [ [dashPattern] , dashOffset ]
-        borderDashOffset    : 5 ,
-        pointShow           : true,
-        pointBackgroundColor: 'rgb(108,132,194)',
-        pointBorderColor    : 'rgb(108,132,194)',
-        pointBorderWidth    : 1,
-        pointRadius         : 5,
-        focusStyle          :{
-                            pointBackgroundColor: 'rgb(108,132,194)',
-                            pointBorderColor    : 'rgb(108,132,194)',
-                            pointBorderWidth    : 1,
-                            pointRadius         : 2,
-        }
-    },
-
-    // 雷达图的旋转角度
-    startAngle: 0,
-
-    //信息框配置
-    toolTip: {
-        lineColor  : '#C6C6C6',
-        lineWidth  : 0.5,
-        fontSize   : 11,
-        color      : '#FFFFFF',
-        fillColor  : 'rgba(136, 136, 136, 0.6)',
-        linePadding: 5,
-
-        padding: {
-            left  : 5,
-            right : 5,
-            top   : 5,
-            bottom: 5,
-        },
-    },
+  },
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (Object(_util_js__WEBPACK_IMPORTED_MODULE_1__["extend"])(radarConfig, _common_js__WEBPACK_IMPORTED_MODULE_0__["default"]));
