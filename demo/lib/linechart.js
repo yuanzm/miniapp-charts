@@ -199,6 +199,7 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
     let origin = {
       x: leftBottom.x + yAxisWidth,
       y: leftBottom.y,
+      show:false,
     };
     let circlePoints = []
 
@@ -241,6 +242,14 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
 
             _oneline.points.push(temp);
           }
+        } else {
+          let temp = {
+            x: startX + index * this._render.unitX,
+            y: 0,
+            show: false
+          };
+
+          _oneline.points.push(temp);
         }
       });
 
@@ -250,6 +259,7 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
         _oneline.points.push({
           x: _oneline.points[_oneline.points.length - 1].x,
           y: leftBottom.y,
+          show: false
         });
 
         Object(_util_js__WEBPACK_IMPORTED_MODULE_0__["updateBezierControlPoints"])(_oneline.points, this._area);
@@ -2124,17 +2134,21 @@ class ChartBase {
 
     for ( let index = 1; index < points.length - 1; index++ ) {
       let point = points[index];
-      if ( index === 1 ) {
-        ctx.moveTo(point.x, point.y);
-      }
-
-      else {
-        if (opts.curve ) {
-          Object(_util_js__WEBPACK_IMPORTED_MODULE_0__["_bezierCurveTo"])(ctx, prev, point);
+      // if ( index === 1 ) {
+      //   ctx.moveTo(point.x, point.y);
+      // } else {
+        if (points[index - 1].show === false) {
+          ctx.moveTo(point.x, point.y);
         } else {
-          ctx.lineTo(point.x, point.y);
+          if (point.show !== false) {
+            if (opts.curve ) {
+              Object(_util_js__WEBPACK_IMPORTED_MODULE_0__["_bezierCurveTo"])(ctx, prev, point);
+            } else {
+              ctx.lineTo(point.x, point.y);
+            }
+          }
         }
-      }
+      // }
 
       prev = point;
     }

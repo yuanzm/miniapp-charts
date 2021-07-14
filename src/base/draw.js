@@ -206,17 +206,21 @@ export default class ChartBase {
 
     for ( let index = 1; index < points.length - 1; index++ ) {
       let point = points[index];
-      if ( index === 1 ) {
-        ctx.moveTo(point.x, point.y);
-      }
-
-      else {
-        if (opts.curve ) {
-          _bezierCurveTo(ctx, prev, point);
+      // if ( index === 1 ) {
+      //   ctx.moveTo(point.x, point.y);
+      // } else {
+        if (points[index - 1].show === false) {
+          ctx.moveTo(point.x, point.y);
         } else {
-          ctx.lineTo(point.x, point.y);
+          if (point.show !== false) {
+            if (opts.curve ) {
+              _bezierCurveTo(ctx, prev, point);
+            } else {
+              ctx.lineTo(point.x, point.y);
+            }
+          }
         }
-      }
+      // }
 
       prev = point;
     }

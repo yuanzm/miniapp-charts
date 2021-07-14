@@ -101,6 +101,7 @@ export default class LineChart extends Base {
     let origin = {
       x: leftBottom.x + yAxisWidth,
       y: leftBottom.y,
+      show:false,
     };
     let circlePoints = []
 
@@ -143,6 +144,14 @@ export default class LineChart extends Base {
 
             _oneline.points.push(temp);
           }
+        } else {
+          let temp = {
+            x: startX + index * this._render.unitX,
+            y: 0,
+            show: false
+          };
+
+          _oneline.points.push(temp);
         }
       });
 
@@ -152,6 +161,7 @@ export default class LineChart extends Base {
         _oneline.points.push({
           x: _oneline.points[_oneline.points.length - 1].x,
           y: leftBottom.y,
+          show: false
         });
 
         updateBezierControlPoints(_oneline.points, this._area);
