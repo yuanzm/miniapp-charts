@@ -2,6 +2,7 @@
 // 太老的库，很多变量是下滑线开头的，暂时屏蔽先
 /* eslint no-underscore-dangle: "off"*/
 /* eslint no-param-reassign: ["error", { "props": false }] */
+/* eslint no-restricted-syntax: "off"*/
 
 import ChartBase from './draw.js';
 import {
