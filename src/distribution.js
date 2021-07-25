@@ -36,29 +36,29 @@ export default class DistributionChart extends Base {
   }
 
   calLabelDataForItem(xStart, y, barLabel) {
-    let labelArr = ( isType('array', barLabel) ? barLabel : [barLabel]);
+    const labelArr = (isType('array', barLabel) ? barLabel : [barLabel]);
     let width    = 0;
-    let arr      = [];
+    const arr      = [];
 
-    labelArr.forEach( item => {
-      let labelConfig = deepCopy(this._config.barLabelStyle);
-      let obj = isType('object', item) ? item : { name: item, style: labelConfig };
+    labelArr.forEach((item) => {
+      const labelConfig = deepCopy(this._config.barLabelStyle);
+      const obj = isType('object', item) ? item : { name: item, style: labelConfig };
       obj.style = extend(labelConfig, obj.style || {});
 
       width  += obj.style.paddingLeft;
       xStart += obj.style.paddingLeft;
 
-      let word = {
-        text     : obj.name || '',
-        color    : obj.style.color,
-        fontSize : obj.style.fontSize,
-        x        : xStart,
-        y        : y,
+      const word = {
+        text: obj.name || '',
+        color: obj.style.color,
+        fontSize: obj.style.fontSize,
+        x: xStart,
+        y,
         textAlign: 'left',
-        baseline : 'middle',
-      }
+        baseline: 'middle',
+      };
       arr.push(word);
-      let w = this.getWordWidth(word);
+      const w = this.getWordWidth(word);
       xStart += w;
       width  += w;
     });
@@ -69,31 +69,31 @@ export default class DistributionChart extends Base {
   calBarData() {
     const config = this._config;
     const render = this._render;
-    const barStyle = config.barStyle;
+    const { barStyle } = config;
 
     let yStart = config.padding.top + config.barStyle.topBottomPadding;
-    let xStart = config.padding.left + render.yAxisWidth;
+    const xStart = config.padding.left + render.yAxisWidth;
 
-    let first  = this._datasets[0];
-    let others = this._datasets.slice(1);
+    const first  = this._datasets[0];
+    const others = this._datasets.slice(1);
 
     const maxItemMap = this.getMaxItem();
 
     const barData      = [];
     let barLabelData   = [];
 
-    let maxBarWidthMap = [];
+    const maxBarWidthMap = [];
 
     first.points.forEach((point, index) => {
-      let barArr = this._datasets.map(dataset => {
-        let bar = dataset.points[index];
+      const barArr = this._datasets.map((dataset) => {
+        const bar = dataset.points[index];
         bar.fillColor = dataset.fillColor || barStyle.fillColor;
 
         return bar;
       });
 
       barArr.forEach((bar, barIndex) => {
-        let maxItem = maxItemMap[barIndex];
+        const maxItem = maxItemMap[barIndex];
         if (!maxBarWidthMap[barIndex]) {
           const { width } = this.calLabelDataForItem(0, 0, maxItem.barLabel);
           maxBarWidthMap[barIndex] = config.width - config.padding.right - xStart - width;
@@ -101,21 +101,21 @@ export default class DistributionChart extends Base {
 
         const rect = {
           fillColor: bar.fillColor,
-          x        : xStart,
-          y        : yStart,
-          width    : maxItem.value ? (bar.value / maxItem.value) * maxBarWidthMap[barIndex]: 0,
-          height   : barStyle.height,
-        }
+          x: xStart,
+          y: yStart,
+          width: maxItem.value ? (bar.value / maxItem.value) * maxBarWidthMap[barIndex] : 0,
+          height: barStyle.height,
+        };
 
         // TODO: fix 0.5
-        if ( bar.barLabel ) {
-          let { arr } = this.calLabelDataForItem(xStart + rect.width, yStart + barStyle.height / 2 - 0.5, bar.barLabel);
+        if (bar.barLabel) {
+          const { arr } = this.calLabelDataForItem(xStart + rect.width, yStart + barStyle.height / 2 - 0.5, bar.barLabel);
           barLabelData = barLabelData.concat(arr);
         }
 
         yStart += barStyle.height;
 
-        if ( others.length && barIndex < barArr.length - 1 ) {
+        if (others.length && barIndex < barArr.length - 1) {
           yStart += config.barStyle.compareBarMargin;
         } else {
           yStart += barStyle.padding;
@@ -124,9 +124,9 @@ export default class DistributionChart extends Base {
         barData.push(rect);
       });
 
-      let centerY = (  barArr.length > 1
+      const centerY = (barArr.length > 1
         ? yStart - barStyle.padding - barStyle.height - config.barStyle.compareBarMargin / 2
-        : yStart - barStyle.padding - barStyle.height / 2  );
+        : yStart - barStyle.padding - barStyle.height / 2);
 
       this._render.yAxisData[index].y = centerY;
     });
@@ -139,9 +139,9 @@ export default class DistributionChart extends Base {
 
   calYAxisLines() {
     const config  = this._config;
-    const padding = config.padding;
+    const { padding } = config;
     const render  = this._render;
-    const yAxisLine = config.yAxisLine;
+    const { yAxisLine } = config;
 
     // 计算Y轴中轴线数据
     this._render.yCenterAxis = {
@@ -149,22 +149,22 @@ export default class DistributionChart extends Base {
         x: padding.left + render.yAxisWidth,
         y: padding.top,
       },
-      end  : {
+      end: {
         x: padding.left + render.yAxisWidth,
         y: render.totalHeight - padding.bottom,
       },
       width: yAxisLine.width,
       color: yAxisLine.color,
-    }
+    };
   }
 
   getDatasetMaxItem(dataset) {
     let maxItem;
-    dataset.points.forEach(item => {
-      if ( !maxItem ) {
+    dataset.points.forEach((item) => {
+      if (!maxItem) {
         maxItem = item;
       } else {
-        if ( item.value > maxItem.value ) {
+        if (item.value > maxItem.value) {
           maxItem = item;
         }
       }
@@ -175,23 +175,23 @@ export default class DistributionChart extends Base {
 
   getMaxItem() {
     let maxItem;
-    let maxItemMap = [];
+    const maxItemMap = [];
 
     this._datasets.forEach((dataset, index) => {
-      let item = this.getDatasetMaxItem(dataset);
+      const item = this.getDatasetMaxItem(dataset);
 
       maxItemMap[index] = item;
 
-      if ( !maxItem ) {
+      if (!maxItem) {
         maxItem = item;
       } else {
-        if ( item.value > maxItem.value ) {
+        if (item.value > maxItem.value) {
           maxItem = item;
         }
       }
     });
 
-    let maxBarWidthMap = this._datasets.forEach((dataset, index) => {
+    const maxBarWidthMap = this._datasets.forEach((dataset, index) => {
       if (!dataset.independentAxis) {
         maxItemMap[index] = maxItem;
       }
@@ -204,20 +204,20 @@ export default class DistributionChart extends Base {
    * 计算Y轴的边界和阶梯值
    */
   calYAxis() {
-    let yAxis      = this._config.yAxis;
+    const { yAxis } = this._config;
     // 用于绘制的数据
-    let yAxisData  = [];
+    const yAxisData  = [];
     // Y轴文案所占据的宽度
     let yAxisWidth = 0;
-    let leftStart   = this._boundary.leftTop.x + yAxis.marginLeft;
+    const leftStart   = this._boundary.leftTop.x + yAxis.marginLeft;
 
-    this._datasets[0].points.forEach( item => {
-      let word = {
-        text    : item.label || '',
-        color   : yAxis.color,
+    this._datasets[0].points.forEach((item) => {
+      const word = {
+        text: item.label || '',
+        color: yAxis.color,
         fontSize: yAxis.fontSize,
-        x       : leftStart,
-        y       : 0,
+        x: leftStart,
+        y: 0,
         baseline: 'middle',
       };
 
@@ -227,9 +227,9 @@ export default class DistributionChart extends Base {
     });
 
     // 考虑Y轴不需要文案的情况
-    yAxisWidth = ( yAxis.show
+    yAxisWidth = (yAxis.show
       ? yAxisWidth + yAxis.marginRight
-      : 0  );
+      : 0);
 
     this._render.yAxisData  = yAxisData;
     this._render.yAxisWidth = yAxisWidth;
@@ -238,7 +238,7 @@ export default class DistributionChart extends Base {
   // 绘制Y轴
   drawYAxis() {
     // 绘制Y轴文案
-    if ( this._config.yAxis.show ) {
+    if (this._config.yAxis.show) {
       this._render.yAxisData.forEach((item) => {
         this.drawWord(this.ctx, item);
       });
@@ -247,14 +247,14 @@ export default class DistributionChart extends Base {
 
   // 绘制Y轴横线
   drawYAxisLine() {
-    this.drawLine(this.ctx,this._render.yCenterAxis);
+    this.drawLine(this.ctx, this._render.yCenterAxis);
   }
 
   drawBars() {
-    this._render.barData.forEach(bar => {
+    this._render.barData.forEach((bar) => {
       this.drawRect(this.ctx, bar);
     });
-    this._render.barLabelData.forEach(label => {
+    this._render.barLabelData.forEach((label) => {
       this.drawWord(this.ctx, label);
     });
   }
@@ -275,9 +275,9 @@ export default class DistributionChart extends Base {
    */
   initData(data, cfg = {}) {
     this.getConfig(cfg, this._config);
-    this._datasets = (data.datasets || []).filter( dataset => !!dataset.points && dataset.points.length);
+    this._datasets = (data.datasets || []).filter(dataset => !!dataset.points && dataset.points.length);
 
-    if ( !this._datasets.length ) {
+    if (!this._datasets.length) {
       return;
     }
 
@@ -295,7 +295,7 @@ export default class DistributionChart extends Base {
    * 实际的绘制函数
    */
   draw() {
-    if ( !this._datasets.length ) {
+    if (!this._datasets.length) {
       return;
     }
 

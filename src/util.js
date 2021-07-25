@@ -6,11 +6,11 @@
  * @param {}
  */
 function is(obj, type) {
-  var toString = Object.prototype.toString, undefined;
+  const { toString } = Object.prototype; let undefined;
 
-  return (type === 'Null' && obj === null) ||
-    (type === "Undefined" && obj === undefined) ||
-    toString.call(obj).slice(8, -1) === type;
+  return (type === 'Null' && obj === null)
+    || (type === 'Undefined' && obj === undefined)
+    || toString.call(obj).slice(8, -1) === type;
 }
 
 /*
@@ -19,14 +19,14 @@ function is(obj, type) {
  * @param {Object} newObj: 需要拷贝的对象
  * @ return {Object} newObj: 拷贝之后的对象
  */
-function deepCopy(oldObj = {}, newObj={}) {
-  for (var key in oldObj) {
-    var copy = oldObj[key];
-    if (oldObj === copy) continue; //如window.window === window，会陷入死循环，需要处理一下
-    if (is(copy, "Object")) {
+function deepCopy(oldObj = {}, newObj = {}) {
+  for (const key in oldObj) {
+    const copy = oldObj[key];
+    if (oldObj === copy) continue; // 如window.window === window，会陷入死循环，需要处理一下
+    if (is(copy, 'Object')) {
       newObj[key] = deepCopy(copy, newObj[key] || {});
-    } else if (is(copy, "Array")) {
-      newObj[key] = []
+    } else if (is(copy, 'Array')) {
+      newObj[key] = [];
       newObj[key] = deepCopy(copy, newObj[key] || []);
     } else {
       newObj[key] = copy;
@@ -35,22 +35,20 @@ function deepCopy(oldObj = {}, newObj={}) {
   return newObj;
 }
 
-function isType (type, value) {
-  let _type = Object.prototype.toString.call(value).match(/\s(\w+)/)[1].toLowerCase();
+function isType(type, value) {
+  const _type = Object.prototype.toString.call(value).match(/\s(\w+)/)[1].toLowerCase();
 
   return _type === type;
 }
 
-function isPlainObject (value) {
-  return ( !!value && isType('object', value) );
+function isPlainObject(value) {
+  return (!!value && isType('object', value));
 }
 
 function extend(destination, source) {
-  if ( !isPlainObject(destination) || !isPlainObject(source) )
-    throw 'destination and source must be type of object';
+  if (!isPlainObject(destination) || !isPlainObject(source)) throw 'destination and source must be type of object';
 
-  for ( let property in source )
-    destination[property] = source[property];
+  for (const property in source) destination[property] = source[property];
 
   return destination;
 }
@@ -64,35 +62,28 @@ function getRoundForNumber(number) {
   let round;
 
   // 计算出当前数组位数减一的最小数字
-  if ( number  >= 100 )
-    round = String(number).split('')
-      .reduce((sum) => sum * 10, 0.01);
+  if (number  >= 100) round = String(number).split('')
+    .reduce(sum => sum * 10, 0.01);
 
   // 数字介于10-100之间，逢5为整
-  else if ( number >= 10 )
-    round = 5;
+  else if (number >= 10) round = 5;
 
-  else if ( number > 1 )
-    round = 1;
+  else if (number > 1) round = 1;
 
-  else
-    round = 0.1;
+  else round = 0.1;
 
   return round;
 }
 
 function roundForNumber(number, direction) {
   let result;
-  let round = getRoundForNumber(number);
+  const round = getRoundForNumber(number);
 
-  if( number === 0 )
-    return 0;
+  if (number === 0) return 0;
 
-  if ( direction === 'up' )
-    result = number + ( round - ( number % round ));
+  if (direction === 'up') result = number + (round - (number % round));
 
-  else if ( direction === 'down' )
-    result = number  - number % round;
+  else if (direction === 'down') result = number  - number % round;
 
   return result;
 }
@@ -101,87 +92,86 @@ function roundForNumber(number, direction) {
  * 给定最大值最小值和区间个数，给出优化后的最大最小值和单step值
  */
 function getDataRangeAndStep(max, min, step) {
-  if ( max === 0 ) {
+  if (max === 0) {
     return {
-      max     : 4,
-      min     : 0,
-      divider : 1,
-      multiple: 1
-    }
+      max: 4,
+      min: 0,
+      divider: 1,
+      multiple: 1,
+    };
   }
 
-  if ( max === min ) {
+  if (max === min) {
     return {
       max: max + 2,
-      min: ( min - 2 >= 0 ? min - 2 : 0 ),
+      min: (min - 2 >= 0 ? min - 2 : 0),
       divider: 1,
-      multiple: 1
-    }
+      multiple: 1,
+    };
   }
 
-  //console.log(1, max, min, step);
+  // console.log(1, max, min, step);
   let multiple = 1;
 
   // 每一步的值小于1的情况，先放大100倍方便计算
-  if (  ( max - min ) / step < 1 ) {
+  if ((max - min) / step < 1) {
     multiple = 10000;
     max *= multiple;
     min *= multiple;
   }
 
-  let originMax = max;
-  //console.log(2, max, min, step);
+  const originMax = max;
+  // console.log(2, max, min, step);
 
-  let divider = Math.round(( max - min ) / step);
+  let divider = Math.round((max - min) / step);
 
   // 如果divider为0，说明值放大后，最大值和最小值差值过小；后续过程没有意义，直接返回
   if (divider === 0) {
     return {
-      max     : 4,
-      min     : 0,
-      divider : 1,
-      multiple: 1
-    }
+      max: 4,
+      min: 0,
+      divider: 1,
+      multiple: 1,
+    };
   }
 
-  //console.log(3, divider);
+  // console.log(3, divider);
 
   // 先将divider降低一点，后面慢慢增加逼近满意值
   divider = roundForNumber(divider, 'down');
-  //console.log(4, divider);
+  // console.log(4, divider);
 
   // 尽量保证整个图是居中而不是贴边的
-  max = max + ( max % divider );
-  min = min - ( min % divider );
+  max = max + (max % divider);
+  min = min - (min % divider);
 
-  //console.log(5, max, min);
+  // console.log(5, max, min);
 
   // 最小值取整，因为divider也是取整的，所以最后max也是取整的
   min = roundForNumber(min, 'down');
 
-  //console.log(6, min);
+  // console.log(6, min);
 
   // 逼近求理想值
-  let round = getRoundForNumber(divider);
+  const round = getRoundForNumber(divider);
 
-  //console.log(8, round)
+  // console.log(8, round)
   let flag = true;
-  while ( flag ) {
-    //console.log( min + divider * step , originMax, max, );
-    let temp = min + divider * step;
-    if ( temp >= max || temp - originMax >= round * 10 )
-      flag = false;
+  while (flag) {
+    // console.log( min + divider * step , originMax, max, );
+    const temp = min + divider * step;
+    if (temp >= max || temp - originMax >= round * 10) flag = false;
 
     divider += round;
   }
 
-  //console.log(9, max, min, divider);
+  // console.log(9, max, min, divider);
 
   return {
-    max    :( min + divider * step ) / multiple,
-    min    : min / multiple,
+    max: (min + divider * step) / multiple,
+    min: min / multiple,
     divider: divider / multiple,
-    multiple
+    multiple,
   };
 }
 
@@ -189,48 +179,39 @@ function isNumeric(n) {
   return !isNaN(parseFloat(n)) && isFinite(n);
 }
 
-function isFloat(n){
+function isFloat(n) {
   return Number(n) === n && n % 1 !== 0;
 }
 
 function changeUnit(value, fixed = 1) {
   // value是非数字的情况，直接返回value
-  if ( !isNumeric(value) )
-    return value;
+  if (!isNumeric(value)) return value;
 
-  let number  = parseFloat(value);
+  const number  = parseFloat(value);
   let unit    = '';
   let divider = 1;
 
   // 小于1000的值，保留小数点
-  if ( isFloat(value) && number < 1000 )
-    return number.toFixed(fixed);
+  if (isFloat(value) && number < 1000) return number.toFixed(fixed);
 
-  if ( number < 1e3 ) {
+  if (number < 1e3) {
     unit    = '';
     divider = 1;
-  }
-
-  else if (number >= 1e3 &&  number < 1e4) {
+  } else if (number >= 1e3 &&  number < 1e4) {
     unit    = 'k';
     divider = 1e3;
-  }
-
-  else if ( number < 1e7 ) {
+  } else if (number < 1e7) {
     unit    = 'w';
     divider = 1e4;
-  }
-
-  else {
+  } else {
     unit    = 'kw';
     divider = 1e7;
   }
 
-  let temp = number / divider;
+  const temp = number / divider;
 
   // 如果达不到保留小数的基本要求，取整
-  if ( temp - Math.floor(temp) < 0.5 * Math.pow(0.1, fixed) )
-    fixed = 0;
+  if (temp - Math.floor(temp) < 0.5 * Math.pow(0.1, fixed)) fixed = 0;
 
   return temp.toFixed(fixed) + unit;
 }
@@ -239,18 +220,18 @@ function none() {
 }
 
 function formatX(length, maxXPoint) {
-  let step  = Math.ceil(length /  maxXPoint );
+  let step  = Math.ceil(length /  maxXPoint);
   let start = 0;
 
   // 记录原始的step长度
-  let origin = step;
+  const origin = step;
 
-  while ( step * ( maxXPoint - 1 ) >= length ) {
+  while (step * (maxXPoint - 1) >= length) {
     step--;
   }
 
-  if ( step < origin ) {
-    start = Math.floor(( length - step * ( maxXPoint - 1 ) ) / 2);
+  if (step < origin) {
+    start = Math.floor((length - step * (maxXPoint - 1)) / 2);
   }
 
 
@@ -283,12 +264,12 @@ export function splineCurve(firstPoint, middlePoint, afterPoint, t) {
   return {
     previous: {
       x: current.x - fa * (next.x - previous.x),
-      y: current.y - fa * (next.y - previous.y)
+      y: current.y - fa * (next.y - previous.y),
     },
     next: {
       x: current.x + fb * (next.x - previous.x),
-      y: current.y + fb * (next.y - previous.y)
-    }
+      y: current.y + fb * (next.y - previous.y),
+    },
   };
 }
 
@@ -306,7 +287,8 @@ export function _bezierCurveTo(ctx, previous, target, flip) {
     flip ? target.controlPointNextX : target.controlPointPreviousX,
     flip ? target.controlPointNextY : target.controlPointPreviousY,
     target.x,
-    target.y);
+    target.y,
+  );
 }
 
 
@@ -324,12 +306,12 @@ function capControlPoint(pt, min, max) {
 export function _isPointInArea(point, area) {
   const epsilon = 0.5; // margin - to match rounded decimals
 
-  return point.x > area.left - epsilon && point.x < area.right + epsilon &&
-    point.y > area.top - epsilon && point.y < area.bottom + epsilon;
+  return point.x > area.left - epsilon && point.x < area.right + epsilon
+    && point.y > area.top - epsilon && point.y < area.bottom + epsilon;
 }
 
 function capBezierPoints(points, area) {
-  let i, ilen, point;
+  let i; let ilen; let point;
   for (i = 0, ilen = points.length; i < ilen; ++i) {
     point = points[i];
     if (!_isPointInArea(point, area)) {
@@ -346,8 +328,8 @@ function capBezierPoints(points, area) {
   }
 }
 
-export function updateBezierControlPoints(points, area ) {
-  let i, ilen, point, controlPoints;
+export function updateBezierControlPoints(points, area) {
+  let i; let ilen; let point; let controlPoints;
   const loop = false;
 
   let prev = loop ? points[points.length - 1] : points[0];
@@ -357,8 +339,8 @@ export function updateBezierControlPoints(points, area ) {
       prev,
       point,
       points[Math.min(i + 1, ilen - (loop ? 0 : 1)) % ilen],
-      /*options.tension*/
-      0.1
+      /* options.tension*/
+      0.1,
     );
     point.controlPointPreviousX = controlPoints.previous.x;
     point.controlPointPreviousY = controlPoints.previous.y;
@@ -379,5 +361,5 @@ export {
   getDataRangeAndStep,
   changeUnit,
   formatX,
-}
+};
 

@@ -2,15 +2,15 @@ import common from './common.js';
 import {
   extend,
   none,
-  changeUnit
+  changeUnit,
 } from '../util.js';
 
-let linechartConfig = {
+const linechartConfig = {
   /**
    * Y轴标签以及toolTip的单位换算函数
    * 组件内置了changeUnit函数，可以自行设置
    */
-  changeUnit : changeUnit,
+  changeUnit,
 
   secondChangeUnit: changeUnit,
 
@@ -26,22 +26,22 @@ let linechartConfig = {
    *      似的divider是大于1的数值，同时将放大的倍数告知组件，默认为1
    * }
    */
-  formatY    : none,
+  formatY: none,
 
   // 折线图默认配置
   lineStyle: {
-    lineWidth : 1.5,
-    lineColor : '#7587db',
-    fillColor : 'rgba(117, 135, 219, 0.3)',
+    lineWidth: 1.5,
+    lineColor: '#7587db',
+    fillColor: 'rgba(117, 135, 219, 0.3)',
     // 是否需要背景颜色
-    needFill  : true,
-    curve     : true,
-    circle    : {
-      show       : true,
-      fillColor  : '#FFFFFF',
+    needFill: true,
+    curve: true,
+    circle: {
+      show: true,
+      fillColor: '#FFFFFF',
       strokeColor: '#FFAA00',
-      lineWidth  : 1,
-      radius     : 1.2,
+      lineWidth: 1,
+      radius: 1.2,
     },
     /**
      * 在数据点很多的时候，如果每个点都要画个圆圈会大大影响性能
@@ -53,93 +53,93 @@ let linechartConfig = {
 
   // x轴文案的样式配置
   xAxis: {
-    show     : true,
+    show: true,
     marginTop: 10,
-    color    : '#B8B8B8',
-    fontSize : 11,
+    color: '#B8B8B8',
+    fontSize: 11,
     /**
      * 默认x轴打七个点
      * 可以自行配置，但仍然会有保底逻辑
      */
-    xAxisCount   : 7,
+    xAxisCount: 7,
   },
 
   /**
    * X轴轴体的样式配置
    */
   xAxisLine: {
-    show      : false,
+    show: false,
     centerShow: true,
-    width     : 0.6,
-    color     : '#C6C6C6',
-    style     : 'solid',
+    width: 0.6,
+    color: '#C6C6C6',
+    style: 'solid',
   },
 
   /**
    * y轴的样式配置
    */
   yAxis: {
-    show       : true,
-    marginLeft : 0,
+    show: true,
+    marginLeft: 0,
     marginRight: 10,
-    color      : '#B8B8B8',
-    fontSize   : 11,
-    unit       : '',
+    color: '#B8B8B8',
+    fontSize: 11,
+    unit: '',
     /**
      * 默认Y轴打四个点
      * 也可以自行配置，但仍然会有保底逻辑
      */
-    yAxisCount  : 4,
+    yAxisCount: 4,
   },
 
   // 第二Y轴
   secondYaxis: {
-    show       : true,
-    marginLeft : 5,
-    color      : '#B8B8B8',
-    fontSize   : 11,
-    unit       : '',
-    textAlign  : 'right',
+    show: true,
+    marginLeft: 5,
+    color: '#B8B8B8',
+    fontSize: 11,
+    unit: '',
+    textAlign: 'right',
   },
 
   /**
    * Y轴轴体的样式
    */
-  secondYAxisLine : {
-    show      : true,
-    width     : 0.2,
-    color     : '#C6C6C6',
+  secondYAxisLine: {
+    show: true,
+    width: 0.2,
+    color: '#C6C6C6',
   },
 
   /**
    * Y轴轴体的样式
    */
-  yAxisLine : {
-    show      : true,
+  yAxisLine: {
+    show: true,
     centerShow: false,
-    width     : 0.2,
-    color     : '#C6C6C6',
+    width: 0.2,
+    color: '#C6C6C6',
   },
 
   toolTip: {
-    lineColor  : '#C6C6C6',
-    lineWidth  : 0.5,
-    fontSize   : 11,
-    color      : '#FFFFFF',
-    fillColor  : 'rgba(136, 136, 136, 0.6)',
+    lineColor: '#C6C6C6',
+    lineWidth: 0.5,
+    fontSize: 11,
+    color: '#FFFFFF',
+    fillColor: 'rgba(136, 136, 136, 0.6)',
     linePadding: 5,
-    needTitle  : false,
-    needX      : true,
+    needTitle: false,
+    needX: true,
 
     padding: {
-      left  : 5,
-      right : 5,
-      top   : 5,
+      left: 5,
+      right: 5,
+      top: 5,
       bottom: 5,
     },
   },
 
-}
+};
 
 export default extend(linechartConfig, common);
 

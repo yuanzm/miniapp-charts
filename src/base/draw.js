@@ -8,19 +8,16 @@ import { _bezierCurveTo } from '../util.js';
 
 export default class ChartBase {
   wordWidth(words, fontSize) {
-    if ( words === undefined || words === null )
-      return 0;
+    if (words === undefined || words === null) return 0;
 
     let totLength = 0;
 
-    for ( let i = 0; i < words.length; i++ ) {
-      let strCode = words.charCodeAt(i);
+    for (let i = 0; i < words.length; i++) {
+      const strCode = words.charCodeAt(i);
 
-      if ( strCode > 128 )
-        totLength += fontSize;
+      if (strCode > 128) totLength += fontSize;
 
-      else
-        totLength += fontSize / 2;
+      else totLength += fontSize / 2;
     }
 
     return totLength;
@@ -28,15 +25,15 @@ export default class ChartBase {
 
   measureText(ctx, word) {
     // 低版本兼容处理
-    if ( !ctx.measureText ) {
+    if (!ctx.measureText) {
       return this.getWordWidth(word);
     }
 
     ctx.save();
-    if ( typeof(word.text) === 'number' ) {
+    if (typeof(word.text) === 'number') {
       word.text = word.text.toString();
     }
-    ctx.font = word.fontSize + 'px sans-serif';
+    ctx.font = `${word.fontSize}px sans-serif`;
     const metrics = ctx.measureText(word.text);
 
     ctx.restore();
@@ -45,11 +42,11 @@ export default class ChartBase {
   }
 
   getWordWidth(word) {
-    if ( typeof(word.text) === 'number' ) {
+    if (typeof(word.text) === 'number') {
       word.text = word.text.toString();
     }
 
-    let w = this.wordWidth(word.text, word.fontSize);
+    const w = this.wordWidth(word.text, word.fontSize);
 
     return Math.ceil(w);
   }
@@ -58,16 +55,14 @@ export default class ChartBase {
    * 根据给定样式绘制文字
    */
   drawWord(ctx, word) {
-    if ( typeof(word.text) === 'number' )
-      word.text = word.text.toString();
+    if (typeof(word.text) === 'number') word.text = word.text.toString();
 
     ctx.beginPath();
 
-    if ( word.isbottom )
-      ctx.setTextBaseline('bottom')
+    if (word.isbottom) ctx.setTextBaseline('bottom');
 
-    if ( word.baseline ) {
-      ctx.setTextBaseline(word.baseline)
+    if (word.baseline) {
+      ctx.setTextBaseline(word.baseline);
     }
 
     ctx.setFontSize(word.fontSize);
@@ -91,41 +86,40 @@ export default class ChartBase {
    * }
    */
   drawRect(ctx, rect) {
-    if(rect['r'] && rect['r'] > 0){
-      ctx.save()
-      ctx.beginPath()
+    if (rect.r && rect.r > 0) {
+      ctx.save();
+      ctx.beginPath();
 
       // 左上弧线
-      ctx.arc(rect.x + rect.r, rect.y + rect.r, rect.r, 1 * Math.PI, 1.5 * Math.PI)
+      ctx.arc(rect.x + rect.r, rect.y + rect.r, rect.r, 1 * Math.PI, 1.5 * Math.PI);
       // 左直线
-      ctx.moveTo(rect.x, rect.y + rect.r)
-      ctx.lineTo(rect.x, rect.y + rect.height - rect.r)
+      ctx.moveTo(rect.x, rect.y + rect.r);
+      ctx.lineTo(rect.x, rect.y + rect.height - rect.r);
       // 左下弧线
-      ctx.arc(rect.x + rect.r, rect.y + rect.height - rect.r, rect.r, 0.5 * Math.PI, 1 * Math.PI)
+      ctx.arc(rect.x + rect.r, rect.y + rect.height - rect.r, rect.r, 0.5 * Math.PI, 1 * Math.PI);
       // 下直线
-      ctx.lineTo(rect.x + rect.r, rect.y + rect.height)
-      ctx.lineTo(rect.x + rect.width - rect.r, rect.y + rect.height)
+      ctx.lineTo(rect.x + rect.r, rect.y + rect.height);
+      ctx.lineTo(rect.x + rect.width - rect.r, rect.y + rect.height);
       // 右下弧线
-      ctx.arc(rect.x + rect.width - rect.r, rect.y + rect.height - rect.r, rect.r, 0 * Math.PI, 0.5 * Math.PI)
+      ctx.arc(rect.x + rect.width - rect.r, rect.y + rect.height - rect.r, rect.r, 0 * Math.PI, 0.5 * Math.PI);
       // 右直线
-      ctx.lineTo(rect.x + rect.width, rect.y + rect.height - rect.r)
-      ctx.lineTo(rect.x + rect.width, rect.y + rect.r)
+      ctx.lineTo(rect.x + rect.width, rect.y + rect.height - rect.r);
+      ctx.lineTo(rect.x + rect.width, rect.y + rect.r);
       // 右上弧线
-      ctx.arc(rect.x + rect.width - rect.r, rect.y + rect.r, rect.r, 1.5 * Math.PI, 2 * Math.PI)
+      ctx.arc(rect.x + rect.width - rect.r, rect.y + rect.r, rect.r, 1.5 * Math.PI, 2 * Math.PI);
       // 上直线
-      ctx.lineTo(rect.x + rect.width - rect.r, rect.y)
-      ctx.lineTo(rect.x + rect.r, rect.y)
+      ctx.lineTo(rect.x + rect.width - rect.r, rect.y);
+      ctx.lineTo(rect.x + rect.r, rect.y);
 
-      ctx.setFillStyle(rect.fillColor)
-      ctx.fill()
-    }else{
+      ctx.setFillStyle(rect.fillColor);
+      ctx.fill();
+    } else {
       ctx.beginPath();
       ctx.setStrokeStyle(rect.fillColor);
       ctx.setFillStyle(rect.fillColor);
       ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
       ctx.closePath();
     }
-
   }
 
   /**
@@ -136,8 +130,7 @@ export default class ChartBase {
     ctx.setLineWidth(line.width || 1);
     ctx.setStrokeStyle(line.color);
 
-    if ( line.isDash )
-      ctx.setLineDash(line.dashPattern, line.dashOffset);
+    if (line.isDash) ctx.setLineDash(line.dashPattern, line.dashOffset);
 
     ctx.moveTo(line.start.x, line.start.y);
     ctx.lineTo(line.end.x, line.end.y);
@@ -153,22 +146,19 @@ export default class ChartBase {
     ctx.setLineWidth(line.width || 1);
     ctx.setStrokeStyle(line.color);
 
-    if ( line.isDash )
-      ctx.setLineDash(line.dashPattern, line.dashOffset);
+    if (line.isDash) ctx.setLineDash(line.dashPattern, line.dashOffset);
 
-    let points = line.points || [];
+    const points = line.points || [];
 
-    for ( let index = 0; index < points.length; index++ ) {
-      let point = points[index];
-      if ( index === 0 )
-        ctx.moveTo(point.x, point.y);
+    for (let index = 0; index < points.length; index++) {
+      const point = points[index];
+      if (index === 0) ctx.moveTo(point.x, point.y);
 
-      else
-        ctx.lineTo(point.x, point.y);
+      else ctx.lineTo(point.x, point.y);
     }
 
     // 需要填充背景颜色要在stroke之前填充，否则边界线会发虚
-    if ( line.fill ) {
+    if (line.fill) {
       ctx.setFillStyle(line.fillColor);
       ctx.fill();
     }
@@ -189,7 +179,7 @@ export default class ChartBase {
     lineWidth: 1,
     lineColor: '#7587db',
     fillColor: 'rgba(117, 135, 219, 0.3)',
-    needFill : false,
+    needFill: false,
   }) {
     ctx.save();
 
@@ -198,28 +188,28 @@ export default class ChartBase {
     ctx.setLineWidth(opts.lineWidth);
     ctx.setStrokeStyle(opts.lineColor);
 
-    let start = points[0];
-    let end   = points[points.length - 1];
+    const start = points[0];
+    const end   = points[points.length - 1];
 
     ctx.moveTo(start.x, start.y);
     let prev;
 
-    for ( let index = 1; index < points.length - 1; index++ ) {
-      let point = points[index];
+    for (let index = 1; index < points.length - 1; index++) {
+      const point = points[index];
       // if ( index === 1 ) {
       //   ctx.moveTo(point.x, point.y);
       // } else {
-        if (points[index - 1].show === false) {
-          ctx.moveTo(point.x, point.y);
-        } else {
-          if (point.show !== false) {
-            if (opts.curve ) {
-              _bezierCurveTo(ctx, prev, point);
-            } else {
-              ctx.lineTo(point.x, point.y);
-            }
+      if (points[index - 1].show === false) {
+        ctx.moveTo(point.x, point.y);
+      } else {
+        if (point.show !== false) {
+          if (opts.curve) {
+            _bezierCurveTo(ctx, prev, point);
+          } else {
+            ctx.lineTo(point.x, point.y);
           }
         }
+      }
       // }
 
       prev = point;
@@ -231,7 +221,7 @@ export default class ChartBase {
     ctx.lineTo(end.x, end.y);
     ctx.lineTo(start.x, start.y);
 
-    if ( opts.needFill !== false ) {
+    if (opts.needFill !== false) {
       ctx.fill();
     }
 
@@ -244,18 +234,15 @@ export default class ChartBase {
    * 根据给定样式绘制一个圆
    */
   drawCircle(ctx, circle) {
-
     ctx.beginPath();
 
     ctx.setStrokeStyle(circle.strokeColor);
-    if(circle.fillColor)
-      ctx.setFillStyle(circle.fillColor);
+    if (circle.fillColor) ctx.setFillStyle(circle.fillColor);
     ctx.setLineWidth(circle.lineWidth || 1);
     ctx.arc(circle.x, circle.y, circle.r, 0, 2 * Math.PI);
 
     ctx.stroke();
-    if(circle.fillColor)
-      ctx.fill();
+    if (circle.fillColor) ctx.fill();
     ctx.closePath();
   }
 

@@ -3,7 +3,7 @@ import {
   extend,
 } from '../util.js';
 
-let barchartConfig = {
+const barchartConfig = {
   /**
    * 给定一组数据，Y轴标签的最大值最小值和每一步的值都是组件自动算出来的
    * 有些场景组件算出来的可能不满足需求，或者调用者就是想自定义Y轴标签的数据，
@@ -16,52 +16,52 @@ let barchartConfig = {
    *      似的divider是大于1的数值，同时将放大的倍数告知组件，默认为1
    * }
    */
-  formatY    : null,
+  formatY: null,
 
   // x轴文案的样式配置
   xAxis: {
-    show     : true,
+    show: true,
     marginTop: 10,
-    color    : '#B8B8B8',
-    fontSize : 11,
+    color: '#B8B8B8',
+    fontSize: 11,
   },
 
   /**
    * X轴轴体的样式配置
    */
   xAxisLine: {
-    show      : false,
+    show: false,
     centerShow: true,
-    width     : 0.6,
-    color     : '#C6C6C6',
-    style     : 'solid',
+    width: 0.6,
+    color: '#C6C6C6',
+    style: 'solid',
   },
 
   /**
    * y轴的样式配置
    */
   yAxis: {
-    show       : true,
-    marginLeft : 0,
+    show: true,
+    marginLeft: 0,
     marginRight: 10,
-    color      : '#B8B8B8',
-    fontSize   : 11,
-    unit       : '',
+    color: '#B8B8B8',
+    fontSize: 11,
+    unit: '',
     /**
      * 默认Y轴打四个点
      * 也可以自行配置，但仍然会有保底逻辑
      */
-    yAxisCount  : 4,
+    yAxisCount: 4,
   },
 
   /**
    * Y轴轴体的样式
    */
-  yAxisLine : {
-    show      : true,
+  yAxisLine: {
+    show: true,
     centerShow: false,
-    width     : 0.2,
-    color     : '#C6C6C6',
+    width: 0.2,
+    color: '#C6C6C6',
   },
 
   barStyle: {
@@ -72,11 +72,11 @@ let barchartConfig = {
   },
 
   barLabelStyle: {
-    color      : '#B8B8B8',
-    fontSize   : 11,
+    color: '#B8B8B8',
+    fontSize: 11,
     paddingBottom: 5,
-  }
-}
+  },
+};
 
 export default extend(barchartConfig, common);
 
