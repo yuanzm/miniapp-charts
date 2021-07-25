@@ -1,3 +1,5 @@
+/* eslint no-param-reassign: ["error", { "props": false }]*/
+
 /*
  * @author: zimyuan
  */
@@ -83,7 +85,7 @@ function roundForNumber(number, direction) {
 
   if (direction === 'up') result = number + (round - (number % round));
 
-  else if (direction === 'down') result = number  - number % round;
+  else if (direction === 'down') result = number - (number % round);
 
   return result;
 }
@@ -91,7 +93,10 @@ function roundForNumber(number, direction) {
 /**
  * 给定最大值最小值和区间个数，给出优化后的最大最小值和单step值
  */
-function getDataRangeAndStep(max, min, step) {
+function getDataRangeAndStep(maxSource, minSource, step) {
+  let max = maxSource;
+  let min = minSource;
+
   if (max === 0) {
     return {
       max: 4,
@@ -183,7 +188,8 @@ function isFloat(n) {
   return Number(n) === n && n % 1 !== 0;
 }
 
-function changeUnit(value, fixed = 1) {
+function changeUnit(value, fixedParam = 1) {
+  let fixed = fixedParam;
   // value是非数字的情况，直接返回value
   if (!isNumeric(value)) return value;
 
@@ -211,7 +217,9 @@ function changeUnit(value, fixed = 1) {
   const temp = number / divider;
 
   // 如果达不到保留小数的基本要求，取整
-  if (temp - Math.floor(temp) < 0.5 * Math.pow(0.1, fixed)) fixed = 0;
+  if (temp - Math.floor(temp) < 0.5 * (0.1 ** fixed)) {
+    fixed = 0;
+  }
 
   return temp.toFixed(fixed) + unit;
 }
@@ -227,7 +235,7 @@ function formatX(length, maxXPoint) {
   const origin = step;
 
   while (step * (maxXPoint - 1) >= length) {
-    step--;
+    step -= 1;
   }
 
   if (step < origin) {
@@ -248,8 +256,8 @@ export function splineCurve(firstPoint, middlePoint, afterPoint, t) {
   const current = middlePoint;
   const next = afterPoint.skip ? middlePoint : afterPoint;
 
-  const d01 = Math.sqrt(Math.pow(current.x - previous.x, 2) + Math.pow(current.y - previous.y, 2));
-  const d12 = Math.sqrt(Math.pow(next.x - current.x, 2) + Math.pow(next.y - current.y, 2));
+  const d01 = Math.sqrt((current.x - previous.x) ** 2 + (current.y - previous.y) ** 2);
+  const d12 = Math.sqrt((next.x - current.x) ** 2 + (next.y - current.y) ** 2);
 
   let s01 = d01 / (d01 + d12);
   let s12 = d12 / (d01 + d12);
@@ -277,7 +285,7 @@ export function splineCurve(firstPoint, middlePoint, afterPoint, t) {
 /**
  * @private
  */
-export function _bezierCurveTo(ctx, previous, target, flip) {
+export function bezierCurveTo(ctx, previous, target, flip) {
   if (!previous) {
     return ctx.lineTo(target.x, target.y);
   }
@@ -303,7 +311,7 @@ function capControlPoint(pt, min, max) {
  * @returns {boolean}
  * @private
  */
-export function _isPointInArea(point, area) {
+export function isPointInArea(point, area) {
   const epsilon = 0.5; // margin - to match rounded decimals
 
   return point.x > area.left - epsilon && point.x < area.right + epsilon
@@ -314,14 +322,14 @@ function capBezierPoints(points, area) {
   let i; let ilen; let point;
   for (i = 0, ilen = points.length; i < ilen; ++i) {
     point = points[i];
-    if (!_isPointInArea(point, area)) {
+    if (!isPointInArea(point, area)) {
       continue;
     }
-    if (i > 0 && _isPointInArea(points[i - 1], area)) {
+    if (i > 0 && isPointInArea(points[i - 1], area)) {
       point.controlPointPreviousX = capControlPoint(point.controlPointPreviousX, area.left, area.right);
       point.controlPointPreviousY = capControlPoint(point.controlPointPreviousY, area.top, area.bottom);
     }
-    if (i < points.length - 1 && _isPointInArea(points[i + 1], area)) {
+    if (i < points.length - 1 && isPointInArea(points[i + 1], area)) {
       point.controlPointNextX = capControlPoint(point.controlPointNextX, area.left, area.right);
       point.controlPointNextY = capControlPoint(point.controlPointNextY, area.top, area.bottom);
     }

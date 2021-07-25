@@ -1,5 +1,6 @@
 // Easing functions adapted from Robert Penner's easing equations
 // http://www.robertpenner.com/easing/
+/* eslint-disable */ 
 
 export default {
   linear(t) {

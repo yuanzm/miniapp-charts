@@ -1,5 +1,6 @@
 // 太老的库，很多变量是下滑线开头的，暂时屏蔽先
 /* eslint no-underscore-dangle: "off"*/
+/* eslint no-param-reassign: ["error", { "props": false }] */
 
 import {
   isType,
@@ -38,7 +39,8 @@ export default class BarChart extends Base {
     this._datasets    = [];
   }
 
-  calLabelDataForItem(x, yStart, barLabel) {
+  calLabelDataForItem(x, yStartParam, barLabel) {
+    let yStart = yStartParam;
     const labelArr = (isType('array', barLabel) ? barLabel : [barLabel]);
     let height   = 0;
     const arr      = [];
@@ -84,7 +86,8 @@ export default class BarChart extends Base {
     }
 
     // 每组柱子的间距
-    const barPadding    = (xCenterAxis.end.x - xCenterAxis.start.x - totalBarWidth - this._config.barStyle.leftRightPadding * 2) / (count - 1);
+    const padding = this._config.barStyle.leftRightPadding * 2;
+    const barPadding    = (xCenterAxis.end.x - xCenterAxis.start.x - totalBarWidth - padding) / (count - 1);
 
     // 柱子的X轴开始位置
     let xStart = xCenterAxis.start.x + this._config.barStyle.leftRightPadding;

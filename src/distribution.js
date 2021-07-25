@@ -38,7 +38,8 @@ export default class DistributionChart extends Base {
     this.totalHeight  = 0;
   }
 
-  calLabelDataForItem(xStart, y, barLabel) {
+  calLabelDataForItem(xStartParam, y, barLabel) {
+    let xStart = xStartParam;
     const labelArr = (isType('array', barLabel) ? barLabel : [barLabel]);
     let width    = 0;
     const arr      = [];
@@ -112,6 +113,7 @@ export default class DistributionChart extends Base {
 
         // TODO: fix 0.5
         if (bar.barLabel) {
+          // eslint-disable-next-line
           const { arr } = this.calLabelDataForItem(xStart + rect.width, yStart + barStyle.height / 2 - 0.5, bar.barLabel);
           barLabelData = barLabelData.concat(arr);
         }
@@ -194,7 +196,7 @@ export default class DistributionChart extends Base {
       }
     });
 
-    const maxBarWidthMap = this._datasets.forEach((dataset, index) => {
+    this._datasets.forEach((dataset, index) => {
       if (!dataset.independentAxis) {
         maxItemMap[index] = maxItem;
       }

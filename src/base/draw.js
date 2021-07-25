@@ -1,10 +1,12 @@
+/* eslint no-param-reassign: ["error", { "props": false }] */
+
 /**
  * 图表组件基础类，封装一些canvas画图的基本方法
  * 这里可用于兼容H5和小程序
  * 因为小程序和H5的绘图API并不是完全一致的，通过基础类来兼容是最合适的
  */
 
-import { _bezierCurveTo } from '../util.js';
+import { bezierCurveTo } from '../util.js';
 
 export default class ChartBase {
   wordWidth(words, fontSize) {
@@ -204,7 +206,7 @@ export default class ChartBase {
       } else {
         if (point.show !== false) {
           if (opts.curve) {
-            _bezierCurveTo(ctx, prev, point);
+            bezierCurveTo(ctx, prev, point);
           } else {
             ctx.lineTo(point.x, point.y);
           }

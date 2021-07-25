@@ -79,13 +79,13 @@ export default class RadarChart extends Base {
       const oneline = {
         color: grid.color,
         width: grid.width,
-        isDash: !!(grid.style == 'dash'),
+        isDash: !!(grid.style === 'dash'),
         dashPattern: grid.dashPattern,
         dashOffset: grid.dashOffset,
         points: [],
         r: 0,
         marginLineColor:
-          this._config.grid.marginLineColor == 'default'
+          this._config.grid.marginLineColor === 'default'
             ? this._config.grid.color
             : this._config.grid.marginLineColor,
       };
@@ -320,10 +320,10 @@ export default class RadarChart extends Base {
     return this._render.labels.map((label, index) => {
       const base = angelLineData[index].end;
       const { width, height } = labelsSizeData[index];
-      const baseX = parseInt(base.x);
-      const baseY = parseInt(base.y);
-      const centerX = parseInt(center.x);
-      const centerY = parseInt(center.y);
+      const baseX = parseInt(base.x, 10);
+      const baseY = parseInt(base.y, 10);
+      const centerX = parseInt(center.x, 10);
+      const centerY = parseInt(center.y, 10);
 
       let startX; let startY;
 
@@ -406,7 +406,7 @@ export default class RadarChart extends Base {
         const point = points[i];
         const focus = !this._render.toolTipData
           ? false
-          : this._render.toolTipData.focusIndex == i;
+          : this._render.toolTipData.focusIndex === i;
         circles.push({
           x: point.x,
           y: point.y,
@@ -435,8 +435,8 @@ export default class RadarChart extends Base {
     const touches = e.touches[0]; // .x .y
     // 根据辐射线顶点计算出 焦点 索引
     const { angelLineData } = this._render;
-    let d_min = 99999;
-    let index_min = -1;
+    let dMin = 99999;
+    let indexMin = -1;
     for (let i = 0; i < angelLineData.length; i++) {
       const d = this.calEuclideanDistance(
         touches.x,
@@ -444,19 +444,19 @@ export default class RadarChart extends Base {
         angelLineData[i].end.x,
         angelLineData[i].end.y,
       );
-      if (d < d_min) {
-        d_min = d;
-        index_min = i;
+      if (d < dMin) {
+        dMin = d;
+        indexMin = i;
       }
     }
-    if (index_min == -1) {
+    if (indexMin === -1) {
       this._render.toolTipData = null;
       return;
     }
     // 定义信息框各项信息
     const info = {
-      focusIndex: index_min, // 焦点索引
-      title: this._render.labels[index_min], // 大标题 取决于 Label
+      focusIndex: indexMin, // 焦点索引
+      title: this._render.labels[indexMin], // 大标题 取决于 Label
       subTitleData: [
         // 子标题数据
         /*
@@ -482,8 +482,8 @@ export default class RadarChart extends Base {
         title: raw.style.label,
         pointStyle: raw.style.focusStyle,
         dataStr: !rawData.dataStr
-          ? rawData.data[index_min]
-          : rawData.dataStr[index_min],
+          ? rawData.data[indexMin]
+          : rawData.dataStr[indexMin],
         content: '',
       };
       _sub.content = `${_sub.title}：${_sub.dataStr}`;
@@ -505,27 +505,27 @@ export default class RadarChart extends Base {
       text: info.title,
       fontSize: _config.fontSize,
     };
-    const _title0_width = this.measureText(this.ctx, wordStyle);
+    const titleWidth = this.measureText(this.ctx, wordStyle);
 
     // 小标题
-    const _subtitle_width = [];
+    const subTitleWidth = [];
     for (const i in info.subTitleData) {
       const r = info.subTitleData[i];
       wordStyle.text = r.content;
-      _subtitle_width.push(this.measureText(this.ctx, wordStyle) + _config.fontSize * 2);
+      subTitleWidth.push(this.measureText(this.ctx, wordStyle) + _config.fontSize * 2);
     }
 
     // 选取宽度最大值作为
     let maxwidth = 0;
-    for (const i in _subtitle_width) {
-      if (_subtitle_width[i] > maxwidth) maxwidth = _subtitle_width[i];
+    for (const i in subTitleWidth) {
+      if (subTitleWidth[i] > maxwidth) maxwidth = subTitleWidth[i];
     }
-    if (_title0_width > maxwidth) maxwidth = _title0_width;
+    if (titleWidth > maxwidth) maxwidth = titleWidth;
 
     info.wrapper.width =      maxwidth + _config.padding.left + _config.padding.right;
     info.wrapper.height = _config.padding.top + _config.padding.bottom;
     const lineHeight = _config.linePadding + _config.fontSize;
-    info.wrapper.height += (_subtitle_width.length + 1) * lineHeight;
+    info.wrapper.height += (subTitleWidth.length + 1) * lineHeight;
 
     // 各个文字位置信息
     let _top = _config.padding.top + 5;
@@ -647,7 +647,7 @@ export default class RadarChart extends Base {
    */
   drawGrid(ctx, grid) {
     // 判断最外圈要求样式
-    if (this._config.grid.marginLineStyle == 'circle') {
+    if (this._config.grid.marginLineStyle === 'circle') {
       // 默认
       // 最外圈圆环
       for (let i = 0; i < grid.length - 1; i++) {
@@ -664,7 +664,7 @@ export default class RadarChart extends Base {
         r: _ps.r,
       });
       // 最外圈的高亮点
-      if (this._config.grid.marginLinePointRadius > 0)
+      if (this._config.grid.marginLinePointRadius > 0) {
         // 高亮点半径 > 0时
         for (const i in _ps.points) {
           const item = _ps.points[i];
@@ -677,6 +677,7 @@ export default class RadarChart extends Base {
             r: this._config.grid.marginLinePointRadius,
           });
         }
+      }
     } else {
       this._render.gridLineData.forEach((line) => {
         this.drawLongLine(this.ctx, line);
@@ -781,7 +782,7 @@ export default class RadarChart extends Base {
   /**
    *  用户TouchEnd事件 / 娇嗲你移除事件
    */
-  touchEnd(e) {
+  touchEnd() {
     // 取消信息框
     this._render.toolTipData = null;
     // 重绘
