@@ -22,6 +22,7 @@ function is(obj, type) {
  * @ return {Object} newObj: 拷贝之后的对象
  */
 function deepCopy(oldObj = {}, newObj = {}) {
+  /* eslint-disable */
   for (const key in oldObj) {
     const copy = oldObj[key];
     if (oldObj === copy) continue; // 如window.window === window，会陷入死循环，需要处理一下
@@ -34,13 +35,12 @@ function deepCopy(oldObj = {}, newObj = {}) {
       newObj[key] = copy;
     }
   }
+  /* eslint-disable */
   return newObj;
 }
 
 function isType(type, value) {
-  const _type = Object.prototype.toString.call(value).match(/\s(\w+)/)[1].toLowerCase();
-
-  return _type === type;
+  return Object.prototype.toString.call(value).match(/\s(\w+)/)[1].toLowerCase() === type;
 }
 
 function isPlainObject(value) {

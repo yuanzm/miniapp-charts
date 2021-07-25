@@ -1,5 +1,6 @@
 // 太老的库，很多变量是下滑线开头的，暂时屏蔽先
 /* eslint no-underscore-dangle: "off"*/
+/* eslint no-param-reassign: ["error", { "props": false }] */
 
 import { isType, deepCopy } from './util.js';
 
@@ -71,7 +72,7 @@ export default class RadarChart extends Base {
     const { grid } = this._config;
     const { center } = this._render;
 
-    const steps = parseInt((grid.max - grid.min) / grid.stepSize);
+    const steps = parseInt((grid.max - grid.min) / grid.stepSize, 10);
 
     const lines = [];
 
@@ -196,10 +197,8 @@ export default class RadarChart extends Base {
           width = Math.max(subSize.width, width);
           height += subSize.height;
         });
-      }
-
-      // 不是数组，但是自带样式等配置
-      else if (isType('object', label)) {
+      } else if (isType('object', label)) {
+        // 不是数组，但是自带样式等配置
         const newLabel = this.getConfig(label, deepCopy(style));
 
         newLabel.text = label.text || '';
@@ -588,7 +587,7 @@ export default class RadarChart extends Base {
    *  计算欧式距离 由于本算法中只比距离大小 该函数没有开平方
    */
   calEuclideanDistance(x1, y1, x2, y2) {
-    return Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2);
+    return (x1 - x2) ** 2 + (y1 - y2) ** 2;
   }
 
   /**
