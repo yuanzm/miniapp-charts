@@ -1,3 +1,6 @@
+// 太老的库，很多变量是下滑线开头的，暂时屏蔽先
+/* eslint no-underscore-dangle: "off"*/
+
 import {
   isType,
   extend,

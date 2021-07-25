@@ -1,3 +1,6 @@
+// 太老的库，很多变量是下滑线开头的，暂时屏蔽先
+/* eslint no-underscore-dangle: "off"*/
+
 /**
  * @author: zimyuan
  * @lase-edit-date: 2018-05-18
@@ -291,7 +294,7 @@ export default class LineChart extends Base {
             y: item.y,
           },
           end: {
-            x: rightTop.x - (second && second.width || 0),
+            x: rightTop.x - ((second && second.width) || 0),
             y: item.y,
           },
           width: yAxisLine.width,
@@ -302,7 +305,8 @@ export default class LineChart extends Base {
   }
 
   calSecondYAxis() {
-    const { max, min, yDivider, maxYPoint, longestLine, yMultiple } = this.calYAxisBoundary(this._secondDatasets, this._secondSublinesets);
+    const bound = this.calYAxisBoundary(this._secondDatasets, this._secondSublinesets);
+    const { max, min, yDivider, maxYPoint, longestLine, yMultiple } = bound;
 
     const second = {};
     this._render.second = second;
@@ -376,7 +380,8 @@ export default class LineChart extends Base {
    * 计算Y轴的边界和阶梯值
    */
   calYAxis() {
-    const { max, min, yDivider, maxYPoint, longestLine, yMultiple } = this.calYAxisBoundary(this._datasets, this._sublinesets);
+    const bound = this.calYAxisBoundary(this._datasets, this._sublinesets);
+    const { max, min, yDivider, maxYPoint, longestLine, yMultiple } = bound;
 
     this._render.min = min;
     this._render.max = max;
