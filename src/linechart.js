@@ -842,6 +842,11 @@ export default class LineChart extends Base {
    * 将处理后的合法数据按照配置绘制到canvas上面
    */
   drawToCanvas() {
+    this.ctx1.clearRect(0, 0, 99999, 99999);
+    if(this.ctx1 !== this.ctx2){
+      this.ctx2.clearRect(0, 0, 99999, 99999);
+    }
+
     this.drawYAxis();
     this.log('drawYAxis');
 
@@ -977,7 +982,7 @@ export default class LineChart extends Base {
 
     this.drawToCanvas();
 
-    this.ctx1.draw();
+    // this.ctx1.draw();
 
     this.log('realDraw');
 
@@ -1008,7 +1013,7 @@ export default class LineChart extends Base {
     // 将tooltip绘制到对应的canvas
     this.drawToolTip();
 
-    this.ctx2.draw();
+    // this.ctx2.draw();
   }
 
   /**
@@ -1040,6 +1045,6 @@ export default class LineChart extends Base {
       this.drawToCanvas();
     }
 
-    this.ctx2.draw();
+    // this.ctx2.draw();
   }
 }

@@ -159,7 +159,10 @@ export default class RadarChart extends Base {
 
   // 计算单个label的size
   calOneLabelSize(label, style = {}) {
-    this.ctx.setFontSize(style.fontSize);
+    this.ctx.save();
+
+    this.ctx.font = style.fontSize+'px sans-serif';
+    // this.ctx.setFontSize(style.fontSize);
 
     let { width } = this.ctx.measureText(label);
     let height = style.fontSize;
@@ -167,6 +170,7 @@ export default class RadarChart extends Base {
     width += style.margin.left + style.margin.right;
     height += style.margin.top + style.margin.bottom;
 
+    this.ctx.restore();
     return { width, height, style };
   }
 
@@ -711,6 +715,8 @@ export default class RadarChart extends Base {
   }
 
   drawToCanvas(percent = 1) {
+    //清空画布
+    this.ctx.clearRect(0, 0, 99999, 99999);
     // 辐射状的线条
     if (this._config.radiationLineStyle.display) {
       this._render.angelLineData.forEach((line) => {
@@ -747,7 +753,7 @@ export default class RadarChart extends Base {
       this.drawToolTip();
     }
 
-    this.ctx.draw();
+    // this.ctx.draw();
   }
 
   draw(data, cfg = {}) {

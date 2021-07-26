@@ -409,6 +409,7 @@ export default class BarChart extends Base {
      * 将处理后的合法数据按照配置绘制到canvas上面
      */
   drawToCanvas() {
+    this.ctx.clearRect(0, 0, 99999, 99999);
     this.drawYAxis();
     this.log('drawYAxis');
 
@@ -467,7 +468,7 @@ export default class BarChart extends Base {
 
     this.drawToCanvas();
 
-    this.ctx.draw();
+    // this.ctx.draw();
 
     this.log('realDraw');
 

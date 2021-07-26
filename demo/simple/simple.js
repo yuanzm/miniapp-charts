@@ -5,98 +5,164 @@ import DistributionChart from '../lib/distributionchart.js';
 
 Page({
     data: {
-        totalHeight: 200,
+        totalHeight: 500,
     },
     onLoad() {
-        let context = wx.createCanvasContext('radar');
+        // let context = wx.createCanvasContext('radar');
 
-        this.radarchart = new RadarChart(context,
-            {
-                width : 300,
-                height: 300,
-                debug : true,
-                padding: {
-                    left: 5, right: 5, top:5, bottom: 5
-                },
-                grid    : {
-                    stepSize: 25,
-                    color : '#c8c8c8',
-                },
-                datasetStyle: {
-                    borderWidth: 1.5,
-                    pointRadius: 1.5
+        wx.createSelectorQuery()
+            .select('#radar')
+            .fields({ node: true, size: true })
+            .exec((res)=>{
+                const canvas = res[0].node;
+                const ctx = canvas.getContext('2d');
+                const dpr = wx.getSystemInfoSync().pixelRatio;
+                canvas.width = res[0].width * dpr;
+                canvas.height = res[0].height * dpr;
+                ctx.scale(dpr, dpr)
+                this.renderRadar(ctx);
+            });
 
-                },
-                label: {
-                    fontSize: 10,
-                    color   : '#676768',
-                },
-            }
-        );
+        
+        wx.createSelectorQuery()
+            .select('#linechart1')
+            .fields({ node: true, size: true })
+            .exec((res)=>{
+                const canvas = res[0].node;
+                const ctx = canvas.getContext('2d');
+                const dpr = wx.getSystemInfoSync().pixelRatio;
+                canvas.width = res[0].width * dpr;
+                canvas.height = res[0].height * dpr;
+                ctx.scale(dpr, dpr)
+                this.renderLineChart(ctx);
+            })
+    
+        wx.createSelectorQuery()
+            .select('#bar')
+            .fields({ node: true, size: true })
+            .exec((res)=>{
+                const canvas = res[0].node;
+                const ctx = canvas.getContext('2d');
+                const dpr = wx.getSystemInfoSync().pixelRatio;
+                canvas.width = res[0].width * dpr;
+                canvas.height = res[0].height * dpr;
+                ctx.scale(dpr, dpr)
+                this.renderBarChart(ctx);
+            })
+        
+        wx.createSelectorQuery()
+            .select('#distribution')
+            .fields({ node: true, size: true })
+            .exec((res)=>{
+                const canvas = res[0].node;
+                const ctx = canvas.getContext('2d');
+                const dpr = wx.getSystemInfoSync().pixelRatio;
+                canvas.width = res[0].width * dpr;
+                canvas.height = res[0].height * dpr;
+                ctx.scale(dpr, dpr)
+                this.renderDistribution(ctx);
+            })
+        
+        // wx.createSelectorQuery()
+        //     .select('#linechart1')
+        //     .fields({ node: true, size: true })
+        //     .exec((res)=>{
+        //         const canvas = res[0].node;
+        //         const ctx = canvas.getContext('2d');
+        //         const dpr = wx.getSystemInfoSync().pixelRatio;
+        //         canvas.width = res[0].width * dpr;
+        //         canvas.height = res[0].height * dpr;
+        //         ctx.scale(dpr, dpr)
+        //         this.renderLineChart(ctx);
+        //     })
 
-        this.radarchart.draw(
-            {
-                labels  : ['输出', 'KDA', '发育', '团战', '生存' ,'随便写'],
-                datasets: [ {
-                  data                : [71, 100, 13, 15, 82, 10],
-                  dataStr                : ['71s', '100s', '13s', '15s', '82s', '10s'],
-                  label               : '同段位',
-                  backgroundColor     : 'rgba(255,255,255,0)',
-                  borderColor         : 'rgb(242,190,86)',
-                  borderWidth         : 2,
-                  borderLineStyle     : 'dash',  //line || dash
-                  borderDashPattern   : [5,5], // [ [dashPattern] , dashOffset ]
-                  borderDashOffset    : 5 ,
-                  pointShow           : false,
-                  pointBackgroundColor: 'rgb(108,132,194)',
-                  pointBorderColor    : 'rgb(108,132,194)',
-                  pointBorderWidth    : 1,
-                  pointRadius         : 5,
-                  focusStyle          :{
-                                      pointBackgroundColor: 'rgb(242,190,86)',
-                                      pointBorderColor    : 'rgb(242,190,86)',
-                                      pointBorderWidth    : 1,
-                                      pointRadius         : 2,
-                  }
-              },{
-                        data                : [71, 65, 67, 63, 72, 100],
-                        // dataStr             : ['71s', '100s', '13s', '15s', '82s', '10s'],
-                        label               : '本人',
-                        backgroundColor     : 'rgba(108,132,194,0.5)',
-                        borderColor         : 'rgb(108,132,194)',
-                        borderWidth         : 2,
-                        borderLineStyle     : 'line',  //line || dash
-                        borderDashPattern   : [10,20], // [ [dashPattern] , dashOffset ]
-                        borderDashOffset    : 5 ,
-                        pointShow           : true,
-                        pointBackgroundColor: 'rgb(255,255,255)',
-                        pointBorderColor    : 'rgb(108,132,194)',
-                        pointBorderWidth    : 3,
-                        pointRadius         : 5,
-                        focusStyle          :{
-                                            pointBackgroundColor: 'rgb(108,132,194)',
-                                            pointBorderColor    : 'rgb(108,132,194)',
-                                            pointBorderWidth    : 1,
-                                            pointRadius         : 5,
-                        }
-                    },
-                ]
-            },
-        );
-
-        this.renderLineChart();
-        this.renderBarChart();
-        this.renderDistribution();
+        // this.renderLineChart();
+        // this.renderBarChart();
+        // this.renderDistribution();
     },
 
-    renderLineChart() {
+    renderRadar(context) {
+         this.radarchart = new RadarChart(context,
+                {
+                    width : 300,
+                    height: 300,
+                    debug : true,
+                    padding: {
+                        left: 5, right: 5, top:5, bottom: 5
+                    },
+                    grid    : {
+                        stepSize: 25,
+                        color : '#c8c8c8',
+                    },
+                    datasetStyle: {
+                        borderWidth: 1.5,
+                        pointRadius: 1.5
+    
+                    },
+                    label: {
+                        fontSize: 10,
+                        color   : '#676768',
+                    },
+                }
+            );
+    
+            this.radarchart.draw(
+                {
+                    labels  : ['输出', 'KDA', '发育', '团战', '生存' ,'随便写'],
+                    datasets: [ {
+                      data                : [71, 100, 13, 15, 82, 10],
+                      dataStr                : ['71s', '100s', '13s', '15s', '82s', '10s'],
+                      label               : '同段位',
+                      backgroundColor     : 'rgba(255,255,255,0)',
+                      borderColor         : 'rgb(242,190,86)',
+                      borderWidth         : 2,
+                      borderLineStyle     : 'dash',  //line || dash
+                      borderDashPattern   : [5,5], // [ [dashPattern] , dashOffset ]
+                      borderDashOffset    : 5 ,
+                      pointShow           : false,
+                      pointBackgroundColor: 'rgb(108,132,194)',
+                      pointBorderColor    : 'rgb(108,132,194)',
+                      pointBorderWidth    : 1,
+                      pointRadius         : 5,
+                      focusStyle          :{
+                                          pointBackgroundColor: 'rgb(242,190,86)',
+                                          pointBorderColor    : 'rgb(242,190,86)',
+                                          pointBorderWidth    : 1,
+                                          pointRadius         : 2,
+                      }
+                  },{
+                            data                : [71, 65, 67, 63, 72, 100],
+                            // dataStr             : ['71s', '100s', '13s', '15s', '82s', '10s'],
+                            label               : '本人',
+                            backgroundColor     : 'rgba(108,132,194,0.5)',
+                            borderColor         : 'rgb(108,132,194)',
+                            borderWidth         : 2,
+                            borderLineStyle     : 'line',  //line || dash
+                            borderDashPattern   : [10,20], // [ [dashPattern] , dashOffset ]
+                            borderDashOffset    : 5 ,
+                            pointShow           : true,
+                            pointBackgroundColor: 'rgb(255,255,255)',
+                            pointBorderColor    : 'rgb(108,132,194)',
+                            pointBorderWidth    : 3,
+                            pointRadius         : 5,
+                            focusStyle          :{
+                                                pointBackgroundColor: 'rgb(108,132,194)',
+                                                pointBorderColor    : 'rgb(108,132,194)',
+                                                pointBorderWidth    : 1,
+                                                pointRadius         : 5,
+                            }
+                        },
+                    ]
+                },
+            );
+
+
+    },
+
+    renderLineChart(ctx) {
         let linechart = new LineChart(
-            wx.createCanvasContext('linechart1'),
-            {
-                width : 414,
-                height: 200,
-            },
-            wx.createCanvasContext('linechart2'),
+            ctx,
+            // ctx,
         );
 
         this.linechart = linechart;
@@ -166,11 +232,10 @@ Page({
         this.radarchart.touchEnd(e);
     },
 
-    renderBarChart() {
-        let context = wx.createCanvasContext('bar');
+    renderBarChart(ctx) {
 
         let barchart = new BarChart(
-            wx.createCanvasContext('bar'),
+            ctx,
             {
                 width : 414,
                 height: 200,
@@ -235,9 +300,9 @@ Page({
         });
     },
 
-    renderDistribution(){
+    renderDistribution(ctx){
         let chart = new DistributionChart(
-            wx.createCanvasContext('distribution'),
+            ctx,
             {
                 width : 414,
                 height: 200,
@@ -325,9 +390,9 @@ Page({
             ]
         });
 
-        this.setData({
-            totalHeight: chart.totalHeight
-        });
+        // this.setData({
+        //     totalHeight: chart.totalHeight
+        // });
 
         chart.draw();
     }
