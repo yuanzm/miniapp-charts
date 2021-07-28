@@ -162,9 +162,9 @@ wx.createSelectorQuery()
 
 为了验证 2.0 版本采用 HTML5 Canvas 绘图 API 是否有效的提升性能，将通过一个简单的实验证明：采用旧版本（原生绘图 API ）以及新版本（ H5 绘图 API ）中的 LineChart 组件分别实现对 5000 个数据点进行渲染，计时整个渲染开始到用户看到图像的耗时情况，分别使用 Android 手机与 iOS 手机进行测试。
 
-新版本的测试 Demo 源码路径：
+新版本的测试 Demo 源码路径：https://github.com/liuxinyumocn/miniapp-charts/tree/feature/h5canvas/demo/perftest
 
-旧版本测试 Demo 源码路径：
+旧版本测试 Demo 源码路径：https://github.com/liuxinyumocn/miniapp-charts/tree/1.0/demo/perftest
 
 最终得出如下结果：
 
