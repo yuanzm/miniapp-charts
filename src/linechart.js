@@ -964,7 +964,9 @@ export default class LineChart extends Base {
   /**
    * 实际的绘制函数
    */
-  draw(data, cfg = {}) {
+  draw(data, cfg = {},callback=function(){}) {
+    console.log(1);
+    this._drawCallBack = callback;
     this._start = new Date();
 
     // this.clear(this.ctx1, this._config.width, this._config.height);
@@ -977,7 +979,12 @@ export default class LineChart extends Base {
 
     this.drawToCanvas();
 
-    this.ctx1.draw();
+    this.ctx1.draw(false,()=>{
+    console.log(2);
+      if(this._drawCallBack){
+        this._drawCallBack();
+      }
+    });
 
     this.log('realDraw');
 

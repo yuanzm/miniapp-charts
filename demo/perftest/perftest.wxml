@@ -1,0 +1,10 @@
+<canvas
+    canvas-id="linechart1"
+    style="width:414px;height:200px;margin:0;position: absolute; left: 0; top: 0"
+    bindtouchstart="bindtouchstart"
+    bindtouchmove="bindtouchmove"
+    bindtouchend="bindtouchend"
+/>
+<view style="height:400px"></view>
+<button bindtap="draw">开始渲染</button>
+<view>耗时{{time}}毫秒</view>
