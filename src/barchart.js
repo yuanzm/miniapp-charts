@@ -19,14 +19,20 @@ import Base   from './base/index.js';
  */
 export default class BarChart extends Base {
   /**
-     * @param { CanvasContext } ctx: 小程序的绘图上下文
+     * @param { canvasNode } canvasNode: canvas节点句柄
      * @param { Object } cfg: 组件配置
      */
-  constructor(ctx, cfg = {}) {
+  constructor(canvasNode, cfg = {}) {
     super();
 
     this.chartType = 'bar';
-    this.ctx       = ctx;
+    this._canvas = canvasNode.node;
+    
+    //清晰度调整
+    this._canvas.width = canvasNode.width * this._dpr;
+    this._canvas.height = canvasNode.height * this._dpr;
+    this.ctx = this._canvas.getContext('2d');
+    this.ctx.scale(this._dpr,this._dpr);
 
     /**
          * 约定！所有的内部变量都需要这里先声明

@@ -11,9 +11,13 @@ import {
 
 import animationOptions from './easing.js';
 
+const dpr = wx.getSystemInfoSync().pixelRatio;
+
 export default class Base extends ChartBase {
   constructor() {
     super();
+
+    this._dpr = dpr;
 
     // 用于性能数据打点
     this._start = 0;

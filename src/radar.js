@@ -9,12 +9,20 @@ import config from './config/radar.js';
 import Base from './base/index.js';
 
 export default class RadarChart extends Base {
-  constructor(ctx, cfg = {}) {
+  //传入Canvas Node
+  constructor(canvasNode, cfg = {}) {
     super();
+
+    this._canvas = canvasNode.node;
+    
+    //清晰度调整
+    this._canvas.width = canvasNode.width * this._dpr;
+    this._canvas.height = canvasNode.height * this._dpr;
+    this.ctx = this._canvas.getContext('2d');
+    this.ctx.scale(this._dpr,this._dpr);
 
     this._touchTimer = 0;
     this.chartType = 'radar';
-    this.ctx = ctx;
 
     this._config = this.getConfig(cfg, deepCopy(config));
 
@@ -716,7 +724,7 @@ export default class RadarChart extends Base {
 
   drawToCanvas(percent = 1) {
     //清空画布
-    this.ctx.clearRect(0, 0, 99999, 99999);
+    this.ctx.clearRect(0, 0, this._canvas.width, this._canvas.height );
     // 辐射状的线条
     if (this._config.radiationLineStyle.display) {
       this._render.angelLineData.forEach((line) => {

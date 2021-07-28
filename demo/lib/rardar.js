@@ -547,9 +547,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+const dpr = wx.getSystemInfoSync().pixelRatio;
+
 class Base extends _draw_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
   constructor() {
     super();
+
+    this._dpr = dpr;
 
     // 用于性能数据打点
     this._start = 0;
@@ -778,7 +782,7 @@ class ChartBase {
     }
 
     // ctx.setFontSize(word.fontSize);
-    ctx.font = word.fontSize+'px sans-serif';
+    ctx.font = `${word.fontSize}px sans-serif`;
     // ctx.setFillStyle(word.color);
     ctx.fillStyle = word.color;
     // ctx.setTextAlign(word.textAlign || 'left');
@@ -1150,12 +1154,20 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class RadarChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
-  constructor(ctx, cfg = {}) {
+  //传入Canvas Node
+  constructor(canvasNode, cfg = {}) {
     super();
+
+    this._canvas = canvasNode.node;
+    
+    //清晰度调整
+    this._canvas.width = canvasNode.width * this._dpr;
+    this._canvas.height = canvasNode.height * this._dpr;
+    this.ctx = this._canvas.getContext('2d');
+    this.ctx.scale(this._dpr,this._dpr);
 
     this._touchTimer = 0;
     this.chartType = 'radar';
-    this.ctx = ctx;
 
     this._config = this.getConfig(cfg, Object(_util_js__WEBPACK_IMPORTED_MODULE_0__["deepCopy"])(_config_radar_js__WEBPACK_IMPORTED_MODULE_1__["default"]));
 
@@ -1857,7 +1869,7 @@ class RadarChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] 
 
   drawToCanvas(percent = 1) {
     //清空画布
-    this.ctx.clearRect(0, 0, 99999, 99999);
+    this.ctx.clearRect(0, 0, this._canvas.width, this._canvas.height );
     // 辐射状的线条
     if (this._config.radiationLineStyle.display) {
       this._render.angelLineData.forEach((line) => {

@@ -15,15 +15,21 @@ import Base   from './base/index.js';
  */
 export default class DistributionChart extends Base {
   /**
-   * @param { CanvasContext } ctx: 小程序的绘图上下文
+   * @param { canvasNode } canvasNode: canvas节点
    * @param { CanvasContext } ctx2: 小程序的绘图上下文
    * @param { Object } cfg: 组件配置
    */
-  constructor(ctx, cfg = {}) {
+  constructor(canvasNode, cfg = {}) {
     super();
 
     this.chartType = 'distribution';
-    this.ctx       = ctx;
+    this._canvas = canvasNode.node;
+
+    //清晰度调整
+    this._canvas.width = canvasNode.width * this._dpr;
+    this._canvas.height = canvasNode.height * this._dpr;
+    this.ctx = this._canvas.getContext('2d');
+    this.ctx.scale(this._dpr,this._dpr);
 
     /**
      * 约定！所有的内部变量都需要这里先声明
@@ -36,6 +42,15 @@ export default class DistributionChart extends Base {
     this._datasets    = [];
 
     this.totalHeight  = 0;
+    this._height = this._canvas.height;
+  }
+
+  /**
+   *  当容器的高度需要变更时必须手动实现图表的变更从而实现反拉伸保持图表渲染稳定
+   * */
+  setHeight(h){
+    this.ctx.scale(1, this._height  / this._dpr / h);
+    this._height = this._dpr * h;
   }
 
   calLabelDataForItem(xStartParam, y, barLabel) {

@@ -5,7 +5,7 @@ import DistributionChart from '../lib/distributionchart.js';
 
 Page({
     data: {
-        totalHeight: 500,
+        totalHeight: 1000,
     },
     onLoad() {
         // let context = wx.createCanvasContext('radar');
@@ -14,13 +14,7 @@ Page({
             .select('#radar')
             .fields({ node: true, size: true })
             .exec((res)=>{
-                const canvas = res[0].node;
-                const ctx = canvas.getContext('2d');
-                const dpr = wx.getSystemInfoSync().pixelRatio;
-                canvas.width = res[0].width * dpr;
-                canvas.height = res[0].height * dpr;
-                ctx.scale(dpr, dpr)
-                this.renderRadar(ctx);
+                this.renderRadar(res[0]);
             });
 
         
@@ -28,39 +22,21 @@ Page({
             .select('#linechart1')
             .fields({ node: true, size: true })
             .exec((res)=>{
-                const canvas = res[0].node;
-                const ctx = canvas.getContext('2d');
-                const dpr = wx.getSystemInfoSync().pixelRatio;
-                canvas.width = res[0].width * dpr;
-                canvas.height = res[0].height * dpr;
-                ctx.scale(dpr, dpr)
-                this.renderLineChart(ctx);
+                this.renderLineChart(res[0]);
             })
     
         wx.createSelectorQuery()
             .select('#bar')
             .fields({ node: true, size: true })
             .exec((res)=>{
-                const canvas = res[0].node;
-                const ctx = canvas.getContext('2d');
-                const dpr = wx.getSystemInfoSync().pixelRatio;
-                canvas.width = res[0].width * dpr;
-                canvas.height = res[0].height * dpr;
-                ctx.scale(dpr, dpr)
-                this.renderBarChart(ctx);
+                this.renderBarChart(res[0]);
             })
         
         wx.createSelectorQuery()
             .select('#distribution')
             .fields({ node: true, size: true })
             .exec((res)=>{
-                const canvas = res[0].node;
-                const ctx = canvas.getContext('2d');
-                const dpr = wx.getSystemInfoSync().pixelRatio;
-                canvas.width = res[0].width * dpr;
-                canvas.height = res[0].height * dpr;
-                ctx.scale(dpr, dpr)
-                this.renderDistribution(ctx);
+                this.renderDistribution(res[0]);
             })
         
         // wx.createSelectorQuery()
@@ -81,8 +57,8 @@ Page({
         // this.renderDistribution();
     },
 
-    renderRadar(context) {
-         this.radarchart = new RadarChart(context,
+    renderRadar(node) {
+         this.radarchart = new RadarChart(node,
                 {
                     width : 300,
                     height: 300,
@@ -390,9 +366,10 @@ Page({
             ]
         });
 
-        // this.setData({
-        //     totalHeight: chart.totalHeight
-        // });
+        this.setData({
+            totalHeight: chart.totalHeight
+        });
+        chart.setHeight(chart.totalHeight);
 
         chart.draw();
     }

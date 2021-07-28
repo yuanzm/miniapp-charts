@@ -124,19 +124,37 @@ __webpack_require__.r(__webpack_exports__);
  */
 class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
   /**
-   * @param { CanvasContext } ctx1: 小程序的绘图上下文
-   * @param { CanvasContext } ctx2: 小程序的绘图上下文
+   * @param { canvasNode } canvasNode: canvasNode句柄
    * @param { Object } cfg: 组件配置
    */
-  constructor(ctx1, cfg = {}, ctx2) {
+  constructor(canvasNode, cfg = {}, canvasNode2) {
     super();
+
+
+    this._canvas = canvasNode.node;
+    
+    //清晰度调整
+    this._canvas.width = canvasNode.width * this._dpr;
+    this._canvas.height = canvasNode.height * this._dpr;
+    this.ctx1 = this._canvas.getContext('2d');
+    this.ctx1.scale(this._dpr,this._dpr);
+
+    let ctx2 = null;
+    if(canvasNode2){
+      this._canvas2 = canvasNode2.node;
+    
+      //清晰度调整
+      this._canvas2.width = canvasNode2.width * this._dpr;
+      this._canvas2.height = canvasNode2.height * this._dpr;
+      ctx2 = this._canvas2.getContext('2d');
+      ctx2.scale(this._dpr,this._dpr);
+    }
 
     this.chartType = 'line';
 
-    this.ctx1 = ctx1;
 
     // 用于绘制tooltip以提高性能，如果没有，则在ctx1上绘制
-    this.ctx2 = ctx2 || ctx1;
+    this.ctx2 = ctx2 || this.ctx1;
 
     /**
      * 约定！所有的内部变量都需要这里先声明
@@ -1750,9 +1768,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+const dpr = wx.getSystemInfoSync().pixelRatio;
+
 class Base extends _draw_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
   constructor() {
     super();
+
+    this._dpr = dpr;
 
     // 用于性能数据打点
     this._start = 0;
@@ -1981,7 +2003,7 @@ class ChartBase {
     }
 
     // ctx.setFontSize(word.fontSize);
-    ctx.font = word.fontSize+'px sans-serif';
+    ctx.font = `${word.fontSize}px sans-serif`;
     // ctx.setFillStyle(word.color);
     ctx.fillStyle = word.color;
     // ctx.setTextAlign(word.textAlign || 'left');

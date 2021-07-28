@@ -1,6 +1,7 @@
 {
     "pages": [
         "simple/simple",
+        "perftest/perftest",
         "linechart/linechart",
         "radar/radar"
     ],
