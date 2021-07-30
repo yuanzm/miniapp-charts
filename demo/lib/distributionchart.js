@@ -1170,6 +1170,8 @@ class DistributionChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["def
     this.chartType = 'distribution';
     this._canvas = canvasNode.node;
 
+    this.canvasNode = canvasNode;
+
     //清晰度调整
     this._canvas.width = canvasNode.width * this._dpr;
     this._canvas.height = canvasNode.height * this._dpr;
@@ -1187,15 +1189,15 @@ class DistributionChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["def
     this._datasets    = [];
 
     this.totalHeight  = 0;
-    this._height = this._canvas.height;
   }
 
   /**
    *  当容器的高度需要变更时必须手动实现图表的变更从而实现反拉伸保持图表渲染稳定
    * */
   setHeight(h){
-    this.ctx.scale(1, this._height  / this._dpr / h);
-    this._height = this._dpr * h;
+    this._canvas.height = h * this._dpr;
+    this.ctx.scale(this._dpr,this._dpr);
+    this.drawToCanvas();
   }
 
   calLabelDataForItem(xStartParam, y, barLabel) {

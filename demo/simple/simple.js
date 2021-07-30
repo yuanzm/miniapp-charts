@@ -368,10 +368,9 @@ Page({
 
         this.setData({
             totalHeight: chart.totalHeight
+        },()=>{
+            chart.setHeight(chart.totalHeight);
         });
-        chart.setHeight(chart.totalHeight);
-
-        chart.draw();
     }
 });
 
