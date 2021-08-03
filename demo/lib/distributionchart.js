@@ -1430,7 +1430,8 @@ class DistributionChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["def
    * 将处理后的合法数据按照配置绘制到canvas上面
    */
   drawToCanvas() {
-    this.ctx.clearRect(0, 0, 99999, 99999);
+    //清空画布
+    this.ctx.clearRect(0, 0, this._canvas.width, this._canvas.height );
     this.drawYAxis();
     this.drawYAxisLine();
     this.drawBars();
@@ -1519,6 +1520,14 @@ const distributionConfig = {
     color: '#B8B8B8',
     fontSize: 11,
     paddingLeft: 5,
+  },
+  /**
+   *  无数据时的文案配置
+   * */
+  emptyData: {
+    content:'暂无数据',
+    color:'rgb(200,200,200)',
+    fontSize:16,
   },
 };
 

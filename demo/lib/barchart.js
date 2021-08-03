@@ -1167,6 +1167,7 @@ class BarChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
 
     this.chartType = 'bar';
     this._canvas = canvasNode.node;
+    this._canvasNode = canvasNode;
     
     //清晰度调整
     this._canvas.width = canvasNode.width * this._dpr;
@@ -1555,7 +1556,8 @@ class BarChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
      * 将处理后的合法数据按照配置绘制到canvas上面
      */
   drawToCanvas() {
-    this.ctx.clearRect(0, 0, 99999, 99999);
+    //清空画布
+    this.ctx.clearRect(0, 0, this._canvas.width, this._canvas.height );
     this.drawYAxis();
     this.log('drawYAxis');
 
@@ -1598,6 +1600,22 @@ class BarChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
     this.log('initData');
   }
 
+  
+  /**
+   *  绘制无数据文案
+   * */
+  drawEmptyData(){
+      const config = this._config.emptyData;
+      this.drawWord(this.ctx1, {
+        text:config.content,
+        fontSize: config.fontSize,
+        textAlign: 'center',
+        color: config.color,
+        x:this._canvasNode.width/2,
+        y:this._canvasNode.height/2,
+      });
+  }
+
   /**
      * 实际的绘制函数
      */
@@ -1609,6 +1627,7 @@ class BarChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
     this.initData(data);
 
     if (!this._datasets.length) {
+      this.drawEmptyData();
       return;
     }
 
@@ -1709,6 +1728,15 @@ const barchartConfig = {
     color: '#B8B8B8',
     fontSize: 11,
     paddingBottom: 5,
+  },
+
+  /**
+   *  无数据时的文案配置
+   * */
+  emptyData: {
+    content:'暂无数据',
+    color:'rgb(200,200,200)',
+    fontSize:16,
   },
 };
 

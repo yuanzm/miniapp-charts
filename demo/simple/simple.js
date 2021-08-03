@@ -8,8 +8,6 @@ Page({
         totalHeight: 1000,
     },
     onLoad() {
-        // let context = wx.createCanvasContext('radar');
-
         wx.createSelectorQuery()
             .select('#radar')
             .fields({ node: true, size: true })
@@ -17,7 +15,6 @@ Page({
                 this.renderRadar(res[0]);
             });
 
-        
         wx.createSelectorQuery()
             .select('#linechart1')
             .fields({ node: true, size: true })
@@ -38,23 +35,6 @@ Page({
             .exec((res)=>{
                 this.renderDistribution(res[0]);
             })
-        
-        // wx.createSelectorQuery()
-        //     .select('#linechart1')
-        //     .fields({ node: true, size: true })
-        //     .exec((res)=>{
-        //         const canvas = res[0].node;
-        //         const ctx = canvas.getContext('2d');
-        //         const dpr = wx.getSystemInfoSync().pixelRatio;
-        //         canvas.width = res[0].width * dpr;
-        //         canvas.height = res[0].height * dpr;
-        //         ctx.scale(dpr, dpr)
-        //         this.renderLineChart(ctx);
-        //     })
-
-        // this.renderLineChart();
-        // this.renderBarChart();
-        // this.renderDistribution();
     },
 
     renderRadar(node) {
@@ -135,9 +115,9 @@ Page({
 
     },
 
-    renderLineChart(ctx) {
+    renderLineChart(node) {
         let linechart = new LineChart(
-            ctx,
+            node,
             // ctx,
         );
 

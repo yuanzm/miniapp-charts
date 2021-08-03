@@ -34,7 +34,8 @@ export default class LineChart extends Base {
 
 
     this._canvas = canvasNode.node;
-    
+    this._canvasNode = canvasNode;
+
     //清晰度调整
     this._canvas.width = canvasNode.width * this._dpr;
     this._canvas.height = canvasNode.height * this._dpr;
@@ -860,9 +861,11 @@ export default class LineChart extends Base {
    * 将处理后的合法数据按照配置绘制到canvas上面
    */
   drawToCanvas() {
-    this.ctx1.clearRect(0, 0, 99999, 99999);
+    //清空画布
+    this.ctx1.clearRect(0, 0, this._canvas.width, this._canvas.height );
     if(this.ctx1 !== this.ctx2){
-      this.ctx2.clearRect(0, 0, 99999, 99999);
+      //清空画布
+      this.ctx2.clearRect(0, 0, this._canvas2.width, this._canvas2.height );
     }
 
     this.drawYAxis();
@@ -985,6 +988,21 @@ export default class LineChart extends Base {
   }
 
   /**
+   *  绘制无数据文案
+   * */
+  drawEmptyData(){
+      const config = this._config.emptyData;
+      this.drawWord(this.ctx1, {
+        text:config.content,
+        fontSize: config.fontSize,
+        textAlign: 'center',
+        color: config.color,
+        x:this._canvasNode.width/2,
+        y:this._canvasNode.height/2,
+      });
+  }
+
+  /**
    * 实际的绘制函数
    */
   draw(data, cfg = {}) {
@@ -996,7 +1014,10 @@ export default class LineChart extends Base {
     this.getConfig(cfg, this._config);
     this.initData(data);
 
-    if (!this._alldatasets.length) return;
+    if (!this._alldatasets.length) {
+      this.drawEmptyData();
+      return;
+    }
 
     this.drawToCanvas();
 
@@ -1013,6 +1034,8 @@ export default class LineChart extends Base {
    * 触摸事件处理，绘制tooltip
    */
   touchHandler(e) {
+    if (!this._alldatasets.length) return;
+
     // 计算用于绘制tooltip的数据
     this.calToolTipData(e);
 
@@ -1055,6 +1078,7 @@ export default class LineChart extends Base {
    * tooltip在触摸结束之后是否需要保留可以通过是否调用这个函数决定
    */
   touchEnd() {
+    if (!this._alldatasets.length) return;
     /**
      * ctx2本身是为了性能优化存在的，如果没有ctx2，
      * 还是要把所用东西老老实实在ctx1上面绘制一遍

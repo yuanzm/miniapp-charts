@@ -285,7 +285,8 @@ export default class DistributionChart extends Base {
    * 将处理后的合法数据按照配置绘制到canvas上面
    */
   drawToCanvas() {
-    this.ctx.clearRect(0, 0, 99999, 99999);
+    //清空画布
+    this.ctx.clearRect(0, 0, this._canvas.width, this._canvas.height );
     this.drawYAxis();
     this.drawYAxisLine();
     this.drawBars();
