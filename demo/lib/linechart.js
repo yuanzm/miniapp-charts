@@ -1090,6 +1090,12 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
    * */
   drawEmptyData(){
       const config = this._config.emptyData;
+      //清空画布
+      this.ctx1.clearRect(0, 0, this._canvas.width, this._canvas.height );
+      if(this.ctx1 !== this.ctx2){
+        //清空画布
+        this.ctx2.clearRect(0, 0, this._canvas2.width, this._canvas2.height );
+      }
       this.drawWord(this.ctx1, {
         text:config.content,
         fontSize: config.fontSize,
