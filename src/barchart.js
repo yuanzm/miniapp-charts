@@ -466,7 +466,7 @@ export default class BarChart extends Base {
    * */
   drawEmptyData(){
       const config = this._config.emptyData;
-      this.drawWord(this.ctx1, {
+      this.drawWord(this.ctx, {
         text:config.content,
         fontSize: config.fontSize,
         textAlign: 'center',

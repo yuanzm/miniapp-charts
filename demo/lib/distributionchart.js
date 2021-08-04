@@ -1188,7 +1188,10 @@ class DistributionChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["def
     // 线条数据
     this._datasets    = [];
 
-    this.totalHeight  = 0;
+    this.totalHeight  = this.canvasNode.height;
+    
+    this._autoDrawTimer = 0;
+    this._autoDrawEndTimestamp = 0;
   }
 
   /**
@@ -1197,7 +1200,41 @@ class DistributionChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["def
   setHeight(h){
     this._canvas.height = h * this._dpr;
     this.ctx.scale(this._dpr,this._dpr);
-    this.drawToCanvas();
+    if (!this._datasets.length) {
+      this.drawEmptyData();
+      return;
+    }
+
+    //设置高度目前的版本iOS可能存在异步问题，因此这里采用一种延迟渲染方案，确保至少有一帧能够保证画面完成渲染
+    this.autoDrawCanvas();
+
+  }
+
+
+  /**
+   *  自动延迟渲染
+   *  每秒可绘制3帧
+   * */
+  autoDrawCanvas(){
+    this._autoDrawEndTimestamp = new Date().getTime() + 1000;
+    if(this._autoDrawTimer){
+      //代表已经触发了自动渲染，无需再次触发
+      return;
+    }
+    let that = this;
+    let draw = function(){
+      that.drawToCanvas();
+      that._autoDrawTimer = setTimeout(()=>{
+        let now = new Date().getTime();
+        if(now > that._autoDrawEndTimestamp){
+          that._autoDrawTimer = 0;
+        }else{
+          draw();
+        }
+      },300);
+
+    }
+    draw();
   }
 
   calLabelDataForItem(xStartParam, y, barLabel) {
@@ -1302,6 +1339,8 @@ class DistributionChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["def
     this._render.barLabelData = barLabelData;
     this._render.totalHeight  = yStart - barStyle.padding + config.padding.bottom + config.barStyle.topBottomPadding;
     this.totalHeight          = this._render.totalHeight;
+    if(this.totalHeight == 0)
+      this.totalHeight = this.canvasNode.height;
   }
 
   calYAxisLines() {
@@ -1427,6 +1466,21 @@ class DistributionChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["def
   }
 
   /**
+   *  绘制无数据文案
+   * */
+  drawEmptyData(){
+      const config = this._config.emptyData;
+      this.drawWord(this.ctx, {
+        text:config.content,
+        fontSize: config.fontSize,
+        textAlign: 'center',
+        color: config.color,
+        x:this.canvasNode.width/2,
+        y:this.canvasNode.height/2,
+      });
+  }
+
+  /**
    * 将处理后的合法数据按照配置绘制到canvas上面
    */
   drawToCanvas() {
@@ -1447,6 +1501,7 @@ class DistributionChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["def
     this._datasets = (data.datasets || []).filter(dataset => !!dataset.points && dataset.points.length);
 
     if (!this._datasets.length) {
+      this.drawEmptyData();
       return;
     }
 
@@ -1465,6 +1520,7 @@ class DistributionChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["def
    */
   draw() {
     if (!this._datasets.length) {
+      this.drawEmptyData();
       return;
     }
 
@@ -1525,9 +1581,9 @@ const distributionConfig = {
    *  无数据时的文案配置
    * */
   emptyData: {
-    content:'暂无数据',
-    color:'rgb(200,200,200)',
-    fontSize:16,
+    content: '暂无数据',
+    color: 'rgb(200,200,200)',
+    fontSize: 16,
   },
 };
 

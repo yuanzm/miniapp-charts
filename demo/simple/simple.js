@@ -199,60 +199,61 @@ Page({
                 debug : true,
             },
         );
-
+        let data =[];
+        data = [
+            {
+                name: '行业',
+                fillColor: '#6684C7',
+                points: [
+                    {
+                        label: '新增',
+                        value: 20,
+                        barLabel: '20%',
+                    },
+                    {
+                        label: '活跃',
+                        value: 100,
+                        barLabel: '100%',
+                    },
+                    {
+                        label: '留存',
+                        value: 5,
+                        barLabel: [{
+                            name: '335',
+                            style: {
+                                color: '#6684C7',
+                            }
+                        }, '50%'],
+                    },
+                ],
+            },
+            {
+                name: '行业',
+                fillColor: '#3AC6D5',
+                points: [
+                    {
+                        label: '新增',
+                        value: 120,
+                        barLabel: [{
+                            name: '335',
+                            style: {
+                                color: '#6684C7',
+                            }
+                        }, '50%'],
+                    },
+                    {
+                        label: '活跃',
+                        value: 77,
+                    },
+                    {
+                        label: '留存',
+                        value: 34,
+                    },
+                ],
+            }
+        ];
         barchart.draw({
-            datasets: [
-                {
-                    name: '行业',
-                    fillColor: '#6684C7',
-                    points: [
-                        {
-                            label: '新增',
-                            value: 20,
-                            barLabel: '20%',
-                        },
-                        {
-                            label: '活跃',
-                            value: 100,
-                            barLabel: '100%',
-                        },
-                        {
-                            label: '留存',
-                            value: 5,
-                            barLabel: [{
-                                name: '335',
-                                style: {
-                                    color: '#6684C7',
-                                }
-                            }, '50%'],
-                        },
-                    ],
-                },
-                {
-                    name: '行业',
-                    fillColor: '#3AC6D5',
-                    points: [
-                        {
-                            label: '新增',
-                            value: 120,
-                            barLabel: [{
-                                name: '335',
-                                style: {
-                                    color: '#6684C7',
-                                }
-                            }, '50%'],
-                        },
-                        {
-                            label: '活跃',
-                            value: 77,
-                        },
-                        {
-                            label: '留存',
-                            value: 34,
-                        },
-                    ],
-                }
-            ]
+            datasets: data
         });
     },
 
@@ -265,85 +266,86 @@ Page({
                 debug : true,
             },
         );
-
+        let data = [];
+        data = [
+            {
+                name     : '行业',
+                fillColor: '#6684C7',
+                points: [
+                    {
+                        label: '新增',
+                        value: 20,
+                        barLabel: '20%',
+                    },
+                    {
+                        label: '活跃',
+                        value: 100,
+                        barLabel: '100%',
+                    },
+                    {
+                        label: '留存',
+                        value: 5,
+                        barLabel: [{
+                            name: '335',
+                            style: {
+                                color: '#6684C7',
+                            }
+                        }, '50%'],
+                    },
+                ],
+            },
+            {
+                name: '行业',
+                fillColor: '#3AC6D5',
+                points: [
+                    {
+                        label: '新增',
+                        value: 120,
+                        barLabel: [{
+                            name: '335',
+                            style: {
+                                color: '#6684C7',
+                            }
+                        }, '50%'],
+                    },
+                    {
+                        label: '活跃',
+                        value: 77,
+                    },
+                    {
+                        label: '留存',
+                        value: 34,
+                    },
+                ],
+            },
+            {
+                name: '行业2',
+                fillColor: '#3AC6D5',
+                independentAxis: true,
+                points: [
+                    {
+                        label: '新增',
+                        value: 10,
+                        barLabel: [{
+                            name: '不同单位',
+                            style: {
+                                color: '#6684C7',
+                            }
+                        }, '50%'],
+                    },
+                    {
+                        label: '活跃',
+                        value: 5,
+                    },
+                    {
+                        label: '留存',
+                        value: 1,
+                    },
+                ],
+            }
+        ];
         chart.initData({
-            datasets: [
-                {
-                    name     : '行业',
-                    fillColor: '#6684C7',
-                    points: [
-                        {
-                            label: '新增',
-                            value: 20,
-                            barLabel: '20%',
-                        },
-                        {
-                            label: '活跃',
-                            value: 100,
-                            barLabel: '100%',
-                        },
-                        {
-                            label: '留存',
-                            value: 5,
-                            barLabel: [{
-                                name: '335',
-                                style: {
-                                    color: '#6684C7',
-                                }
-                            }, '50%'],
-                        },
-                    ],
-                },
-                {
-                    name: '行业',
-                    fillColor: '#3AC6D5',
-                    points: [
-                        {
-                            label: '新增',
-                            value: 120,
-                            barLabel: [{
-                                name: '335',
-                                style: {
-                                    color: '#6684C7',
-                                }
-                            }, '50%'],
-                        },
-                        {
-                            label: '活跃',
-                            value: 77,
-                        },
-                        {
-                            label: '留存',
-                            value: 34,
-                        },
-                    ],
-                },
-                {
-                    name: '行业2',
-                    fillColor: '#3AC6D5',
-                    independentAxis: true,
-                    points: [
-                        {
-                            label: '新增',
-                            value: 10,
-                            barLabel: [{
-                                name: '不同单位',
-                                style: {
-                                    color: '#6684C7',
-                                }
-                            }, '50%'],
-                        },
-                        {
-                            label: '活跃',
-                            value: 5,
-                        },
-                        {
-                            label: '留存',
-                            value: 1,
-                        },
-                    ],
-                }
-            ]
+            datasets: data
         });
 
         this.setData({

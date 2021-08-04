@@ -1606,7 +1606,7 @@ class BarChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
    * */
   drawEmptyData(){
       const config = this._config.emptyData;
-      this.drawWord(this.ctx1, {
+      this.drawWord(this.ctx, {
         text:config.content,
         fontSize: config.fontSize,
         textAlign: 'center',
@@ -1734,9 +1734,9 @@ const barchartConfig = {
    *  无数据时的文案配置
    * */
   emptyData: {
-    content:'暂无数据',
-    color:'rgb(200,200,200)',
-    fontSize:16,
+    content: '暂无数据',
+    color: 'rgb(200,200,200)',
+    fontSize: 16,
   },
 };
 

@@ -42,9 +42,9 @@ const distributionConfig = {
    *  无数据时的文案配置
    * */
   emptyData: {
-    content:'暂无数据',
-    color:'rgb(200,200,200)',
-    fontSize:16,
+    content: '暂无数据',
+    color: 'rgb(200,200,200)',
+    fontSize: 16,
   },
 };
 
