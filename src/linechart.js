@@ -20,26 +20,56 @@ import {
 
 import config from './config/linechart.js';
 import Base from './base/index.js';
+import Native2H5CTX from './base/Native2H5CTX.js';
 
 /**
  * 小程序折线图绘制组件
  */
 export default class LineChart extends Base {
   /**
-   * @param { CanvasContext } ctx1: 小程序的绘图上下文
-   * @param { CanvasContext } ctx2: 小程序的绘图上下文
+   * @param { canvasNode } canvasNode: canvasNode句柄
    * @param { Object } cfg: 组件配置
    */
-  constructor(ctx1, cfg = {}, ctx2) {
+  constructor(canvasNode, cfg = {}, canvasNode2) {
     super();
 
+
+    
+    let ctx2 = null;
+    if(canvasNode.node){ //以节点传入
+      this._renderType = 'h5';
+      this._canvas = canvasNode.node;
+      this._canvasNode = canvasNode;
+      
+      //清晰度调整
+      this._canvas.width = canvasNode.width * this._dpr;
+      this._canvas.height = canvasNode.height * this._dpr;
+      this.ctx1 = this._canvas.getContext('2d');
+      this.ctx1.scale(this._dpr,this._dpr);
+      if(canvasNode2){
+        this._canvas2 = canvasNode2.node;
+        //清晰度调整
+        this._canvas2.width = canvasNode2.width * this._dpr;
+        this._canvas2.height = canvasNode2.height * this._dpr;
+        ctx2 = this._canvas2.getContext('2d');
+        ctx2.scale(this._dpr,this._dpr);
+      }
+    }else{ //以原生ctx传入
+      this._renderType = 'native';
+      this._canvas = {
+        width:100,
+        height:100,
+      }
+      this.ctx1 = Native2H5CTX(canvasNode);
+      if(canvasNode2){
+        ctx2 = Native2H5CTX(canvasNode2);
+      }
+    }
+
+
     this.chartType = 'line';
-
-    this.ctx1 = ctx1;
-
     // 用于绘制tooltip以提高性能，如果没有，则在ctx1上绘制
-    this.ctx2 = ctx2 || ctx1;
-
+    this.ctx2 = ctx2 || this.ctx1;
     /**
      * 约定！所有的内部变量都需要这里先声明
      * 可以大大提高源码阅读性
@@ -842,6 +872,13 @@ export default class LineChart extends Base {
    * 将处理后的合法数据按照配置绘制到canvas上面
    */
   drawToCanvas() {
+    //清空画布
+    this.ctx1.clearRect(0, 0, this._canvas.width, this._canvas.height );
+    if(this.ctx1 !== this.ctx2){
+      //清空画布
+      this.ctx2.clearRect(0, 0, this._canvas2.width, this._canvas2.height );
+    }
+
     this.drawYAxis();
     this.log('drawYAxis');
 
@@ -962,10 +999,42 @@ export default class LineChart extends Base {
   }
 
   /**
+   *  绘制无数据文案
+   * */
+  drawEmptyData(){
+      const config = this._config.emptyData;
+      //清空画布
+      this.ctx1.clearRect(0, 0, this._canvas.width, this._canvas.height );
+      if(this.ctx1 !== this.ctx2){
+        //清空画布
+        this.ctx2.clearRect(0, 0, this._canvas2.width, this._canvas2.height );
+      }
+      if(this._renderType == 'h5'){
+        this.drawWord(this.ctx1, {
+          text:config.content,
+          fontSize: config.fontSize,
+          textAlign: 'center',
+          color: config.color,
+          x:this._canvasNode.width/2,
+          y:this._canvasNode.height/2,
+        });
+      }else{
+        this.drawWord(this.ctx1, {
+          text:config.content,
+          fontSize: config.fontSize,
+          textAlign: 'center',
+          color: config.color,
+          x:this._config.width/2,
+          y:this._config.height/2,
+        });
+        this.ctx1.draw();
+      }
+  }
+
+  /**
    * 实际的绘制函数
    */
   draw(data, cfg = {},callback=function(){}) {
-    console.log(1);
     this._drawCallBack = callback;
     this._start = new Date();
 
@@ -975,16 +1044,15 @@ export default class LineChart extends Base {
     this.getConfig(cfg, this._config);
     this.initData(data);
 
-    if (!this._alldatasets.length) return;
+    if (!this._alldatasets.length) {
+      this.drawEmptyData();
+      return;
+    }
 
     this.drawToCanvas();
 
-    this.ctx1.draw(false,()=>{
-    console.log(2);
-      if(this._drawCallBack){
-        this._drawCallBack();
-      }
-    });
+    if(this._renderType == 'native')
+      this.ctx1.draw();
 
     this.log('realDraw');
 
@@ -997,6 +1065,8 @@ export default class LineChart extends Base {
    * 触摸事件处理，绘制tooltip
    */
   touchHandler(e) {
+    if (!this._alldatasets.length) return;
+
     // 计算用于绘制tooltip的数据
     this.calToolTipData(e);
 
@@ -1015,7 +1085,8 @@ export default class LineChart extends Base {
     // 将tooltip绘制到对应的canvas
     this.drawToolTip();
 
-    this.ctx2.draw();
+    if(this._renderType == 'native')
+      this.ctx2.draw();
   }
 
   /**
@@ -1039,6 +1110,7 @@ export default class LineChart extends Base {
    * tooltip在触摸结束之后是否需要保留可以通过是否调用这个函数决定
    */
   touchEnd() {
+    if (!this._alldatasets.length) return;
     /**
      * ctx2本身是为了性能优化存在的，如果没有ctx2，
      * 还是要把所用东西老老实实在ctx1上面绘制一遍
@@ -1047,6 +1119,7 @@ export default class LineChart extends Base {
       this.drawToCanvas();
     }
 
-    this.ctx2.draw();
+    if(this._renderType == 'native')
+      this.ctx2.draw();
   }
 }

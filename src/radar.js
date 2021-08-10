@@ -7,14 +7,33 @@ import { isType, deepCopy } from './util.js';
 
 import config from './config/radar.js';
 import Base from './base/index.js';
+import Native2H5CTX from './base/Native2H5CTX.js';
 
 export default class RadarChart extends Base {
-  constructor(ctx, cfg = {}) {
+  //传入Canvas Node
+  constructor(canvasNode, cfg = {}) {
     super();
+    
+    if(canvasNode.node){ //以节点传入
+      this._renderType = 'h5';
+      this._canvas = canvasNode.node;
+      
+      //清晰度调整
+      this._canvas.width = canvasNode.width * this._dpr;
+      this._canvas.height = canvasNode.height * this._dpr;
+      this.ctx = this._canvas.getContext('2d');
+      this.ctx.scale(this._dpr,this._dpr);
+    }else{ //以原生ctx传入
+      this._renderType = 'native';
+      this._canvas = {
+        width:100,
+        height:100,
+      }
+      this.ctx = Native2H5CTX(canvasNode);
+    }
 
     this._touchTimer = 0;
     this.chartType = 'radar';
-    this.ctx = ctx;
 
     this._config = this.getConfig(cfg, deepCopy(config));
 
@@ -159,7 +178,10 @@ export default class RadarChart extends Base {
 
   // 计算单个label的size
   calOneLabelSize(label, style = {}) {
-    this.ctx.setFontSize(style.fontSize);
+    this.ctx.save();
+
+    this.ctx.font = style.fontSize+'px sans-serif';
+    // this.ctx.setFontSize(style.fontSize);
 
     let { width } = this.ctx.measureText(label);
     let height = style.fontSize;
@@ -167,6 +189,7 @@ export default class RadarChart extends Base {
     width += style.margin.left + style.margin.right;
     height += style.margin.top + style.margin.bottom;
 
+    this.ctx.restore();
     return { width, height, style };
   }
 
@@ -711,6 +734,8 @@ export default class RadarChart extends Base {
   }
 
   drawToCanvas(percent = 1) {
+    //清空画布
+    this.ctx.clearRect(0, 0, this._canvas.width, this._canvas.height );
     // 辐射状的线条
     if (this._config.radiationLineStyle.display) {
       this._render.angelLineData.forEach((line) => {
@@ -747,7 +772,8 @@ export default class RadarChart extends Base {
       this.drawToolTip();
     }
 
-    this.ctx.draw();
+    if(this._renderType == 'native')
+      this.ctx.draw();
   }
 
   draw(data, cfg = {}) {

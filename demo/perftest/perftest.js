@@ -5,28 +5,44 @@ Page({
      * 页面的初始数据
      */
     data: {
-        time:0,
     },
 
     /**
      * 生命周期函数--监听页面加载
      */
     onLoad: function (options) {
-        
+
     },
 
-    
-    draw() {
+    /**
+     * 生命周期函数--监听页面初次渲染完成
+     */
+    onReady: function () {
+
+    },
+
+    /**
+     * 生命周期函数--监听页面显示
+     */
+    onShow: function () {
+
+    },
+    draw(){
+        wx.createSelectorQuery()
+            .select('#linechart1')
+            .fields({ node: true, size: true })
+            .exec((res)=>{
+                this.renderLineChart(res[0]);
+            })
+    },
+    renderLineChart(ctx) {
         let start = new Date().getTime();
-        console.log(start);
         let linechart = new LineChart(
-            wx.createCanvasContext('linechart1'),
-            {
-                width : 414,
-                height: 200,
-            }
+            ctx,
+            // ctx,
         );
 
+        
         this.linechart = linechart;
 
         let points = [];
@@ -75,13 +91,13 @@ Page({
                     axis:2
                 }
             ]
-        },{},()=>{
-            let end = new Date().getTime();
-            console.log(end,end - start);
-            this.setData({
-                time:end - start
-            })
         });
-    
+        
+
+
+        let end = new Date().getTime();
+        this.setData({
+            time:end - start
+        })
     }
 })

@@ -101,9 +101,10 @@ return /******/ (function(modules) { // webpackBootstrap
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return LineChart; });
-/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
-/* harmony import */ var _config_linechart_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
-/* harmony import */ var _base_index_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(4);
+/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
+/* harmony import */ var _config_linechart_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(13);
+/* harmony import */ var _base_index_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5);
+/* harmony import */ var _base_Native2H5CTX_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8);
 // 太老的库，很多变量是下滑线开头的，暂时屏蔽先
 /* eslint no-underscore-dangle: "off"*/
 /* eslint no-param-reassign: ["error", { "props": false }] */
@@ -119,25 +120,55 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 /**
  * 小程序折线图绘制组件
  */
 class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
   /**
-   * @param { CanvasContext } ctx1: 小程序的绘图上下文
-   * @param { CanvasContext } ctx2: 小程序的绘图上下文
+   * @param { canvasNode } canvasNode: canvasNode句柄
    * @param { Object } cfg: 组件配置
    */
-  constructor(ctx1, cfg = {}, ctx2) {
+  constructor(canvasNode, cfg = {}, canvasNode2) {
     super();
 
+
+    
+    let ctx2 = null;
+    if(canvasNode.node){ //以节点传入
+      this._renderType = 'h5';
+      this._canvas = canvasNode.node;
+      this._canvasNode = canvasNode;
+      
+      //清晰度调整
+      this._canvas.width = canvasNode.width * this._dpr;
+      this._canvas.height = canvasNode.height * this._dpr;
+      this.ctx1 = this._canvas.getContext('2d');
+      this.ctx1.scale(this._dpr,this._dpr);
+      if(canvasNode2){
+        this._canvas2 = canvasNode2.node;
+        //清晰度调整
+        this._canvas2.width = canvasNode2.width * this._dpr;
+        this._canvas2.height = canvasNode2.height * this._dpr;
+        ctx2 = this._canvas2.getContext('2d');
+        ctx2.scale(this._dpr,this._dpr);
+      }
+    }else{ //以原生ctx传入
+      this._renderType = 'native';
+      this._canvas = {
+        width:100,
+        height:100,
+      }
+      this.ctx1 = Object(_base_Native2H5CTX_js__WEBPACK_IMPORTED_MODULE_3__["default"])(canvasNode);
+      if(canvasNode2){
+        ctx2 = Object(_base_Native2H5CTX_js__WEBPACK_IMPORTED_MODULE_3__["default"])(canvasNode2);
+      }
+    }
+
+
     this.chartType = 'line';
-
-    this.ctx1 = ctx1;
-
     // 用于绘制tooltip以提高性能，如果没有，则在ctx1上绘制
-    this.ctx2 = ctx2 || ctx1;
-
+    this.ctx2 = ctx2 || this.ctx1;
     /**
      * 约定！所有的内部变量都需要这里先声明
      * 可以大大提高源码阅读性
@@ -940,6 +971,13 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
    * 将处理后的合法数据按照配置绘制到canvas上面
    */
   drawToCanvas() {
+    //清空画布
+    this.ctx1.clearRect(0, 0, this._canvas.width, this._canvas.height );
+    if(this.ctx1 !== this.ctx2){
+      //清空画布
+      this.ctx2.clearRect(0, 0, this._canvas2.width, this._canvas2.height );
+    }
+
     this.drawYAxis();
     this.log('drawYAxis');
 
@@ -1060,10 +1098,42 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
   }
 
   /**
+   *  绘制无数据文案
+   * */
+  drawEmptyData(){
+      const config = this._config.emptyData;
+      //清空画布
+      this.ctx1.clearRect(0, 0, this._canvas.width, this._canvas.height );
+      if(this.ctx1 !== this.ctx2){
+        //清空画布
+        this.ctx2.clearRect(0, 0, this._canvas2.width, this._canvas2.height );
+      }
+      if(this._renderType == 'h5'){
+        this.drawWord(this.ctx1, {
+          text:config.content,
+          fontSize: config.fontSize,
+          textAlign: 'center',
+          color: config.color,
+          x:this._canvasNode.width/2,
+          y:this._canvasNode.height/2,
+        });
+      }else{
+        this.drawWord(this.ctx1, {
+          text:config.content,
+          fontSize: config.fontSize,
+          textAlign: 'center',
+          color: config.color,
+          x:this._config.width/2,
+          y:this._config.height/2,
+        });
+        this.ctx1.draw();
+      }
+  }
+
+  /**
    * 实际的绘制函数
    */
   draw(data, cfg = {},callback=function(){}) {
-    console.log(1);
     this._drawCallBack = callback;
     this._start = new Date();
 
@@ -1073,16 +1143,15 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
     this.getConfig(cfg, this._config);
     this.initData(data);
 
-    if (!this._alldatasets.length) return;
+    if (!this._alldatasets.length) {
+      this.drawEmptyData();
+      return;
+    }
 
     this.drawToCanvas();
 
-    this.ctx1.draw(false,()=>{
-    console.log(2);
-      if(this._drawCallBack){
-        this._drawCallBack();
-      }
-    });
+    if(this._renderType == 'native')
+      this.ctx1.draw();
 
     this.log('realDraw');
 
@@ -1095,6 +1164,8 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
    * 触摸事件处理，绘制tooltip
    */
   touchHandler(e) {
+    if (!this._alldatasets.length) return;
+
     // 计算用于绘制tooltip的数据
     this.calToolTipData(e);
 
@@ -1113,7 +1184,8 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
     // 将tooltip绘制到对应的canvas
     this.drawToolTip();
 
-    this.ctx2.draw();
+    if(this._renderType == 'native')
+      this.ctx2.draw();
   }
 
   /**
@@ -1137,6 +1209,7 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
    * tooltip在触摸结束之后是否需要保留可以通过是否调用这个函数决定
    */
   touchEnd() {
+    if (!this._alldatasets.length) return;
     /**
      * ctx2本身是为了性能优化存在的，如果没有ctx2，
      * 还是要把所用东西老老实实在ctx1上面绘制一遍
@@ -1145,13 +1218,15 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
       this.drawToCanvas();
     }
 
-    this.ctx2.draw();
+    if(this._renderType == 'native')
+      this.ctx2.draw();
   }
 }
 
 
 /***/ }),
-/* 1 */
+/* 1 */,
+/* 2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1535,163 +1610,13 @@ function updateBezierControlPoints(points, area) {
 
 
 /***/ }),
-/* 2 */
+/* 3 */,
+/* 4 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _common_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1);
-
-
-
-const linechartConfig = {
-  /**
-   * Y轴标签以及toolTip的单位换算函数
-   * 组件内置了changeUnit函数，可以自行设置
-   */
-  changeUnit: _util_js__WEBPACK_IMPORTED_MODULE_1__["changeUnit"],
-
-  secondChangeUnit: _util_js__WEBPACK_IMPORTED_MODULE_1__["changeUnit"],
-
-  /**
-   * 给定一组数据，Y轴标签的最大值最小值和每一步的值都是组件自动算出来的
-   * 有些场景组件算出来的可能不满足需求，或者调用者就是想自定义Y轴标签的数据，
-   * 因此提供自定义的formatY(max, min, yAxisCount)函数，调用者按要求返回数据给组件处理即可
-   * @return {
-   *      max: 将原始的最大值处理之后的最大值
-   *      min: 将原始的最小值处理之后的最小值
-   *      divider: 每一步的值
-   *      multiple: 如果处理过程中发现divider是小于1的小数，需要将上面三个数值相对应放大一定倍数
-   *      似的divider是大于1的数值，同时将放大的倍数告知组件，默认为1
-   * }
-   */
-  formatY: _util_js__WEBPACK_IMPORTED_MODULE_1__["none"],
-
-  // 折线图默认配置
-  lineStyle: {
-    lineWidth: 1.5,
-    lineColor: '#7587db',
-    fillColor: 'rgba(117, 135, 219, 0.3)',
-    // 是否需要背景颜色
-    needFill: true,
-    curve: true,
-    circle: {
-      show: true,
-      fillColor: '#FFFFFF',
-      strokeColor: '#FFAA00',
-      lineWidth: 1,
-      radius: 1.2,
-    },
-    /**
-     * 在数据点很多的时候，如果每个点都要画个圆圈会大大影响性能
-     * 同时圆圈过于多也会影响美观，因此设定阀值，大于此阀值的情况不绘制圆圈
-     */
-    maxCircleCount: 30,
-  },
-
-
-  // x轴文案的样式配置
-  xAxis: {
-    show: true,
-    marginTop: 10,
-    color: '#B8B8B8',
-    fontSize: 11,
-    /**
-     * 默认x轴打七个点
-     * 可以自行配置，但仍然会有保底逻辑
-     */
-    xAxisCount: 7,
-  },
-
-  /**
-   * X轴轴体的样式配置
-   */
-  xAxisLine: {
-    show: false,
-    centerShow: true,
-    width: 0.6,
-    color: '#C6C6C6',
-    style: 'solid',
-  },
-
-  /**
-   * y轴的样式配置
-   */
-  yAxis: {
-    show: true,
-    marginLeft: 0,
-    marginRight: 10,
-    color: '#B8B8B8',
-    fontSize: 11,
-    unit: '',
-    /**
-     * 默认Y轴打四个点
-     * 也可以自行配置，但仍然会有保底逻辑
-     */
-    yAxisCount: 4,
-  },
-
-  // 第二Y轴
-  secondYaxis: {
-    show: true,
-    marginLeft: 5,
-    color: '#B8B8B8',
-    fontSize: 11,
-    unit: '',
-    textAlign: 'right',
-  },
-
-  /**
-   * Y轴轴体的样式
-   */
-  secondYAxisLine: {
-    show: true,
-    width: 0.2,
-    color: '#C6C6C6',
-  },
-
-  /**
-   * Y轴轴体的样式
-   */
-  yAxisLine: {
-    show: true,
-    centerShow: false,
-    width: 0.2,
-    color: '#C6C6C6',
-  },
-
-  toolTip: {
-    lineColor: '#C6C6C6',
-    lineWidth: 0.5,
-    fontSize: 11,
-    color: '#FFFFFF',
-    fillColor: 'rgba(136, 136, 136, 0.6)',
-    linePadding: 5,
-    needTitle: false,
-    needX: true,
-
-    padding: {
-      left: 5,
-      right: 5,
-      top: 5,
-      bottom: 5,
-    },
-  },
-
-};
-
-/* harmony default export */ __webpack_exports__["default"] = (Object(_util_js__WEBPACK_IMPORTED_MODULE_1__["extend"])(linechartConfig, _common_js__WEBPACK_IMPORTED_MODULE_0__["default"]));
-
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
+/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
 
 /**
  * 所有组件通用配置
@@ -1732,15 +1657,15 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Base; });
-/* harmony import */ var _draw_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
-/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1);
-/* harmony import */ var _easing_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(6);
+/* harmony import */ var _draw_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6);
+/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
+/* harmony import */ var _easing_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7);
 
 // 太老的库，很多变量是下滑线开头的，暂时屏蔽先
 /* eslint no-underscore-dangle: "off"*/
@@ -1752,9 +1677,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+const dpr = wx.getSystemInfoSync().pixelRatio;
+
 class Base extends _draw_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
   constructor() {
     super();
+
+    this._dpr = dpr;
 
     // 用于性能数据打点
     this._start = 0;
@@ -1902,13 +1831,13 @@ class Base extends _draw_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return ChartBase; });
-/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
+/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
 /* eslint no-param-reassign: ["error", { "props": false }] */
 
 /**
@@ -1972,15 +1901,22 @@ class ChartBase {
 
     ctx.beginPath();
 
-    if (word.isbottom) ctx.setTextBaseline('bottom');
-
-    if (word.baseline) {
-      ctx.setTextBaseline(word.baseline);
+    if (word.isbottom) {
+      // ctx.setTextBaseline('bottom');
+      ctx.textBaseline = 'bottom';
     }
 
-    ctx.setFontSize(word.fontSize);
-    ctx.setFillStyle(word.color);
-    ctx.setTextAlign(word.textAlign || 'left');
+    if (word.baseline) {
+      // ctx.setTextBaseline(word.baseline);
+      ctx.textBaseline = word.baseline;
+    }
+
+    // ctx.setFontSize(word.fontSize);
+    ctx.font = `${word.fontSize}px sans-serif`;
+    // ctx.setFillStyle(word.color);
+    ctx.fillStyle = word.color;
+    // ctx.setTextAlign(word.textAlign || 'left');
+    ctx.textAlign = word.textAlign || 'left';
     ctx.fillText(word.text, word.x, word.y);
 
     ctx.stroke();
@@ -2024,12 +1960,15 @@ class ChartBase {
       ctx.lineTo(rect.x + rect.width - rect.r, rect.y);
       ctx.lineTo(rect.x + rect.r, rect.y);
 
-      ctx.setFillStyle(rect.fillColor);
+      // ctx.setFillStyle(rect.fillColor);
+      ctx.fillStyle = rect.fillColor;
       ctx.fill();
     } else {
       ctx.beginPath();
-      ctx.setStrokeStyle(rect.fillColor);
-      ctx.setFillStyle(rect.fillColor);
+      // ctx.setStrokeStyle(rect.fillColor);
+      ctx.strokeStyle = rect.fillColor;
+      // ctx.setFillStyle(rect.fillColor);
+      ctx.fillStyle = rect.fillColor;
       ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
       ctx.closePath();
     }
@@ -2040,8 +1979,9 @@ class ChartBase {
    */
   drawLine(ctx, line) {
     ctx.beginPath();
-    ctx.setLineWidth(line.width || 1);
-    ctx.setStrokeStyle(line.color);
+    // ctx.setLineWidth(line.width || 1);
+    ctx.lineWidth = line.width || 1;
+    ctx.strokeStyle = line.color;
 
     if (line.isDash) ctx.setLineDash(line.dashPattern, line.dashOffset);
 
@@ -2056,8 +1996,10 @@ class ChartBase {
 
   drawLongLine(ctx, line) {
     ctx.beginPath();
-    ctx.setLineWidth(line.width || 1);
-    ctx.setStrokeStyle(line.color);
+    // ctx.setLineWidth(line.width || 1);
+    // ctx.setStrokeStyle(line.color);
+    ctx.lineWidth = line.width || 1;
+    ctx.strokeStyle = line.color;
 
     if (line.isDash) ctx.setLineDash(line.dashPattern, line.dashOffset);
 
@@ -2072,7 +2014,8 @@ class ChartBase {
 
     // 需要填充背景颜色要在stroke之前填充，否则边界线会发虚
     if (line.fill) {
-      ctx.setFillStyle(line.fillColor);
+      // ctx.setFillStyle(line.fillColor);
+      ctx.fillStyle = line.fillColor;
       ctx.fill();
     }
 
@@ -2097,9 +2040,12 @@ class ChartBase {
     ctx.save();
 
     ctx.beginPath();
-    ctx.setFillStyle(opts.fillColor);
-    ctx.setLineWidth(opts.lineWidth);
-    ctx.setStrokeStyle(opts.lineColor);
+    // ctx.setFillStyle(opts.fillColor);
+    ctx.fillStyle = opts.fillColor;
+    // ctx.setLineWidth(opts.lineWidth);
+    ctx.lineWidth = opts.lineWidth;
+    // ctx.setStrokeStyle(opts.lineColor);
+    ctx.strokeStyle = opts.lineColor;
 
     const start = points[0];
     const end   = points[points.length - 1];
@@ -2149,9 +2095,14 @@ class ChartBase {
   drawCircle(ctx, circle) {
     ctx.beginPath();
 
-    ctx.setStrokeStyle(circle.strokeColor);
-    if (circle.fillColor) ctx.setFillStyle(circle.fillColor);
-    ctx.setLineWidth(circle.lineWidth || 1);
+    // ctx.setStrokeStyle(circle.strokeColor);
+    ctx.strokeStyle = circle.strokeColor;
+    if (circle.fillColor) {
+      // ctx.setFillStyle(circle.fillColor);
+      ctx.fillStyle = circle.fillColor;
+    }
+    // ctx.setLineWidth(circle.lineWidth || 1);
+    ctx.lineWidth = circle.lineWidth || 1;
     ctx.arc(circle.x, circle.y, circle.r, 0, 2 * Math.PI);
 
     ctx.stroke();
@@ -2161,14 +2112,14 @@ class ChartBase {
 
   clearCanvas(ctx, width, height) {
     ctx.clearRect(0, 0, width, height);
-    ctx.draw();
+    // ctx.draw();
   }
 }
 
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2309,6 +2260,298 @@ __webpack_require__.r(__webpack_exports__);
     return animationOptions.easeOutBounce(t * 2 - 1) * .5 + 1 * .5;
   },
 });
+
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Native2H5CTX; });
+/**
+ *
+ * 	原生Canvas绘图上下文胶水层
+ * 	支持大部分 H5 Canvas API 直接转化为 原生CanvasAPI
+ * 	原生CanvasAPI也可以直接使用
+ *
+ * 	使用方法：
+ *
+
+	import Native2H5CTX from './base/Native2H5CTX.js';
+	const ctx = Native2H5CTX(nativeCtx);
+
+	请注意：由于原生API需要 draw() 完成最终渲染，因此开发者需要手动判断并执行 ctx.draw()
+ *
+ *
+ * */
+
+/**
+ * 	转化管理器
+ * */
+class CONVERT {
+  /**
+	 * 	Font 定义差异
+	 * 	原生Canvas仅支持设置 FontSize 因此要读取大小后直接设置，忽略文字字体的定义
+	 * */
+  font(target, prop, value) {
+    const result = /[0-9]+px/i.exec(value);
+    if (!result) {
+      throw new Error('font 所接收的参数值不符合期望 例: ctx.font = \'23px\'');
+    }
+    const fontSize = result[0].slice(0, -2);
+    target.setFontSize(fontSize);
+    return true;
+  }
+
+  /**
+	 * 	lineWidth 定义差异
+	 * 	原生 lineWidth 采用 setLineWidth 进行设置
+	 * */
+  lineWidth(target, prop, value) {
+    target.setLineWidth(value);
+    return true;
+  }
+
+  /**
+	 * 	strokeStyle 定义差异
+	 * 	原生 strokeStyle 采用 setStrokeStyle 进行设置
+	 * */
+  strokeStyle(target, prop, value) {
+    target.setStrokeStyle(value);
+    return true;
+  }
+
+  /**
+	 * 	fillStyle 定义差异
+	 * 	原生 fillStyle 采用 setFillStyle 进行设置
+	 * */
+  fillStyle(target, prop, value) {
+    target.setFillStyle(value);
+    return true;
+  }
+
+  /**
+	 * 	textBaseline 定义差异
+	 * 	原生 textBaseline 采用 setTextBaseline 进行设置
+	 * */
+  textBaseline(target, prop, value) {
+    target.setTextBaseline(value);
+    return true;
+  }
+
+  /**
+	 * 	textAlign 定义差异
+	 * 	原生 textAlign 采用 setTextAlign 进行设置
+	 * */
+  textAlign(target, prop, value) {
+    target.setTextAlign(value);
+    return true;
+  }
+}
+
+const convert = new CONVERT();
+
+function Native2H5CTX(nativeCtx) {
+  const ctx0Proxy = new Proxy(nativeCtx, {
+    set(...args) {
+      // 属性设置类
+      switch (args[1]) {
+      case 'font':
+        return convert.font.apply(null, args);
+
+      case 'lineWidth':
+        return convert.lineWidth.apply(null, args);
+
+      case 'strokeStyle':
+        return convert.strokeStyle.apply(null, args);
+
+      case 'fillStyle':
+        return convert.fillStyle.apply(null, args);
+
+      case 'textBaseline':
+        return convert.textBaseline.apply(null, args);
+
+      case 'textAlign':
+        return convert.textAlign.apply(null, args);
+
+      default:
+        return Reflect.get.apply(null, args);
+      }
+    },
+    get(...args) {
+      if (args[1] === 'clearRect') {	// 原生API没有 clearRect 方法在这里阻止调用 返回一个匿名函数
+        return () => {};
+      }
+      // 函数调用类
+      return Reflect.get.apply(null, args);
+    },
+  });
+  return ctx0Proxy;
+}
+
+
+/***/ }),
+/* 9 */,
+/* 10 */,
+/* 11 */,
+/* 12 */,
+/* 13 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _common_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4);
+/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
+
+
+
+const linechartConfig = {
+  /**
+   * Y轴标签以及toolTip的单位换算函数
+   * 组件内置了changeUnit函数，可以自行设置
+   */
+  changeUnit: _util_js__WEBPACK_IMPORTED_MODULE_1__["changeUnit"],
+
+  secondChangeUnit: _util_js__WEBPACK_IMPORTED_MODULE_1__["changeUnit"],
+
+  /**
+   * 给定一组数据，Y轴标签的最大值最小值和每一步的值都是组件自动算出来的
+   * 有些场景组件算出来的可能不满足需求，或者调用者就是想自定义Y轴标签的数据，
+   * 因此提供自定义的formatY(max, min, yAxisCount)函数，调用者按要求返回数据给组件处理即可
+   * @return {
+   *      max: 将原始的最大值处理之后的最大值
+   *      min: 将原始的最小值处理之后的最小值
+   *      divider: 每一步的值
+   *      multiple: 如果处理过程中发现divider是小于1的小数，需要将上面三个数值相对应放大一定倍数
+   *      似的divider是大于1的数值，同时将放大的倍数告知组件，默认为1
+   * }
+   */
+  formatY: _util_js__WEBPACK_IMPORTED_MODULE_1__["none"],
+
+  // 折线图默认配置
+  lineStyle: {
+    lineWidth: 1.5,
+    lineColor: '#7587db',
+    fillColor: 'rgba(117, 135, 219, 0.3)',
+    // 是否需要背景颜色
+    needFill: true,
+    curve: true,
+    circle: {
+      show: true,
+      fillColor: '#FFFFFF',
+      strokeColor: '#FFAA00',
+      lineWidth: 1,
+      radius: 1.2,
+    },
+    /**
+     * 在数据点很多的时候，如果每个点都要画个圆圈会大大影响性能
+     * 同时圆圈过于多也会影响美观，因此设定阀值，大于此阀值的情况不绘制圆圈
+     */
+    maxCircleCount: 30,
+  },
+
+
+  // x轴文案的样式配置
+  xAxis: {
+    show: true,
+    marginTop: 10,
+    color: '#B8B8B8',
+    fontSize: 11,
+    /**
+     * 默认x轴打七个点
+     * 可以自行配置，但仍然会有保底逻辑
+     */
+    xAxisCount: 7,
+  },
+
+  /**
+   * X轴轴体的样式配置
+   */
+  xAxisLine: {
+    show: false,
+    centerShow: true,
+    width: 0.6,
+    color: '#C6C6C6',
+    style: 'solid',
+  },
+
+  /**
+   * y轴的样式配置
+   */
+  yAxis: {
+    show: true,
+    marginLeft: 0,
+    marginRight: 10,
+    color: '#B8B8B8',
+    fontSize: 11,
+    unit: '',
+    /**
+     * 默认Y轴打四个点
+     * 也可以自行配置，但仍然会有保底逻辑
+     */
+    yAxisCount: 4,
+  },
+
+  // 第二Y轴
+  secondYaxis: {
+    show: true,
+    marginLeft: 5,
+    color: '#B8B8B8',
+    fontSize: 11,
+    unit: '',
+    textAlign: 'right',
+  },
+
+  /**
+   * Y轴轴体的样式
+   */
+  secondYAxisLine: {
+    show: true,
+    width: 0.2,
+    color: '#C6C6C6',
+  },
+
+  /**
+   * Y轴轴体的样式
+   */
+  yAxisLine: {
+    show: true,
+    centerShow: false,
+    width: 0.2,
+    color: '#C6C6C6',
+  },
+
+  toolTip: {
+    lineColor: '#C6C6C6',
+    lineWidth: 0.5,
+    fontSize: 11,
+    color: '#FFFFFF',
+    fillColor: 'rgba(136, 136, 136, 0.6)',
+    linePadding: 5,
+    needTitle: false,
+    needX: true,
+
+    padding: {
+      left: 5,
+      right: 5,
+      top: 5,
+      bottom: 5,
+    },
+  },
+  /**
+   *  无数据时的文案配置
+   * */
+  emptyData: {
+    content: '暂无数据',
+    color: 'rgb(200,200,200)',
+    fontSize: 16,
+  },
+
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (Object(_util_js__WEBPACK_IMPORTED_MODULE_1__["extend"])(linechartConfig, _common_js__WEBPACK_IMPORTED_MODULE_0__["default"]));
 
 
 
