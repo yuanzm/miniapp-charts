@@ -23,7 +23,7 @@ class CONVERT {
 	 * 	Font 定义差异
 	 * 	原生Canvas仅支持设置 FontSize 因此要读取大小后直接设置，忽略文字字体的定义
 	 * */
-  font(target, value) {
+  font(target, prop, value) {
     const result = /[0-9]+px/i.exec(value);
     if (!result) {
       throw new Error('font 所接收的参数值不符合期望 例: ctx.font = \'23px\'');
@@ -37,7 +37,7 @@ class CONVERT {
 	 * 	lineWidth 定义差异
 	 * 	原生 lineWidth 采用 setLineWidth 进行设置
 	 * */
-  lineWidth(target, value) {
+  lineWidth(target, prop, value) {
     target.setLineWidth(value);
     return true;
   }
@@ -46,7 +46,7 @@ class CONVERT {
 	 * 	strokeStyle 定义差异
 	 * 	原生 strokeStyle 采用 setStrokeStyle 进行设置
 	 * */
-  strokeStyle(target, value) {
+  strokeStyle(target, prop, value) {
     target.setStrokeStyle(value);
     return true;
   }
@@ -55,7 +55,7 @@ class CONVERT {
 	 * 	fillStyle 定义差异
 	 * 	原生 fillStyle 采用 setFillStyle 进行设置
 	 * */
-  fillStyle(target, value) {
+  fillStyle(target, prop, value) {
     target.setFillStyle(value);
     return true;
   }
@@ -64,7 +64,7 @@ class CONVERT {
 	 * 	textBaseline 定义差异
 	 * 	原生 textBaseline 采用 setTextBaseline 进行设置
 	 * */
-  textBaseline(target, value) {
+  textBaseline(target, prop, value) {
     target.setTextBaseline(value);
     return true;
   }
@@ -73,7 +73,7 @@ class CONVERT {
 	 * 	textAlign 定义差异
 	 * 	原生 textAlign 采用 setTextAlign 进行设置
 	 * */
-  textAlign(target, value) {
+  textAlign(target, prop, value) {
     target.setTextAlign(value);
     return true;
   }
@@ -81,44 +81,40 @@ class CONVERT {
 
 const convert = new CONVERT();
 
-
 export default function Native2H5CTX(nativeCtx) {
-  Object.defineProperty(nativeCtx, 'font', {
-    set(v) {
-      convert.font.apply(null, [nativeCtx, v]);
+  const ctx0Proxy = new Proxy(nativeCtx, {
+    set(...args) {
+      // 属性设置类
+      switch (args[1]) {
+      case 'font':
+        return convert.font.apply(null, args);
+
+      case 'lineWidth':
+        return convert.lineWidth.apply(null, args);
+
+      case 'strokeStyle':
+        return convert.strokeStyle.apply(null, args);
+
+      case 'fillStyle':
+        return convert.fillStyle.apply(null, args);
+
+      case 'textBaseline':
+        return convert.textBaseline.apply(null, args);
+
+      case 'textAlign':
+        return convert.textAlign.apply(null, args);
+
+      default:
+        return Reflect.get.apply(null, args);
+      }
+    },
+    get(...args) {
+      if (args[1] === 'clearRect') {	// 原生API没有 clearRect 方法在这里阻止调用 返回一个匿名函数
+        return () => {};
+      }
+      // 函数调用类
+      return Reflect.get.apply(null, args);
     },
   });
-
-  Object.defineProperty(nativeCtx, 'lineWidth', {
-    set(v) {
-      convert.lineWidth.apply(null, [nativeCtx, v]);
-    },
-  });
-
-  Object.defineProperty(nativeCtx, 'strokeStyle', {
-    set(v) {
-      convert.strokeStyle.apply(null, [nativeCtx, v]);
-    },
-  });
-
-  Object.defineProperty(nativeCtx, 'fillStyle', {
-    set(v) {
-      convert.fillStyle.apply(null, [nativeCtx, v]);
-    },
-  });
-
-  Object.defineProperty(nativeCtx, 'textBaseline', {
-    set(v) {
-      convert.textBaseline.apply(null, [nativeCtx, v]);
-    },
-  });
-
-  Object.defineProperty(nativeCtx, 'textAlign', {
-    set(v) {
-      convert.textAlign.apply(null, [nativeCtx, v]);
-    },
-  });
-
-  return nativeCtx;
+  return ctx0Proxy;
 }
-
