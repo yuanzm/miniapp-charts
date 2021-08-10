@@ -7,19 +7,30 @@ import { isType, deepCopy } from './util.js';
 
 import config from './config/radar.js';
 import Base from './base/index.js';
+import Native2H5CTX from './base/Native2H5CTX.js';
 
 export default class RadarChart extends Base {
   //传入Canvas Node
   constructor(canvasNode, cfg = {}) {
     super();
-
-    this._canvas = canvasNode.node;
     
-    //清晰度调整
-    this._canvas.width = canvasNode.width * this._dpr;
-    this._canvas.height = canvasNode.height * this._dpr;
-    this.ctx = this._canvas.getContext('2d');
-    this.ctx.scale(this._dpr,this._dpr);
+    if(canvasNode.node){ //以节点传入
+      this._renderType = 'h5';
+      this._canvas = canvasNode.node;
+      
+      //清晰度调整
+      this._canvas.width = canvasNode.width * this._dpr;
+      this._canvas.height = canvasNode.height * this._dpr;
+      this.ctx = this._canvas.getContext('2d');
+      this.ctx.scale(this._dpr,this._dpr);
+    }else{ //以原生ctx传入
+      this._renderType = 'native';
+      this._canvas = {
+        width:100,
+        height:100,
+      }
+      this.ctx = Native2H5CTX(canvasNode);
+    }
 
     this._touchTimer = 0;
     this.chartType = 'radar';
@@ -761,7 +772,8 @@ export default class RadarChart extends Base {
       this.drawToolTip();
     }
 
-    // this.ctx.draw();
+    if(this._renderType == 'native')
+      this.ctx.draw();
   }
 
   draw(data, cfg = {}) {

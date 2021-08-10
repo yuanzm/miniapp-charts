@@ -1143,6 +1143,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var _config_radar_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8);
 /* harmony import */ var _base_index_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(4);
+/* harmony import */ var _base_Native2H5CTX_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(13);
 // 太老的库，很多变量是下滑线开头的，暂时屏蔽先
 /* eslint no-underscore-dangle: "off"*/
 /* eslint no-param-reassign: ["error", { "props": false }] */
@@ -1153,18 +1154,29 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 class RadarChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
   //传入Canvas Node
   constructor(canvasNode, cfg = {}) {
     super();
-
-    this._canvas = canvasNode.node;
     
-    //清晰度调整
-    this._canvas.width = canvasNode.width * this._dpr;
-    this._canvas.height = canvasNode.height * this._dpr;
-    this.ctx = this._canvas.getContext('2d');
-    this.ctx.scale(this._dpr,this._dpr);
+    if(canvasNode.node){ //以节点传入
+      this._renderType = 'h5';
+      this._canvas = canvasNode.node;
+      
+      //清晰度调整
+      this._canvas.width = canvasNode.width * this._dpr;
+      this._canvas.height = canvasNode.height * this._dpr;
+      this.ctx = this._canvas.getContext('2d');
+      this.ctx.scale(this._dpr,this._dpr);
+    }else{ //以原生ctx传入
+      this._renderType = 'native';
+      this._canvas = {
+        width:100,
+        height:100,
+      }
+      this.ctx = Object(_base_Native2H5CTX_js__WEBPACK_IMPORTED_MODULE_3__["default"])(canvasNode);
+    }
 
     this._touchTimer = 0;
     this.chartType = 'radar';
@@ -1906,7 +1918,8 @@ class RadarChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] 
       this.drawToolTip();
     }
 
-    // this.ctx.draw();
+    if(this._renderType == 'native')
+      this.ctx.draw();
   }
 
   draw(data, cfg = {}) {
@@ -2074,6 +2087,139 @@ const radarConfig = {
 
 /* harmony default export */ __webpack_exports__["default"] = (Object(_util_js__WEBPACK_IMPORTED_MODULE_1__["extend"])(radarConfig, _common_js__WEBPACK_IMPORTED_MODULE_0__["default"]));
 
+
+
+/***/ }),
+/* 9 */,
+/* 10 */,
+/* 11 */,
+/* 12 */,
+/* 13 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Native2H5CTX; });
+/**
+ *
+ * 	原生Canvas绘图上下文胶水层
+ * 	支持大部分 H5 Canvas API 直接转化为 原生CanvasAPI
+ * 	原生CanvasAPI也可以直接使用
+ *
+ * 	使用方法：
+ *
+
+	import Native2H5CTX from './base/Native2H5CTX.js';
+	const ctx = Native2H5CTX(nativeCtx);
+
+	请注意：由于原生API需要 draw() 完成最终渲染，因此开发者需要手动判断并执行 ctx.draw()
+ *
+ *
+ * */
+
+/**
+ * 	转化管理器
+ * */
+class CONVERT {
+  /**
+	 * 	Font 定义差异
+	 * 	原生Canvas仅支持设置 FontSize 因此要读取大小后直接设置，忽略文字字体的定义
+	 * */
+  font(target, prop, value) {
+    const result = /[0-9]+px/i.exec(value);
+    if (!result) {
+      throw new Error('font 所接收的参数值不符合期望 例: ctx.font = \'23px\'');
+    }
+    const fontSize = result[0].slice(0, -2);
+    target.setFontSize(fontSize);
+    return true;
+  }
+
+  /**
+	 * 	lineWidth 定义差异
+	 * 	原生 lineWidth 采用 setLineWidth 进行设置
+	 * */
+  lineWidth(target, prop, value) {
+    target.setLineWidth(value);
+    return true;
+  }
+
+  /**
+	 * 	strokeStyle 定义差异
+	 * 	原生 strokeStyle 采用 setStrokeStyle 进行设置
+	 * */
+  strokeStyle(target, prop, value) {
+    target.setStrokeStyle(value);
+    return true;
+  }
+
+  /**
+	 * 	fillStyle 定义差异
+	 * 	原生 fillStyle 采用 setFillStyle 进行设置
+	 * */
+  fillStyle(target, prop, value) {
+    target.setFillStyle(value);
+    return true;
+  }
+
+  /**
+	 * 	textBaseline 定义差异
+	 * 	原生 textBaseline 采用 setTextBaseline 进行设置
+	 * */
+  textBaseline(target, prop, value) {
+    target.setTextBaseline(value);
+    return true;
+  }
+
+  /**
+	 * 	textAlign 定义差异
+	 * 	原生 textAlign 采用 setTextAlign 进行设置
+	 * */
+  textAlign(target, prop, value) {
+    target.setTextAlign(value);
+    return true;
+  }
+}
+
+const convert = new CONVERT();
+
+function Native2H5CTX(nativeCtx) {
+  const ctx0Proxy = new Proxy(nativeCtx, {
+    set(...args) {
+      // 属性设置类
+      switch (args[1]) {
+      case 'font':
+        return convert.font.apply(null, args);
+
+      case 'lineWidth':
+        return convert.lineWidth.apply(null, args);
+
+      case 'strokeStyle':
+        return convert.strokeStyle.apply(null, args);
+
+      case 'fillStyle':
+        return convert.fillStyle.apply(null, args);
+
+      case 'textBaseline':
+        return convert.textBaseline.apply(null, args);
+
+      case 'textAlign':
+        return convert.textAlign.apply(null, args);
+
+      default:
+        return Reflect.get.apply(null, args);
+      }
+    },
+    get(...args) {
+      if (args[1] === 'clearRect') {	// 原生API没有 clearRect 方法在这里阻止调用 返回一个匿名函数
+        return () => {};
+      }
+      // 函数调用类
+      return Reflect.get.apply(null, args);
+    },
+  });
+  return ctx0Proxy;
+}
 
 
 /***/ })

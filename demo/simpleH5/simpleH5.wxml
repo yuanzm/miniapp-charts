@@ -1,0 +1,28 @@
+<text>此页面为H5 Canvas使用样例</text>
+<button bindtap="gotonative">点击去看原生Canvas</button>
+<canvas
+    id="linechart1"
+    type="2d"
+    style="width:100%;height:200px;margin:0;position: absolute; left: 0; top: 60"
+    bindtouchstart="bindtouchstart"
+    bindtouchmove="bindtouchmove"
+    bindtouchend="bindtouchend"
+/>
+<canvas
+    type="2d"
+    id="radar"
+    style="width:100%;height:300px;margin-top: 220px"
+    bindtouchstart="bindtouchstart2"
+    bindtouchmove="bindtouchmove2"
+    bindtouchend="bindtouchend2"
+/>
+<canvas
+    type="2d"
+    id="bar"
+    style="width: 100%; height: 200px;"
+/>
+<canvas
+    id="distribution"
+    type="2d"
+    style="width: 100%; height: {{ totalHeight }}px;"
+/>

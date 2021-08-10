@@ -8,37 +8,16 @@ Page({
         totalHeight: 1000,
     },
     onLoad() {
-        wx.createSelectorQuery()
-            .select('#radar')
-            .fields({ node: true, size: true })
-            .exec((res)=>{
-                this.renderRadar(res[0]);
-            });
-
-        wx.createSelectorQuery()
-            .select('#linechart1')
-            .fields({ node: true, size: true })
-            .exec((res)=>{
-                this.renderLineChart(res[0]);
-            })
-    
-        wx.createSelectorQuery()
-            .select('#bar')
-            .fields({ node: true, size: true })
-            .exec((res)=>{
-                this.renderBarChart(res[0]);
-            })
+        this.renderRadar();
+        this.renderLineChart();
+        this.renderBarChart();
+        this.renderDistribution();
         
-        wx.createSelectorQuery()
-            .select('#distribution')
-            .fields({ node: true, size: true })
-            .exec((res)=>{
-                this.renderDistribution(res[0]);
-            })
     },
 
-    renderRadar(node) {
-         this.radarchart = new RadarChart(node,
+    renderRadar() {
+        let context = wx.createCanvasContext('radar');
+         this.radarchart = new RadarChart(context,
                 {
                     width : 300,
                     height: 300,
@@ -115,9 +94,10 @@ Page({
 
     },
 
-    renderLineChart(node) {
+    renderLineChart() {
+        let ctx = wx.createCanvasContext('linechart1');
         let linechart = new LineChart(
-            node,
+            ctx,
             // ctx,
         );
 
@@ -188,8 +168,8 @@ Page({
         this.radarchart.touchEnd(e);
     },
 
-    renderBarChart(ctx) {
-
+    renderBarChart() {
+        let ctx = wx.createCanvasContext('bar');
         let barchart = new BarChart(
             ctx,
             {
@@ -257,7 +237,8 @@ Page({
         });
     },
 
-    renderDistribution(ctx){
+    renderDistribution(){
+        let ctx = wx.createCanvasContext('distribution');
         let chart = new DistributionChart(
             ctx,
             {
@@ -352,6 +333,7 @@ Page({
             totalHeight: chart.totalHeight
         },()=>{
             chart.setHeight(chart.totalHeight);
+            chart.draw();
         });
     }
 });

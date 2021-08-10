@@ -9,6 +9,7 @@ import {
 
 import config from './config/distribution.js';
 import Base   from './base/index.js';
+import Native2H5CTX from './base/Native2H5CTX.js';
 
 /**
  * 小程序折线图绘制组件
@@ -22,28 +23,43 @@ export default class DistributionChart extends Base {
   constructor(canvasNode, cfg = {}) {
     super();
 
+
+    // 本实例配置文件
+    this._config      = this.getConfig(cfg, deepCopy(config));
+    if(canvasNode.node){ //以节点传入
+      this._renderType = 'h5';
+      this._canvas = canvasNode.node;
+      this.canvasNode = canvasNode;
+      
+      //清晰度调整
+      this._canvas.width = canvasNode.width * this._dpr;
+      this._canvas.height = canvasNode.height * this._dpr;
+      this.ctx = this._canvas.getContext('2d');
+      this.ctx.scale(this._dpr,this._dpr);
+      this.totalHeight  = this.canvasNode.height;
+    }else{ //以原生ctx传入
+      this._renderType = 'native';
+      this._canvas = {
+        width:100,
+        height:100,
+      }
+      this.canvasNode = {
+        height : this._config.height
+      }
+      this.ctx = Native2H5CTX(canvasNode);
+      this.totalHeight = this._config.height;
+    }
+
+
     this.chartType = 'distribution';
-    this._canvas = canvasNode.node;
-
-    this.canvasNode = canvasNode;
-
-    //清晰度调整
-    this._canvas.width = canvasNode.width * this._dpr;
-    this._canvas.height = canvasNode.height * this._dpr;
-    this.ctx = this._canvas.getContext('2d');
-    this.ctx.scale(this._dpr,this._dpr);
 
     /**
      * 约定！所有的内部变量都需要这里先声明
      * 可以大大提高源码阅读性
      */
-    // 本实例配置文件
-    this._config      = this.getConfig(cfg, deepCopy(config));
 
     // 线条数据
     this._datasets    = [];
-
-    this.totalHeight  = this.canvasNode.height;
     
     this._autoDrawTimer = 0;
     this._autoDrawEndTimestamp = 0;
@@ -53,6 +69,10 @@ export default class DistributionChart extends Base {
    *  当容器的高度需要变更时必须手动实现图表的变更从而实现反拉伸保持图表渲染稳定
    * */
   setHeight(h){
+
+    if(this._renderType != 'h5')
+      return;
+
     this._canvas.height = h * this._dpr;
     this.ctx.scale(this._dpr,this._dpr);
     if (!this._datasets.length) {
@@ -194,8 +214,10 @@ export default class DistributionChart extends Base {
     this._render.barLabelData = barLabelData;
     this._render.totalHeight  = yStart - barStyle.padding + config.padding.bottom + config.barStyle.topBottomPadding;
     this.totalHeight          = this._render.totalHeight;
-    if(this.totalHeight == 0)
+    if(this.totalHeight == 0){
       this.totalHeight = this.canvasNode.height;
+      this._config.height = this.totalHeight;
+    }
   }
 
   calYAxisLines() {
@@ -327,14 +349,26 @@ export default class DistributionChart extends Base {
       const config = this._config.emptyData;
       //清空画布
       this.ctx.clearRect(0, 0, this._canvas.width, this._canvas.height );
-      this.drawWord(this.ctx, {
-        text:config.content,
-        fontSize: config.fontSize,
-        textAlign: 'center',
-        color: config.color,
-        x:this.canvasNode.width/2,
-        y:this.canvasNode.height/2,
-      });
+      if(this._renderType == 'h5'){
+        this.drawWord(this.ctx, {
+          text:config.content,
+          fontSize: config.fontSize,
+          textAlign: 'center',
+          color: config.color,
+          x:this._canvasNode.width/2,
+          y:this._canvasNode.height/2,
+        });
+      }else{
+        this.drawWord(this.ctx, {
+          text:config.content,
+          fontSize: config.fontSize,
+          textAlign: 'center',
+          color: config.color,
+          x:this._config.width/2,
+          y:this._config.height/2,
+        });
+        this.ctx.draw();
+      }
   }
 
   /**
@@ -382,7 +416,8 @@ export default class DistributionChart extends Base {
     }
 
     this.drawToCanvas();
-    // this.ctx.draw();
+    if(this._renderType == 'native')
+      this.ctx.draw();
   }
 }
 

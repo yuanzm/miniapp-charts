@@ -13,6 +13,7 @@ import {
 
 import config from './config/barchart.js';
 import Base   from './base/index.js';
+import Native2H5CTX from './base/Native2H5CTX.js';
 
 /**
  * 小程序折线图绘制组件
@@ -25,15 +26,28 @@ export default class BarChart extends Base {
   constructor(canvasNode, cfg = {}) {
     super();
 
+
+    if(canvasNode.node){ //以节点传入
+      this._renderType = 'h5';
+      this._canvas = canvasNode.node;
+      
+      //清晰度调整
+      this._canvas.width = canvasNode.width * this._dpr;
+      this._canvas.height = canvasNode.height * this._dpr;
+      this._canvasNode = canvasNode;
+      this.ctx = this._canvas.getContext('2d');
+      this.ctx.scale(this._dpr,this._dpr);
+    }else{ //以原生ctx传入
+      this._renderType = 'native';
+      this._canvas = {
+        width:100,
+        height:100,
+      }
+      this.ctx = Native2H5CTX(canvasNode);
+    }
+
+
     this.chartType = 'bar';
-    this._canvas = canvasNode.node;
-    this._canvasNode = canvasNode;
-    
-    //清晰度调整
-    this._canvas.width = canvasNode.width * this._dpr;
-    this._canvas.height = canvasNode.height * this._dpr;
-    this.ctx = this._canvas.getContext('2d');
-    this.ctx.scale(this._dpr,this._dpr);
 
     /**
          * 约定！所有的内部变量都需要这里先声明
@@ -468,14 +482,27 @@ export default class BarChart extends Base {
       const config = this._config.emptyData;
       //清空画布
       this.ctx.clearRect(0, 0, this._canvas.width, this._canvas.height );
-      this.drawWord(this.ctx, {
-        text:config.content,
-        fontSize: config.fontSize,
-        textAlign: 'center',
-        color: config.color,
-        x:this._canvasNode.width/2,
-        y:this._canvasNode.height/2,
-      });
+      
+      if(this._renderType == 'h5'){
+        this.drawWord(this.ctx, {
+          text:config.content,
+          fontSize: config.fontSize,
+          textAlign: 'center',
+          color: config.color,
+          x:this._canvasNode.width/2,
+          y:this._canvasNode.height/2,
+        });
+      }else{
+        this.drawWord(this.ctx, {
+          text:config.content,
+          fontSize: config.fontSize,
+          textAlign: 'center',
+          color: config.color,
+          x:this._config.width/2,
+          y:this._config.height/2,
+        });
+        this.ctx.draw();
+      }
   }
 
   /**
@@ -495,7 +522,8 @@ export default class BarChart extends Base {
 
     this.drawToCanvas();
 
-    // this.ctx.draw();
+    if(this._renderType == 'native')
+      this.ctx.draw();
 
     this.log('realDraw');
 
