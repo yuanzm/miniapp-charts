@@ -208,7 +208,7 @@ export default class ChartBase {
     ctx.strokeStyle = opts.lineColor;
 
     const start = points[0];
-    const end   = points[points.length - 1];
+    const end = points[points.length - 1];
 
     ctx.moveTo(start.x, start.y);
     let prev;
@@ -275,4 +275,3 @@ export default class ChartBase {
     // ctx.draw();
   }
 }
-

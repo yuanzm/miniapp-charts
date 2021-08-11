@@ -124,11 +124,12 @@ __webpack_require__.r(__webpack_exports__);
  * @param {}
  */
 function is(obj, type) {
-  const { toString } = Object.prototype; let undefined;
+  const { toString } = Object.prototype;
+  let undefined;
 
-  return (type === 'Null' && obj === null)
-    || (type === 'Undefined' && obj === undefined)
-    || toString.call(obj).slice(8, -1) === type;
+  return (type === 'Null' && obj === null) ||
+    (type === 'Undefined' && obj === undefined) ||
+    toString.call(obj).slice(8, -1) === type;
 }
 
 /*
@@ -180,7 +181,7 @@ function getRoundForNumber(number) {
   let round;
 
   // 计算出当前数组位数减一的最小数字
-  if (number  >= 100) round = String(number).split('')
+  if (number >= 100) round = String(number).split('')
     .reduce(sum => sum * 10, 0.01);
 
   // 数字介于10-100之间，逢5为整
@@ -309,24 +310,24 @@ function changeUnit(value, fixedParam = 1) {
   // value是非数字的情况，直接返回value
   if (!isNumeric(value)) return value;
 
-  const number  = parseFloat(value);
-  let unit    = '';
+  const number = parseFloat(value);
+  let unit = '';
   let divider = 1;
 
   // 小于1000的值，保留小数点
   if (isFloat(value) && number < 1000) return number.toFixed(fixed);
 
   if (number < 1e3) {
-    unit    = '';
+    unit = '';
     divider = 1;
-  } else if (number >= 1e3 &&  number < 1e4) {
-    unit    = 'k';
+  } else if (number >= 1e3 && number < 1e4) {
+    unit = 'k';
     divider = 1e3;
   } else if (number < 1e7) {
-    unit    = 'w';
+    unit = 'w';
     divider = 1e4;
   } else {
-    unit    = 'kw';
+    unit = 'kw';
     divider = 1e7;
   }
 
@@ -340,11 +341,10 @@ function changeUnit(value, fixedParam = 1) {
   return temp.toFixed(fixed) + unit;
 }
 
-function none() {
-}
+function none() {}
 
 function formatX(length, maxXPoint) {
-  let step  = Math.ceil(length /  maxXPoint);
+  let step = Math.ceil(length / maxXPoint);
   let start = 0;
 
   // 记录原始的step长度
@@ -430,12 +430,14 @@ function capControlPoint(pt, min, max) {
 function isPointInArea(point, area) {
   const epsilon = 0.5; // margin - to match rounded decimals
 
-  return point.x > area.left - epsilon && point.x < area.right + epsilon
-    && point.y > area.top - epsilon && point.y < area.bottom + epsilon;
+  return point.x > area.left - epsilon && point.x < area.right + epsilon &&
+    point.y > area.top - epsilon && point.y < area.bottom + epsilon;
 }
 
 function capBezierPoints(points, area) {
-  let i; let ilen; let point;
+  let i;
+  let ilen;
+  let point;
   for (i = 0, ilen = points.length; i < ilen; ++i) {
     point = points[i];
     if (!isPointInArea(point, area)) {
@@ -453,7 +455,10 @@ function capBezierPoints(points, area) {
 }
 
 function updateBezierControlPoints(points, area) {
-  let i; let ilen; let point; let controlPoints;
+  let i;
+  let ilen;
+  let point;
+  let controlPoints;
   const loop = false;
 
   let prev = loop ? points[points.length - 1] : points[0];
@@ -475,8 +480,6 @@ function updateBezierControlPoints(points, area) {
 
   capBezierPoints(points, area);
 }
-
-
 
 
 
@@ -523,9 +526,15 @@ __webpack_require__.r(__webpack_exports__);
     top: 10,
     bottom: 5,
   },
+  /**
+   *  无数据时的文案配置
+   * */
+  emptyData: {
+    content: '暂无数据',
+    color: 'rgb(200,200,200)',
+    fontSize: 16,
+  },
 });
-
-
 
 /***/ }),
 /* 5 */
@@ -537,7 +546,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _draw_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6);
 /* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
 /* harmony import */ var _easing_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7);
-
 // 太老的库，很多变量是下滑线开头的，暂时屏蔽先
 /* eslint no-underscore-dangle: "off"*/
 /* eslint no-param-reassign: ["error", { "props": false }] */
@@ -615,8 +623,8 @@ class Base extends _draw_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
     // 计算实际绘图区域的左下角信息
     this._boundary.leftBottom = {
       x: padding.left,
-      y: (_config.height
-        - padding.bottom),
+      y: (_config.height -
+        padding.bottom),
     };
 
     if (_config.xAxis) {
@@ -624,7 +632,7 @@ class Base extends _draw_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
     }
 
     // 计算实际绘图区域的右上角信息
-    this._boundary.rightTop =  {
+    this._boundary.rightTop = {
       x: _config.width - padding.right,
       y: padding.top,
     };
@@ -667,14 +675,14 @@ class Base extends _draw_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
     const easingFunction = _easing_js__WEBPACK_IMPORTED_MODULE_2__["default"][config.animationEasing];
 
     // 动画完成的百分比
-    let percentComplete = (config.animation
-      ? 0
-      : 1);
+    let percentComplete = (config.animation ?
+      0 :
+      1);
 
     const animationFrame = () => {
-      let easeAdjustedAnimationPercent = (config.animation
-        ? easingFunction(percentComplete)
-        : 1);
+      let easeAdjustedAnimationPercent = (config.animation ?
+        easingFunction(percentComplete) :
+        1);
 
       if (easeAdjustedAnimationPercent > 1) {
         easeAdjustedAnimationPercent = 1;
@@ -698,8 +706,6 @@ class Base extends _draw_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
     this.requestAnimFrame(animationLoop);
   }
 }
-
-
 
 /***/ }),
 /* 6 */
@@ -919,7 +925,7 @@ class ChartBase {
     ctx.strokeStyle = opts.lineColor;
 
     const start = points[0];
-    const end   = points[points.length - 1];
+    const end = points[points.length - 1];
 
     ctx.moveTo(start.x, start.y);
     let prev;
@@ -987,8 +993,6 @@ class ChartBase {
   }
 }
 
-
-
 /***/ }),
 /* 7 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -997,7 +1001,7 @@ class ChartBase {
 __webpack_require__.r(__webpack_exports__);
 // Easing functions adapted from Robert Penner's easing equations
 // http://www.robertpenner.com/easing/
-/* eslint-disable */ 
+/* eslint-disable */
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   linear(t) {
@@ -1076,26 +1080,41 @@ __webpack_require__.r(__webpack_exports__);
     return 1 / 2 * (Math.sqrt(1 - (t -= 2) * t) + 1);
   },
   easeInElastic(t) {
-    let s = 1.70158; let p = 0; let a = 1;
-    if (t == 0) return 0; if ((t /= 1) == 1) return 1; if (!p) p = 1 * .3;
+    let s = 1.70158;
+    let p = 0;
+    let a = 1;
+    if (t == 0) return 0;
+    if ((t /= 1) == 1) return 1;
+    if (!p) p = 1 * .3;
     if (a < Math.abs(1)) {
-      a = 1; s = p / 4;
+      a = 1;
+      s = p / 4;
     } else s = p / (2 * Math.PI) * Math.asin(1 / a);
     return -(a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * 1 - s) * (2 * Math.PI) / p));
   },
   easeOutElastic(t) {
-    let s = 1.70158; let p = 0; let a = 1;
-    if (t == 0) return 0; if ((t /= 1) == 1) return 1; if (!p) p = 1 * .3;
+    let s = 1.70158;
+    let p = 0;
+    let a = 1;
+    if (t == 0) return 0;
+    if ((t /= 1) == 1) return 1;
+    if (!p) p = 1 * .3;
     if (a < Math.abs(1)) {
-      a = 1; s = p / 4;
+      a = 1;
+      s = p / 4;
     } else s = p / (2 * Math.PI) * Math.asin(1 / a);
     return a * Math.pow(2, -10 * t) * Math.sin((t * 1 - s) * (2 * Math.PI) / p) + 1;
   },
   easeInOutElastic(t) {
-    let s = 1.70158; let p = 0; let a = 1;
-    if (t == 0) return 0; if ((t /= 1 / 2) == 2) return 1; if (!p) p = 1 * (.3 * 1.5);
+    let s = 1.70158;
+    let p = 0;
+    let a = 1;
+    if (t == 0) return 0;
+    if ((t /= 1 / 2) == 2) return 1;
+    if (!p) p = 1 * (.3 * 1.5);
     if (a < Math.abs(1)) {
-      a = 1; s = p / 4;
+      a = 1;
+      s = p / 4;
     } else s = p / (2 * Math.PI) * Math.asin(1 / a);
     if (t < 1) return -.5 * (a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * 1 - s) * (2 * Math.PI) / p));
     return a * Math.pow(2, -10 * (t -= 1)) * Math.sin((t * 1 - s) * (2 * Math.PI) / p) * .5 + 1;
@@ -1119,9 +1138,11 @@ __webpack_require__.r(__webpack_exports__);
   easeOutBounce(t) {
     if ((t /= 1) < (1 / 2.75)) {
       return 1 * (7.5625 * t * t);
-    } if (t < (2 / 2.75)) {
+    }
+    if (t < (2 / 2.75)) {
       return 1 * (7.5625 * (t -= (1.5 / 2.75)) * t + .75);
-    } if (t < (2.5 / 2.75)) {
+    }
+    if (t < (2.5 / 2.75)) {
       return 1 * (7.5625 * (t -= (2.25 / 2.75)) * t + .9375);
     }
     return 1 * (7.5625 * (t -= (2.625 / 2.75)) * t + .984375);
@@ -1132,8 +1153,6 @@ __webpack_require__.r(__webpack_exports__);
   },
 });
 
-
-
 /***/ }),
 /* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -1143,29 +1162,29 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Native2H5CTX; });
 /**
  *
- * 	原生Canvas绘图上下文胶水层
- * 	支持大部分 H5 Canvas API 直接转化为 原生CanvasAPI
- * 	原生CanvasAPI也可以直接使用
+ *  原生Canvas绘图上下文胶水层
+ *  支持大部分 H5 Canvas API 直接转化为 原生CanvasAPI
+ *  原生CanvasAPI也可以直接使用
  *
- * 	使用方法：
+ *  使用方法：
  *
 
-	import Native2H5CTX from './base/Native2H5CTX.js';
-	const ctx = Native2H5CTX(nativeCtx);
+  import Native2H5CTX from './base/Native2H5CTX.js';
+  const ctx = Native2H5CTX(nativeCtx);
 
-	请注意：由于原生API需要 draw() 完成最终渲染，因此开发者需要手动判断并执行 ctx.draw()
+  请注意：由于原生API需要 draw() 完成最终渲染，因此开发者需要手动判断并执行 ctx.draw()
  *
  *
  * */
 
 /**
- * 	转化管理器
+ *  转化管理器
  * */
 class CONVERT {
   /**
-	 * 	Font 定义差异
-	 * 	原生Canvas仅支持设置 FontSize 因此要读取大小后直接设置，忽略文字字体的定义
-	 * */
+   *  Font 定义差异
+   *  原生Canvas仅支持设置 FontSize 因此要读取大小后直接设置，忽略文字字体的定义
+   * */
   font(target, value) {
     const result = /[0-9]+px/i.exec(value);
     if (!result) {
@@ -1177,45 +1196,45 @@ class CONVERT {
   }
 
   /**
-	 * 	lineWidth 定义差异
-	 * 	原生 lineWidth 采用 setLineWidth 进行设置
-	 * */
+   *  lineWidth 定义差异
+   *  原生 lineWidth 采用 setLineWidth 进行设置
+   * */
   lineWidth(target, value) {
     target.setLineWidth(value);
     return true;
   }
 
   /**
-	 * 	strokeStyle 定义差异
-	 * 	原生 strokeStyle 采用 setStrokeStyle 进行设置
-	 * */
+   *  strokeStyle 定义差异
+   *  原生 strokeStyle 采用 setStrokeStyle 进行设置
+   * */
   strokeStyle(target, value) {
     target.setStrokeStyle(value);
     return true;
   }
 
   /**
-	 * 	fillStyle 定义差异
-	 * 	原生 fillStyle 采用 setFillStyle 进行设置
-	 * */
+   *  fillStyle 定义差异
+   *  原生 fillStyle 采用 setFillStyle 进行设置
+   * */
   fillStyle(target, value) {
     target.setFillStyle(value);
     return true;
   }
 
   /**
-	 * 	textBaseline 定义差异
-	 * 	原生 textBaseline 采用 setTextBaseline 进行设置
-	 * */
+   *  textBaseline 定义差异
+   *  原生 textBaseline 采用 setTextBaseline 进行设置
+   * */
   textBaseline(target, value) {
     target.setTextBaseline(value);
     return true;
   }
 
   /**
-	 * 	textAlign 定义差异
-	 * 	原生 textAlign 采用 setTextAlign 进行设置
-	 * */
+   *  textAlign 定义差异
+   *  原生 textAlign 采用 setTextAlign 进行设置
+   * */
   textAlign(target, value) {
     target.setTextAlign(value);
     return true;
@@ -1265,8 +1284,6 @@ function Native2H5CTX(nativeCtx) {
   return nativeCtx;
 }
 
-
-
 /***/ }),
 /* 9 */,
 /* 10 */,
@@ -1303,26 +1320,26 @@ class DistributionChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["def
 
 
     // 本实例配置文件
-    this._config      = this.getConfig(cfg, Object(_util_js__WEBPACK_IMPORTED_MODULE_0__["deepCopy"])(_config_distribution_js__WEBPACK_IMPORTED_MODULE_1__["default"]));
-    if(canvasNode.node){ //以节点传入
+    this._config = this.getConfig(cfg, Object(_util_js__WEBPACK_IMPORTED_MODULE_0__["deepCopy"])(_config_distribution_js__WEBPACK_IMPORTED_MODULE_1__["default"]));
+    if (canvasNode.node) { //以节点传入
       this._renderType = 'h5';
       this._canvas = canvasNode.node;
       this.canvasNode = canvasNode;
-      
+
       //清晰度调整
       this._canvas.width = canvasNode.width * this._dpr;
       this._canvas.height = canvasNode.height * this._dpr;
       this.ctx = this._canvas.getContext('2d');
-      this.ctx.scale(this._dpr,this._dpr);
-      this.totalHeight  = this.canvasNode.height;
-    }else{ //以原生ctx传入
+      this.ctx.scale(this._dpr, this._dpr);
+      this.totalHeight = this.canvasNode.height;
+    } else { //以原生ctx传入
       this._renderType = 'native';
       this._canvas = {
-        width:100,
-        height:100,
+        width: 100,
+        height: 100,
       }
       this.canvasNode = {
-        height : this._config.height
+        height: this._config.height
       }
       this.ctx = Object(_base_Native2H5CTX_js__WEBPACK_IMPORTED_MODULE_3__["default"])(canvasNode);
       this.totalHeight = this._config.height;
@@ -1337,8 +1354,8 @@ class DistributionChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["def
      */
 
     // 线条数据
-    this._datasets    = [];
-    
+    this._datasets = [];
+
     this._autoDrawTimer = 0;
     this._autoDrawEndTimestamp = 0;
   }
@@ -1346,13 +1363,13 @@ class DistributionChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["def
   /**
    *  当容器的高度需要变更时必须手动实现图表的变更从而实现反拉伸保持图表渲染稳定
    * */
-  setHeight(h){
+  setHeight(h) {
 
-    if(this._renderType != 'h5')
+    if (this._renderType != 'h5')
       return;
 
     this._canvas.height = h * this._dpr;
-    this.ctx.scale(this._dpr,this._dpr);
+    this.ctx.scale(this._dpr, this._dpr);
     if (!this._datasets.length) {
       this.drawEmptyData();
       return;
@@ -1368,23 +1385,23 @@ class DistributionChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["def
    *  自动延迟渲染
    *  每秒可绘制3帧
    * */
-  autoDrawCanvas(){
+  autoDrawCanvas() {
     this._autoDrawEndTimestamp = new Date().getTime() + 1000;
-    if(this._autoDrawTimer){
+    if (this._autoDrawTimer) {
       //代表已经触发了自动渲染，无需再次触发
       return;
     }
     let that = this;
-    let draw = function(){
+    let draw = function() {
       that.drawToCanvas();
-      that._autoDrawTimer = setTimeout(()=>{
+      that._autoDrawTimer = setTimeout(() => {
         let now = new Date().getTime();
-        if(now > that._autoDrawEndTimestamp){
+        if (now > that._autoDrawEndTimestamp) {
           that._autoDrawTimer = 0;
-        }else{
+        } else {
           draw();
         }
-      },300);
+      }, 300);
 
     }
     draw();
@@ -1393,15 +1410,15 @@ class DistributionChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["def
   calLabelDataForItem(xStartParam, y, barLabel) {
     let xStart = xStartParam;
     const labelArr = (Object(_util_js__WEBPACK_IMPORTED_MODULE_0__["isType"])('array', barLabel) ? barLabel : [barLabel]);
-    let width    = 0;
-    const arr      = [];
+    let width = 0;
+    const arr = [];
 
     labelArr.forEach((item) => {
       const labelConfig = Object(_util_js__WEBPACK_IMPORTED_MODULE_0__["deepCopy"])(this._config.barLabelStyle);
       const obj = Object(_util_js__WEBPACK_IMPORTED_MODULE_0__["isType"])('object', item) ? item : { name: item, style: labelConfig };
       obj.style = Object(_util_js__WEBPACK_IMPORTED_MODULE_0__["extend"])(labelConfig, obj.style || {});
 
-      width  += obj.style.paddingLeft;
+      width += obj.style.paddingLeft;
       xStart += obj.style.paddingLeft;
 
       const word = {
@@ -1416,7 +1433,7 @@ class DistributionChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["def
       arr.push(word);
       const w = this.getWordWidth(word);
       xStart += w;
-      width  += w;
+      width += w;
     });
 
     return { arr, width };
@@ -1430,13 +1447,13 @@ class DistributionChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["def
     let yStart = config.padding.top + config.barStyle.topBottomPadding;
     const xStart = config.padding.left + render.yAxisWidth;
 
-    const first  = this._datasets[0];
+    const first = this._datasets[0];
     const others = this._datasets.slice(1);
 
     const maxItemMap = this.getMaxItem();
 
-    const barData      = [];
-    let barLabelData   = [];
+    const barData = [];
+    let barLabelData = [];
 
     const maxBarWidthMap = [];
 
@@ -1481,27 +1498,27 @@ class DistributionChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["def
         barData.push(rect);
       });
 
-      const centerY = (barArr.length > 1
-        ? yStart - barStyle.padding - barStyle.height - config.barStyle.compareBarMargin / 2
-        : yStart - barStyle.padding - barStyle.height / 2);
+      const centerY = (barArr.length > 1 ?
+        yStart - barStyle.padding - barStyle.height - config.barStyle.compareBarMargin / 2 :
+        yStart - barStyle.padding - barStyle.height / 2);
 
       this._render.yAxisData[index].y = centerY;
     });
 
-    this._render.barData      = barData;
+    this._render.barData = barData;
     this._render.barLabelData = barLabelData;
-    this._render.totalHeight  = yStart - barStyle.padding + config.padding.bottom + config.barStyle.topBottomPadding;
-    this.totalHeight          = this._render.totalHeight;
-    if(this.totalHeight == 0){
+    this._render.totalHeight = yStart - barStyle.padding + config.padding.bottom + config.barStyle.topBottomPadding;
+    this.totalHeight = this._render.totalHeight;
+    if (this.totalHeight == 0) {
       this.totalHeight = this.canvasNode.height;
       this._config.height = this.totalHeight;
     }
   }
 
   calYAxisLines() {
-    const config  = this._config;
+    const config = this._config;
     const { padding } = config;
-    const render  = this._render;
+    const render = this._render;
     const { yAxisLine } = config;
 
     // 计算Y轴中轴线数据
@@ -1567,10 +1584,10 @@ class DistributionChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["def
   calYAxis() {
     const { yAxis } = this._config;
     // 用于绘制的数据
-    const yAxisData  = [];
+    const yAxisData = [];
     // Y轴文案所占据的宽度
     let yAxisWidth = 0;
-    const leftStart   = this._boundary.leftTop.x + yAxis.marginLeft;
+    const leftStart = this._boundary.leftTop.x + yAxis.marginLeft;
 
     this._datasets[0].points.forEach((item) => {
       const word = {
@@ -1588,11 +1605,11 @@ class DistributionChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["def
     });
 
     // 考虑Y轴不需要文案的情况
-    yAxisWidth = (yAxis.show
-      ? yAxisWidth + yAxis.marginRight
-      : 0);
+    yAxisWidth = (yAxis.show ?
+      yAxisWidth + yAxis.marginRight :
+      0);
 
-    this._render.yAxisData  = yAxisData;
+    this._render.yAxisData = yAxisData;
     this._render.yAxisWidth = yAxisWidth;
   }
 
@@ -1623,30 +1640,30 @@ class DistributionChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["def
   /**
    *  绘制无数据文案
    * */
-  drawEmptyData(){
-      const config = this._config.emptyData;
-      //清空画布
-      this.ctx.clearRect(0, 0, this._canvas.width, this._canvas.height );
-      if(this._renderType == 'h5'){
-        this.drawWord(this.ctx, {
-          text:config.content,
-          fontSize: config.fontSize,
-          textAlign: 'center',
-          color: config.color,
-          x:this._canvasNode.width/2,
-          y:this._canvasNode.height/2,
-        });
-      }else{
-        this.drawWord(this.ctx, {
-          text:config.content,
-          fontSize: config.fontSize,
-          textAlign: 'center',
-          color: config.color,
-          x:this._config.width/2,
-          y:this._config.height/2,
-        });
-        this.ctx.draw();
-      }
+  drawEmptyData() {
+    const config = this._config.emptyData;
+    //清空画布
+    this.ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
+    if (this._renderType == 'h5') {
+      this.drawWord(this.ctx, {
+        text: config.content,
+        fontSize: config.fontSize,
+        textAlign: 'center',
+        color: config.color,
+        x: this._canvasNode.width / 2,
+        y: this._canvasNode.height / 2,
+      });
+    } else {
+      this.drawWord(this.ctx, {
+        text: config.content,
+        fontSize: config.fontSize,
+        textAlign: 'center',
+        color: config.color,
+        x: this._config.width / 2,
+        y: this._config.height / 2,
+      });
+      this.ctx.draw();
+    }
   }
 
   /**
@@ -1654,7 +1671,7 @@ class DistributionChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["def
    */
   drawToCanvas() {
     //清空画布
-    this.ctx.clearRect(0, 0, this._canvas.width, this._canvas.height );
+    this.ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
     this.drawYAxis();
     this.drawYAxisLine();
     this.drawBars();
@@ -1694,12 +1711,10 @@ class DistributionChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["def
     }
 
     this.drawToCanvas();
-    if(this._renderType == 'native')
+    if (this._renderType == 'native')
       this.ctx.draw();
   }
 }
-
-
 
 /***/ }),
 /* 12 */
@@ -1747,19 +1762,9 @@ const distributionConfig = {
     fontSize: 11,
     paddingLeft: 5,
   },
-  /**
-   *  无数据时的文案配置
-   * */
-  emptyData: {
-    content: '暂无数据',
-    color: 'rgb(200,200,200)',
-    fontSize: 16,
-  },
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (Object(_util_js__WEBPACK_IMPORTED_MODULE_1__["extend"])(distributionConfig, _common_js__WEBPACK_IMPORTED_MODULE_0__["default"]));
-
-
 
 /***/ })
 /******/ ]);

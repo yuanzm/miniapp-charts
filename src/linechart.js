@@ -34,34 +34,34 @@ export default class LineChart extends Base {
     super();
 
 
-    
+
     let ctx2 = null;
-    if(canvasNode.node){ //以节点传入
+    if (canvasNode.node) { //以节点传入
       this._renderType = 'h5';
       this._canvas = canvasNode.node;
       this._canvasNode = canvasNode;
-      
+
       //清晰度调整
       this._canvas.width = canvasNode.width * this._dpr;
       this._canvas.height = canvasNode.height * this._dpr;
       this.ctx1 = this._canvas.getContext('2d');
-      this.ctx1.scale(this._dpr,this._dpr);
-      if(canvasNode2){
+      this.ctx1.scale(this._dpr, this._dpr);
+      if (canvasNode2) {
         this._canvas2 = canvasNode2.node;
         //清晰度调整
         this._canvas2.width = canvasNode2.width * this._dpr;
         this._canvas2.height = canvasNode2.height * this._dpr;
         ctx2 = this._canvas2.getContext('2d');
-        ctx2.scale(this._dpr,this._dpr);
+        ctx2.scale(this._dpr, this._dpr);
       }
-    }else{ //以原生ctx传入
+    } else { //以原生ctx传入
       this._renderType = 'native';
       this._canvas = {
-        width:100,
-        height:100,
+        width: 100,
+        height: 100,
       }
       this.ctx1 = Native2H5CTX(canvasNode);
-      if(canvasNode2){
+      if (canvasNode2) {
         ctx2 = Native2H5CTX(canvasNode2);
       }
     }
@@ -94,9 +94,9 @@ export default class LineChart extends Base {
     const { yAxisWidth } = this._render;
     const { leftBottom } = this._boundary;
     const startX = leftBottom.x + yAxisWidth;
-    const endX = this._render.second
-      ? this._boundary.rightBottom.x - this._render.second.yAxisWidth - 4
-      : this._boundary.rightBottom.x;
+    const endX = this._render.second ?
+      this._boundary.rightBottom.x - this._render.second.yAxisWidth - 4 :
+      this._boundary.rightBottom.x;
 
     const { second } = this._render;
     this._allsublinesets.forEach((item) => {
@@ -113,8 +113,8 @@ export default class LineChart extends Base {
         x1: endX,
       };
       // 判断绘制区间 必须在区间内的才绘制
-      if (_data.y <= this._boundary.rightBottom.y
-        && _data.y >= this._boundary.leftTop.y) sublineData.push(_data);
+      if (_data.y <= this._boundary.rightBottom.y &&
+        _data.y >= this._boundary.leftTop.y) sublineData.push(_data);
     });
 
     this._render.sublineData = sublineData;
@@ -254,9 +254,9 @@ export default class LineChart extends Base {
       realWidth -= this._render.second.width;
     }
 
-    const pointCount = (points.length - 1 > 0
-      ? points.length - 1
-      : 1);
+    const pointCount = (points.length - 1 > 0 ?
+      points.length - 1 :
+      1);
     data.unitX = realWidth / pointCount;
 
     let xDivider = Math.ceil(length / (maxXPoint));
@@ -270,9 +270,9 @@ export default class LineChart extends Base {
     const bottom = leftBottom.y + xAxis.marginTop + xAxis.fontSize;
 
     for (let i = 0; i < maxXPoint; i++) {
-      const index = (i * xDivider >= length
-        ? length - 1
-        : i * xDivider);
+      const index = (i * xDivider >= length ?
+        length - 1 :
+        i * xDivider);
 
       const word = {
         text: points[index].x,
@@ -356,15 +356,15 @@ export default class LineChart extends Base {
     let yAxisWidth = 0;
 
     // 计算Y轴上两个点之间的像素值
-    const unitY = ((this._boundary.leftBottom.y
-      - this._boundary.leftTop.y)
-      / (yDivider * yMultiple * this._config.yAxis.yAxisCount)
+    const unitY = ((this._boundary.leftBottom.y -
+        this._boundary.leftTop.y) /
+      (yDivider * yMultiple * this._config.yAxis.yAxisCount)
     );
 
     const changeFunc = this._config.secondChangeUnit || this._config.changeUnit || changeUnit;
-    const toFixed = ((max < 1 || max > 1e7)
-      ? 2
-      : 1);
+    const toFixed = ((max < 1 || max > 1e7) ?
+      2 :
+      1);
 
     const bottomStart = this._boundary.leftBottom.y;
 
@@ -385,9 +385,9 @@ export default class LineChart extends Base {
     }
 
     // 考虑Y轴不需要文案的情况
-    yAxisWidth = (yAxis.show
-      ? yAxisWidth
-      : 0);
+    yAxisWidth = (yAxis.show ?
+      yAxisWidth :
+      0);
 
     let leftStart = this._boundary.rightTop.x - yAxisWidth;
     if (yAxis.textAlign === 'right') {
@@ -428,18 +428,18 @@ export default class LineChart extends Base {
     let yAxisWidth = 0;
 
     // 计算Y轴上两个点之间的像素值
-    const unitY = ((this._boundary.leftBottom.y
-      - this._boundary.leftTop.y)
-      / (yDivider * this._render.yMultiple * this._config.yAxis.yAxisCount)
+    const unitY = ((this._boundary.leftBottom.y -
+        this._boundary.leftTop.y) /
+      (yDivider * this._render.yMultiple * this._config.yAxis.yAxisCount)
     );
 
     const leftStart = this._boundary.leftTop.x + yAxis.marginLeft;
     const bottomStart = this._boundary.leftBottom.y;
 
     const changeFunc = this._config.changeUnit || changeUnit;
-    const toFixed = ((max < 1 || max > 1e7)
-      ? 2
-      : 1);
+    const toFixed = ((max < 1 || max > 1e7) ?
+      2 :
+      1);
 
     for (let i = 0; i < this._config.yAxis.yAxisCount + 1; i++) {
       const word = {
@@ -456,9 +456,9 @@ export default class LineChart extends Base {
     }
 
     // 考虑Y轴不需要文案的情况
-    yAxisWidth = (yAxis.show
-      ? yAxisWidth + yAxis.marginRight
-      : 0);
+    yAxisWidth = (yAxis.show ?
+      yAxisWidth + yAxis.marginRight :
+      0);
 
     this._render.unitY = unitY;
     this._render.yAxisWidth = yAxisWidth;
@@ -471,18 +471,18 @@ export default class LineChart extends Base {
 
   getMinY(data) {
     return data.reduce(
-      (min, p) => (p.y < min
-        ? p.y
-        : min),
+      (min, p) => (p.y < min ?
+        p.y :
+        min),
       data[0].y,
     );
   }
 
   getMaxY(data) {
     return data.reduce(
-      (max, p) => (p.y > max
-        ? p.y
-        : max),
+      (max, p) => (p.y > max ?
+        p.y :
+        max),
       data[0].y,
     );
   }
@@ -640,11 +640,12 @@ export default class LineChart extends Base {
     words.forEach((word, index) => {
       word.x = baseX + style.padding.left;
 
-      word.y = (baseY
-        + style.padding.top
+      word.y = (baseY +
+        style.padding.top
         // 对于文字而言，是以文字左下角为圆点，所以还需要加上一个行高
-        +        style.fontSize
-        + index * (style.fontSize + style.linePadding));
+        +
+        style.fontSize +
+        index * (style.fontSize + style.linePadding));
 
       const circle = {
         x: baseX + style.padding.left + style.fontSize / 2,
@@ -672,25 +673,28 @@ export default class LineChart extends Base {
     let maxWidth = 0;
 
     // tooltip的总宽度
-    let width = (style.padding.left
-      + style.padding.right
+    let width = (style.padding.left +
+      style.padding.right
       // 圆点的直径
-      +      style.fontSize
+      +
+      style.fontSize
       // 圆点的右边距
-      +      5);
+      +
+      5);
 
-    let height = (style.padding.top
-      + style.padding.bottom
+    let height = (style.padding.top +
+      style.padding.bottom
       // 第一行用于绘制当前X坐标的坐标值
-      +      (style.needTitle ? style.fontSize + style.linePadding : 0)
+      +
+      (style.needTitle ? style.fontSize + style.linePadding : 0)
     );
 
     this._render.toolTipData.words = [];
 
     const changeFunc = this._config.secondChangeUnit || this._config.changeUnit || changeUnit;
-    const toFixed = ((this._render.max < 1 || this._render > 1e7)
-      ? 2
-      : 1);
+    const toFixed = ((this._render.max < 1 || this._render > 1e7) ?
+      2 :
+      1);
 
     // 点数据文字
     this._alldatasets.forEach((oneline) => {
@@ -746,9 +750,9 @@ export default class LineChart extends Base {
       width,
       height,
 
-      x: (rightTop.x - data.currPointsLine.start.x > width
-        ? data.currPointsLine.start.x + 3
-        : data.currPointsLine.start.x - width - 3),
+      x: (rightTop.x - data.currPointsLine.start.x > width ?
+        data.currPointsLine.start.x + 3 :
+        data.currPointsLine.start.x - width - 3),
 
       y: leftTop.y + 10,
       fillColor: style.fillColor,
@@ -873,10 +877,10 @@ export default class LineChart extends Base {
    */
   drawToCanvas() {
     //清空画布
-    this.ctx1.clearRect(0, 0, this._canvas.width, this._canvas.height );
-    if(this.ctx1 !== this.ctx2){
+    this.ctx1.clearRect(0, 0, this._canvas.width, this._canvas.height);
+    if (this.ctx1 !== this.ctx2) {
       //清空画布
-      this.ctx2.clearRect(0, 0, this._canvas2.width, this._canvas2.height );
+      this.clearCTX2Canvas();
     }
 
     this.drawYAxis();
@@ -1001,40 +1005,40 @@ export default class LineChart extends Base {
   /**
    *  绘制无数据文案
    * */
-  drawEmptyData(){
-      const config = this._config.emptyData;
+  drawEmptyData() {
+    const config = this._config.emptyData;
+    //清空画布
+    this.ctx1.clearRect(0, 0, this._canvas.width, this._canvas.height);
+    if (this.ctx1 !== this.ctx2) {
       //清空画布
-      this.ctx1.clearRect(0, 0, this._canvas.width, this._canvas.height );
-      if(this.ctx1 !== this.ctx2){
-        //清空画布
-        this.ctx2.clearRect(0, 0, this._canvas2.width, this._canvas2.height );
-      }
-      if(this._renderType == 'h5'){
-        this.drawWord(this.ctx1, {
-          text:config.content,
-          fontSize: config.fontSize,
-          textAlign: 'center',
-          color: config.color,
-          x:this._canvasNode.width/2,
-          y:this._canvasNode.height/2,
-        });
-      }else{
-        this.drawWord(this.ctx1, {
-          text:config.content,
-          fontSize: config.fontSize,
-          textAlign: 'center',
-          color: config.color,
-          x:this._config.width/2,
-          y:this._config.height/2,
-        });
-        this.ctx1.draw();
-      }
+      this.ctx2.clearRect(0, 0, this._canvas2.width, this._canvas2.height);
+    }
+    if (this._renderType == 'h5') {
+      this.drawWord(this.ctx1, {
+        text: config.content,
+        fontSize: config.fontSize,
+        textAlign: 'center',
+        color: config.color,
+        x: this._canvasNode.width / 2,
+        y: this._canvasNode.height / 2,
+      });
+    } else {
+      this.drawWord(this.ctx1, {
+        text: config.content,
+        fontSize: config.fontSize,
+        textAlign: 'center',
+        color: config.color,
+        x: this._config.width / 2,
+        y: this._config.height / 2,
+      });
+      this.ctx1.draw();
+    }
   }
 
   /**
    * 实际的绘制函数
    */
-  draw(data, cfg = {},callback=function(){}) {
+  draw(data, cfg = {}, callback = function() {}) {
     this._drawCallBack = callback;
     this._start = new Date();
 
@@ -1051,7 +1055,7 @@ export default class LineChart extends Base {
 
     this.drawToCanvas();
 
-    if(this._renderType == 'native')
+    if (this._renderType == 'native')
       this.ctx1.draw();
 
     this.log('realDraw');
@@ -1080,12 +1084,14 @@ export default class LineChart extends Base {
      */
     if (this.ctx2 === this.ctx1) {
       this.drawToCanvas();
+    } else {
+      this.clearCTX2Canvas();
     }
 
     // 将tooltip绘制到对应的canvas
     this.drawToolTip();
 
-    if(this._renderType == 'native')
+    if (this._renderType == 'native')
       this.ctx2.draw();
   }
 
@@ -1117,9 +1123,19 @@ export default class LineChart extends Base {
      */
     if (this.ctx2 === this.ctx1) {
       this.drawToCanvas();
+    } else {
+      this.clearCTX2Canvas();
     }
 
-    if(this._renderType == 'native')
+    if (this._renderType == 'native')
       this.ctx2.draw();
+  }
+
+  /**
+   *  在原生Canvas时是自动清画布的，但是在h5Canvas中需要手动清理
+   *  这里就需要注意当分成两个Canvas时，需要手动清理第二个Canvas
+   */
+  clearCTX2Canvas() {
+    this.ctx2.clearRect(0, 0, this._canvas2.width, this._canvas2.height);
   }
 }

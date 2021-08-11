@@ -1,4 +1,3 @@
-
 // 太老的库，很多变量是下滑线开头的，暂时屏蔽先
 /* eslint no-underscore-dangle: "off"*/
 /* eslint no-param-reassign: ["error", { "props": false }] */
@@ -78,8 +77,8 @@ export default class Base extends ChartBase {
     // 计算实际绘图区域的左下角信息
     this._boundary.leftBottom = {
       x: padding.left,
-      y: (_config.height
-        - padding.bottom),
+      y: (_config.height -
+        padding.bottom),
     };
 
     if (_config.xAxis) {
@@ -87,7 +86,7 @@ export default class Base extends ChartBase {
     }
 
     // 计算实际绘图区域的右上角信息
-    this._boundary.rightTop =  {
+    this._boundary.rightTop = {
       x: _config.width - padding.right,
       y: padding.top,
     };
@@ -130,14 +129,14 @@ export default class Base extends ChartBase {
     const easingFunction = animationOptions[config.animationEasing];
 
     // 动画完成的百分比
-    let percentComplete = (config.animation
-      ? 0
-      : 1);
+    let percentComplete = (config.animation ?
+      0 :
+      1);
 
     const animationFrame = () => {
-      let easeAdjustedAnimationPercent = (config.animation
-        ? easingFunction(percentComplete)
-        : 1);
+      let easeAdjustedAnimationPercent = (config.animation ?
+        easingFunction(percentComplete) :
+        1);
 
       if (easeAdjustedAnimationPercent > 1) {
         easeAdjustedAnimationPercent = 1;
@@ -161,4 +160,3 @@ export default class Base extends ChartBase {
     this.requestAnimFrame(animationLoop);
   }
 }
-

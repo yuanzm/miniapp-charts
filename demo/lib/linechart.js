@@ -133,34 +133,34 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
     super();
 
 
-    
+
     let ctx2 = null;
-    if(canvasNode.node){ //以节点传入
+    if (canvasNode.node) { //以节点传入
       this._renderType = 'h5';
       this._canvas = canvasNode.node;
       this._canvasNode = canvasNode;
-      
+
       //清晰度调整
       this._canvas.width = canvasNode.width * this._dpr;
       this._canvas.height = canvasNode.height * this._dpr;
       this.ctx1 = this._canvas.getContext('2d');
-      this.ctx1.scale(this._dpr,this._dpr);
-      if(canvasNode2){
+      this.ctx1.scale(this._dpr, this._dpr);
+      if (canvasNode2) {
         this._canvas2 = canvasNode2.node;
         //清晰度调整
         this._canvas2.width = canvasNode2.width * this._dpr;
         this._canvas2.height = canvasNode2.height * this._dpr;
         ctx2 = this._canvas2.getContext('2d');
-        ctx2.scale(this._dpr,this._dpr);
+        ctx2.scale(this._dpr, this._dpr);
       }
-    }else{ //以原生ctx传入
+    } else { //以原生ctx传入
       this._renderType = 'native';
       this._canvas = {
-        width:100,
-        height:100,
+        width: 100,
+        height: 100,
       }
       this.ctx1 = Object(_base_Native2H5CTX_js__WEBPACK_IMPORTED_MODULE_3__["default"])(canvasNode);
-      if(canvasNode2){
+      if (canvasNode2) {
         ctx2 = Object(_base_Native2H5CTX_js__WEBPACK_IMPORTED_MODULE_3__["default"])(canvasNode2);
       }
     }
@@ -193,9 +193,9 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
     const { yAxisWidth } = this._render;
     const { leftBottom } = this._boundary;
     const startX = leftBottom.x + yAxisWidth;
-    const endX = this._render.second
-      ? this._boundary.rightBottom.x - this._render.second.yAxisWidth - 4
-      : this._boundary.rightBottom.x;
+    const endX = this._render.second ?
+      this._boundary.rightBottom.x - this._render.second.yAxisWidth - 4 :
+      this._boundary.rightBottom.x;
 
     const { second } = this._render;
     this._allsublinesets.forEach((item) => {
@@ -212,8 +212,8 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
         x1: endX,
       };
       // 判断绘制区间 必须在区间内的才绘制
-      if (_data.y <= this._boundary.rightBottom.y
-        && _data.y >= this._boundary.leftTop.y) sublineData.push(_data);
+      if (_data.y <= this._boundary.rightBottom.y &&
+        _data.y >= this._boundary.leftTop.y) sublineData.push(_data);
     });
 
     this._render.sublineData = sublineData;
@@ -353,9 +353,9 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
       realWidth -= this._render.second.width;
     }
 
-    const pointCount = (points.length - 1 > 0
-      ? points.length - 1
-      : 1);
+    const pointCount = (points.length - 1 > 0 ?
+      points.length - 1 :
+      1);
     data.unitX = realWidth / pointCount;
 
     let xDivider = Math.ceil(length / (maxXPoint));
@@ -369,9 +369,9 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
     const bottom = leftBottom.y + xAxis.marginTop + xAxis.fontSize;
 
     for (let i = 0; i < maxXPoint; i++) {
-      const index = (i * xDivider >= length
-        ? length - 1
-        : i * xDivider);
+      const index = (i * xDivider >= length ?
+        length - 1 :
+        i * xDivider);
 
       const word = {
         text: points[index].x,
@@ -455,15 +455,15 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
     let yAxisWidth = 0;
 
     // 计算Y轴上两个点之间的像素值
-    const unitY = ((this._boundary.leftBottom.y
-      - this._boundary.leftTop.y)
-      / (yDivider * yMultiple * this._config.yAxis.yAxisCount)
+    const unitY = ((this._boundary.leftBottom.y -
+        this._boundary.leftTop.y) /
+      (yDivider * yMultiple * this._config.yAxis.yAxisCount)
     );
 
     const changeFunc = this._config.secondChangeUnit || this._config.changeUnit || _util_js__WEBPACK_IMPORTED_MODULE_0__["changeUnit"];
-    const toFixed = ((max < 1 || max > 1e7)
-      ? 2
-      : 1);
+    const toFixed = ((max < 1 || max > 1e7) ?
+      2 :
+      1);
 
     const bottomStart = this._boundary.leftBottom.y;
 
@@ -484,9 +484,9 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
     }
 
     // 考虑Y轴不需要文案的情况
-    yAxisWidth = (yAxis.show
-      ? yAxisWidth
-      : 0);
+    yAxisWidth = (yAxis.show ?
+      yAxisWidth :
+      0);
 
     let leftStart = this._boundary.rightTop.x - yAxisWidth;
     if (yAxis.textAlign === 'right') {
@@ -527,18 +527,18 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
     let yAxisWidth = 0;
 
     // 计算Y轴上两个点之间的像素值
-    const unitY = ((this._boundary.leftBottom.y
-      - this._boundary.leftTop.y)
-      / (yDivider * this._render.yMultiple * this._config.yAxis.yAxisCount)
+    const unitY = ((this._boundary.leftBottom.y -
+        this._boundary.leftTop.y) /
+      (yDivider * this._render.yMultiple * this._config.yAxis.yAxisCount)
     );
 
     const leftStart = this._boundary.leftTop.x + yAxis.marginLeft;
     const bottomStart = this._boundary.leftBottom.y;
 
     const changeFunc = this._config.changeUnit || _util_js__WEBPACK_IMPORTED_MODULE_0__["changeUnit"];
-    const toFixed = ((max < 1 || max > 1e7)
-      ? 2
-      : 1);
+    const toFixed = ((max < 1 || max > 1e7) ?
+      2 :
+      1);
 
     for (let i = 0; i < this._config.yAxis.yAxisCount + 1; i++) {
       const word = {
@@ -555,9 +555,9 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
     }
 
     // 考虑Y轴不需要文案的情况
-    yAxisWidth = (yAxis.show
-      ? yAxisWidth + yAxis.marginRight
-      : 0);
+    yAxisWidth = (yAxis.show ?
+      yAxisWidth + yAxis.marginRight :
+      0);
 
     this._render.unitY = unitY;
     this._render.yAxisWidth = yAxisWidth;
@@ -570,18 +570,18 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
 
   getMinY(data) {
     return data.reduce(
-      (min, p) => (p.y < min
-        ? p.y
-        : min),
+      (min, p) => (p.y < min ?
+        p.y :
+        min),
       data[0].y,
     );
   }
 
   getMaxY(data) {
     return data.reduce(
-      (max, p) => (p.y > max
-        ? p.y
-        : max),
+      (max, p) => (p.y > max ?
+        p.y :
+        max),
       data[0].y,
     );
   }
@@ -739,11 +739,12 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
     words.forEach((word, index) => {
       word.x = baseX + style.padding.left;
 
-      word.y = (baseY
-        + style.padding.top
+      word.y = (baseY +
+        style.padding.top
         // 对于文字而言，是以文字左下角为圆点，所以还需要加上一个行高
-        +        style.fontSize
-        + index * (style.fontSize + style.linePadding));
+        +
+        style.fontSize +
+        index * (style.fontSize + style.linePadding));
 
       const circle = {
         x: baseX + style.padding.left + style.fontSize / 2,
@@ -771,25 +772,28 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
     let maxWidth = 0;
 
     // tooltip的总宽度
-    let width = (style.padding.left
-      + style.padding.right
+    let width = (style.padding.left +
+      style.padding.right
       // 圆点的直径
-      +      style.fontSize
+      +
+      style.fontSize
       // 圆点的右边距
-      +      5);
+      +
+      5);
 
-    let height = (style.padding.top
-      + style.padding.bottom
+    let height = (style.padding.top +
+      style.padding.bottom
       // 第一行用于绘制当前X坐标的坐标值
-      +      (style.needTitle ? style.fontSize + style.linePadding : 0)
+      +
+      (style.needTitle ? style.fontSize + style.linePadding : 0)
     );
 
     this._render.toolTipData.words = [];
 
     const changeFunc = this._config.secondChangeUnit || this._config.changeUnit || _util_js__WEBPACK_IMPORTED_MODULE_0__["changeUnit"];
-    const toFixed = ((this._render.max < 1 || this._render > 1e7)
-      ? 2
-      : 1);
+    const toFixed = ((this._render.max < 1 || this._render > 1e7) ?
+      2 :
+      1);
 
     // 点数据文字
     this._alldatasets.forEach((oneline) => {
@@ -845,9 +849,9 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
       width,
       height,
 
-      x: (rightTop.x - data.currPointsLine.start.x > width
-        ? data.currPointsLine.start.x + 3
-        : data.currPointsLine.start.x - width - 3),
+      x: (rightTop.x - data.currPointsLine.start.x > width ?
+        data.currPointsLine.start.x + 3 :
+        data.currPointsLine.start.x - width - 3),
 
       y: leftTop.y + 10,
       fillColor: style.fillColor,
@@ -972,10 +976,10 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
    */
   drawToCanvas() {
     //清空画布
-    this.ctx1.clearRect(0, 0, this._canvas.width, this._canvas.height );
-    if(this.ctx1 !== this.ctx2){
+    this.ctx1.clearRect(0, 0, this._canvas.width, this._canvas.height);
+    if (this.ctx1 !== this.ctx2) {
       //清空画布
-      this.ctx2.clearRect(0, 0, this._canvas2.width, this._canvas2.height );
+      this.clearCTX2Canvas();
     }
 
     this.drawYAxis();
@@ -1100,40 +1104,40 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
   /**
    *  绘制无数据文案
    * */
-  drawEmptyData(){
-      const config = this._config.emptyData;
+  drawEmptyData() {
+    const config = this._config.emptyData;
+    //清空画布
+    this.ctx1.clearRect(0, 0, this._canvas.width, this._canvas.height);
+    if (this.ctx1 !== this.ctx2) {
       //清空画布
-      this.ctx1.clearRect(0, 0, this._canvas.width, this._canvas.height );
-      if(this.ctx1 !== this.ctx2){
-        //清空画布
-        this.ctx2.clearRect(0, 0, this._canvas2.width, this._canvas2.height );
-      }
-      if(this._renderType == 'h5'){
-        this.drawWord(this.ctx1, {
-          text:config.content,
-          fontSize: config.fontSize,
-          textAlign: 'center',
-          color: config.color,
-          x:this._canvasNode.width/2,
-          y:this._canvasNode.height/2,
-        });
-      }else{
-        this.drawWord(this.ctx1, {
-          text:config.content,
-          fontSize: config.fontSize,
-          textAlign: 'center',
-          color: config.color,
-          x:this._config.width/2,
-          y:this._config.height/2,
-        });
-        this.ctx1.draw();
-      }
+      this.ctx2.clearRect(0, 0, this._canvas2.width, this._canvas2.height);
+    }
+    if (this._renderType == 'h5') {
+      this.drawWord(this.ctx1, {
+        text: config.content,
+        fontSize: config.fontSize,
+        textAlign: 'center',
+        color: config.color,
+        x: this._canvasNode.width / 2,
+        y: this._canvasNode.height / 2,
+      });
+    } else {
+      this.drawWord(this.ctx1, {
+        text: config.content,
+        fontSize: config.fontSize,
+        textAlign: 'center',
+        color: config.color,
+        x: this._config.width / 2,
+        y: this._config.height / 2,
+      });
+      this.ctx1.draw();
+    }
   }
 
   /**
    * 实际的绘制函数
    */
-  draw(data, cfg = {},callback=function(){}) {
+  draw(data, cfg = {}, callback = function() {}) {
     this._drawCallBack = callback;
     this._start = new Date();
 
@@ -1150,7 +1154,7 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
 
     this.drawToCanvas();
 
-    if(this._renderType == 'native')
+    if (this._renderType == 'native')
       this.ctx1.draw();
 
     this.log('realDraw');
@@ -1179,12 +1183,14 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
      */
     if (this.ctx2 === this.ctx1) {
       this.drawToCanvas();
+    } else {
+      this.clearCTX2Canvas();
     }
 
     // 将tooltip绘制到对应的canvas
     this.drawToolTip();
 
-    if(this._renderType == 'native')
+    if (this._renderType == 'native')
       this.ctx2.draw();
   }
 
@@ -1216,13 +1222,22 @@ class LineChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["default"] {
      */
     if (this.ctx2 === this.ctx1) {
       this.drawToCanvas();
+    } else {
+      this.clearCTX2Canvas();
     }
 
-    if(this._renderType == 'native')
+    if (this._renderType == 'native')
       this.ctx2.draw();
   }
-}
 
+  /**
+   *  在原生Canvas时是自动清画布的，但是在h5Canvas中需要手动清理
+   *  这里就需要注意当分成两个Canvas时，需要手动清理第二个Canvas
+   */
+  clearCTX2Canvas() {
+    this.ctx2.clearRect(0, 0, this._canvas2.width, this._canvas2.height);
+  }
+}
 
 /***/ }),
 /* 1 */,
@@ -1253,11 +1268,12 @@ __webpack_require__.r(__webpack_exports__);
  * @param {}
  */
 function is(obj, type) {
-  const { toString } = Object.prototype; let undefined;
+  const { toString } = Object.prototype;
+  let undefined;
 
-  return (type === 'Null' && obj === null)
-    || (type === 'Undefined' && obj === undefined)
-    || toString.call(obj).slice(8, -1) === type;
+  return (type === 'Null' && obj === null) ||
+    (type === 'Undefined' && obj === undefined) ||
+    toString.call(obj).slice(8, -1) === type;
 }
 
 /*
@@ -1309,7 +1325,7 @@ function getRoundForNumber(number) {
   let round;
 
   // 计算出当前数组位数减一的最小数字
-  if (number  >= 100) round = String(number).split('')
+  if (number >= 100) round = String(number).split('')
     .reduce(sum => sum * 10, 0.01);
 
   // 数字介于10-100之间，逢5为整
@@ -1438,24 +1454,24 @@ function changeUnit(value, fixedParam = 1) {
   // value是非数字的情况，直接返回value
   if (!isNumeric(value)) return value;
 
-  const number  = parseFloat(value);
-  let unit    = '';
+  const number = parseFloat(value);
+  let unit = '';
   let divider = 1;
 
   // 小于1000的值，保留小数点
   if (isFloat(value) && number < 1000) return number.toFixed(fixed);
 
   if (number < 1e3) {
-    unit    = '';
+    unit = '';
     divider = 1;
-  } else if (number >= 1e3 &&  number < 1e4) {
-    unit    = 'k';
+  } else if (number >= 1e3 && number < 1e4) {
+    unit = 'k';
     divider = 1e3;
   } else if (number < 1e7) {
-    unit    = 'w';
+    unit = 'w';
     divider = 1e4;
   } else {
-    unit    = 'kw';
+    unit = 'kw';
     divider = 1e7;
   }
 
@@ -1469,11 +1485,10 @@ function changeUnit(value, fixedParam = 1) {
   return temp.toFixed(fixed) + unit;
 }
 
-function none() {
-}
+function none() {}
 
 function formatX(length, maxXPoint) {
-  let step  = Math.ceil(length /  maxXPoint);
+  let step = Math.ceil(length / maxXPoint);
   let start = 0;
 
   // 记录原始的step长度
@@ -1559,12 +1574,14 @@ function capControlPoint(pt, min, max) {
 function isPointInArea(point, area) {
   const epsilon = 0.5; // margin - to match rounded decimals
 
-  return point.x > area.left - epsilon && point.x < area.right + epsilon
-    && point.y > area.top - epsilon && point.y < area.bottom + epsilon;
+  return point.x > area.left - epsilon && point.x < area.right + epsilon &&
+    point.y > area.top - epsilon && point.y < area.bottom + epsilon;
 }
 
 function capBezierPoints(points, area) {
-  let i; let ilen; let point;
+  let i;
+  let ilen;
+  let point;
   for (i = 0, ilen = points.length; i < ilen; ++i) {
     point = points[i];
     if (!isPointInArea(point, area)) {
@@ -1582,7 +1599,10 @@ function capBezierPoints(points, area) {
 }
 
 function updateBezierControlPoints(points, area) {
-  let i; let ilen; let point; let controlPoints;
+  let i;
+  let ilen;
+  let point;
+  let controlPoints;
   const loop = false;
 
   let prev = loop ? points[points.length - 1] : points[0];
@@ -1604,8 +1624,6 @@ function updateBezierControlPoints(points, area) {
 
   capBezierPoints(points, area);
 }
-
-
 
 
 
@@ -1652,9 +1670,15 @@ __webpack_require__.r(__webpack_exports__);
     top: 10,
     bottom: 5,
   },
+  /**
+   *  无数据时的文案配置
+   * */
+  emptyData: {
+    content: '暂无数据',
+    color: 'rgb(200,200,200)',
+    fontSize: 16,
+  },
 });
-
-
 
 /***/ }),
 /* 5 */
@@ -1666,7 +1690,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _draw_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6);
 /* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
 /* harmony import */ var _easing_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7);
-
 // 太老的库，很多变量是下滑线开头的，暂时屏蔽先
 /* eslint no-underscore-dangle: "off"*/
 /* eslint no-param-reassign: ["error", { "props": false }] */
@@ -1744,8 +1767,8 @@ class Base extends _draw_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
     // 计算实际绘图区域的左下角信息
     this._boundary.leftBottom = {
       x: padding.left,
-      y: (_config.height
-        - padding.bottom),
+      y: (_config.height -
+        padding.bottom),
     };
 
     if (_config.xAxis) {
@@ -1753,7 +1776,7 @@ class Base extends _draw_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
     }
 
     // 计算实际绘图区域的右上角信息
-    this._boundary.rightTop =  {
+    this._boundary.rightTop = {
       x: _config.width - padding.right,
       y: padding.top,
     };
@@ -1796,14 +1819,14 @@ class Base extends _draw_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
     const easingFunction = _easing_js__WEBPACK_IMPORTED_MODULE_2__["default"][config.animationEasing];
 
     // 动画完成的百分比
-    let percentComplete = (config.animation
-      ? 0
-      : 1);
+    let percentComplete = (config.animation ?
+      0 :
+      1);
 
     const animationFrame = () => {
-      let easeAdjustedAnimationPercent = (config.animation
-        ? easingFunction(percentComplete)
-        : 1);
+      let easeAdjustedAnimationPercent = (config.animation ?
+        easingFunction(percentComplete) :
+        1);
 
       if (easeAdjustedAnimationPercent > 1) {
         easeAdjustedAnimationPercent = 1;
@@ -1827,8 +1850,6 @@ class Base extends _draw_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
     this.requestAnimFrame(animationLoop);
   }
 }
-
-
 
 /***/ }),
 /* 6 */
@@ -2048,7 +2069,7 @@ class ChartBase {
     ctx.strokeStyle = opts.lineColor;
 
     const start = points[0];
-    const end   = points[points.length - 1];
+    const end = points[points.length - 1];
 
     ctx.moveTo(start.x, start.y);
     let prev;
@@ -2116,8 +2137,6 @@ class ChartBase {
   }
 }
 
-
-
 /***/ }),
 /* 7 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -2126,7 +2145,7 @@ class ChartBase {
 __webpack_require__.r(__webpack_exports__);
 // Easing functions adapted from Robert Penner's easing equations
 // http://www.robertpenner.com/easing/
-/* eslint-disable */ 
+/* eslint-disable */
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   linear(t) {
@@ -2205,26 +2224,41 @@ __webpack_require__.r(__webpack_exports__);
     return 1 / 2 * (Math.sqrt(1 - (t -= 2) * t) + 1);
   },
   easeInElastic(t) {
-    let s = 1.70158; let p = 0; let a = 1;
-    if (t == 0) return 0; if ((t /= 1) == 1) return 1; if (!p) p = 1 * .3;
+    let s = 1.70158;
+    let p = 0;
+    let a = 1;
+    if (t == 0) return 0;
+    if ((t /= 1) == 1) return 1;
+    if (!p) p = 1 * .3;
     if (a < Math.abs(1)) {
-      a = 1; s = p / 4;
+      a = 1;
+      s = p / 4;
     } else s = p / (2 * Math.PI) * Math.asin(1 / a);
     return -(a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * 1 - s) * (2 * Math.PI) / p));
   },
   easeOutElastic(t) {
-    let s = 1.70158; let p = 0; let a = 1;
-    if (t == 0) return 0; if ((t /= 1) == 1) return 1; if (!p) p = 1 * .3;
+    let s = 1.70158;
+    let p = 0;
+    let a = 1;
+    if (t == 0) return 0;
+    if ((t /= 1) == 1) return 1;
+    if (!p) p = 1 * .3;
     if (a < Math.abs(1)) {
-      a = 1; s = p / 4;
+      a = 1;
+      s = p / 4;
     } else s = p / (2 * Math.PI) * Math.asin(1 / a);
     return a * Math.pow(2, -10 * t) * Math.sin((t * 1 - s) * (2 * Math.PI) / p) + 1;
   },
   easeInOutElastic(t) {
-    let s = 1.70158; let p = 0; let a = 1;
-    if (t == 0) return 0; if ((t /= 1 / 2) == 2) return 1; if (!p) p = 1 * (.3 * 1.5);
+    let s = 1.70158;
+    let p = 0;
+    let a = 1;
+    if (t == 0) return 0;
+    if ((t /= 1 / 2) == 2) return 1;
+    if (!p) p = 1 * (.3 * 1.5);
     if (a < Math.abs(1)) {
-      a = 1; s = p / 4;
+      a = 1;
+      s = p / 4;
     } else s = p / (2 * Math.PI) * Math.asin(1 / a);
     if (t < 1) return -.5 * (a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * 1 - s) * (2 * Math.PI) / p));
     return a * Math.pow(2, -10 * (t -= 1)) * Math.sin((t * 1 - s) * (2 * Math.PI) / p) * .5 + 1;
@@ -2248,9 +2282,11 @@ __webpack_require__.r(__webpack_exports__);
   easeOutBounce(t) {
     if ((t /= 1) < (1 / 2.75)) {
       return 1 * (7.5625 * t * t);
-    } if (t < (2 / 2.75)) {
+    }
+    if (t < (2 / 2.75)) {
       return 1 * (7.5625 * (t -= (1.5 / 2.75)) * t + .75);
-    } if (t < (2.5 / 2.75)) {
+    }
+    if (t < (2.5 / 2.75)) {
       return 1 * (7.5625 * (t -= (2.25 / 2.75)) * t + .9375);
     }
     return 1 * (7.5625 * (t -= (2.625 / 2.75)) * t + .984375);
@@ -2261,8 +2297,6 @@ __webpack_require__.r(__webpack_exports__);
   },
 });
 
-
-
 /***/ }),
 /* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -2272,29 +2306,29 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Native2H5CTX; });
 /**
  *
- * 	原生Canvas绘图上下文胶水层
- * 	支持大部分 H5 Canvas API 直接转化为 原生CanvasAPI
- * 	原生CanvasAPI也可以直接使用
+ *  原生Canvas绘图上下文胶水层
+ *  支持大部分 H5 Canvas API 直接转化为 原生CanvasAPI
+ *  原生CanvasAPI也可以直接使用
  *
- * 	使用方法：
+ *  使用方法：
  *
 
-	import Native2H5CTX from './base/Native2H5CTX.js';
-	const ctx = Native2H5CTX(nativeCtx);
+  import Native2H5CTX from './base/Native2H5CTX.js';
+  const ctx = Native2H5CTX(nativeCtx);
 
-	请注意：由于原生API需要 draw() 完成最终渲染，因此开发者需要手动判断并执行 ctx.draw()
+  请注意：由于原生API需要 draw() 完成最终渲染，因此开发者需要手动判断并执行 ctx.draw()
  *
  *
  * */
 
 /**
- * 	转化管理器
+ *  转化管理器
  * */
 class CONVERT {
   /**
-	 * 	Font 定义差异
-	 * 	原生Canvas仅支持设置 FontSize 因此要读取大小后直接设置，忽略文字字体的定义
-	 * */
+   *  Font 定义差异
+   *  原生Canvas仅支持设置 FontSize 因此要读取大小后直接设置，忽略文字字体的定义
+   * */
   font(target, value) {
     const result = /[0-9]+px/i.exec(value);
     if (!result) {
@@ -2306,45 +2340,45 @@ class CONVERT {
   }
 
   /**
-	 * 	lineWidth 定义差异
-	 * 	原生 lineWidth 采用 setLineWidth 进行设置
-	 * */
+   *  lineWidth 定义差异
+   *  原生 lineWidth 采用 setLineWidth 进行设置
+   * */
   lineWidth(target, value) {
     target.setLineWidth(value);
     return true;
   }
 
   /**
-	 * 	strokeStyle 定义差异
-	 * 	原生 strokeStyle 采用 setStrokeStyle 进行设置
-	 * */
+   *  strokeStyle 定义差异
+   *  原生 strokeStyle 采用 setStrokeStyle 进行设置
+   * */
   strokeStyle(target, value) {
     target.setStrokeStyle(value);
     return true;
   }
 
   /**
-	 * 	fillStyle 定义差异
-	 * 	原生 fillStyle 采用 setFillStyle 进行设置
-	 * */
+   *  fillStyle 定义差异
+   *  原生 fillStyle 采用 setFillStyle 进行设置
+   * */
   fillStyle(target, value) {
     target.setFillStyle(value);
     return true;
   }
 
   /**
-	 * 	textBaseline 定义差异
-	 * 	原生 textBaseline 采用 setTextBaseline 进行设置
-	 * */
+   *  textBaseline 定义差异
+   *  原生 textBaseline 采用 setTextBaseline 进行设置
+   * */
   textBaseline(target, value) {
     target.setTextBaseline(value);
     return true;
   }
 
   /**
-	 * 	textAlign 定义差异
-	 * 	原生 textAlign 采用 setTextAlign 进行设置
-	 * */
+   *  textAlign 定义差异
+   *  原生 textAlign 采用 setTextAlign 进行设置
+   * */
   textAlign(target, value) {
     target.setTextAlign(value);
     return true;
@@ -2393,8 +2427,6 @@ function Native2H5CTX(nativeCtx) {
 
   return nativeCtx;
 }
-
-
 
 /***/ }),
 /* 9 */,
@@ -2544,20 +2576,10 @@ const linechartConfig = {
       bottom: 5,
     },
   },
-  /**
-   *  无数据时的文案配置
-   * */
-  emptyData: {
-    content: '暂无数据',
-    color: 'rgb(200,200,200)',
-    fontSize: 16,
-  },
 
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (Object(_util_js__WEBPACK_IMPORTED_MODULE_1__["extend"])(linechartConfig, _common_js__WEBPACK_IMPORTED_MODULE_0__["default"]));
-
-
 
 /***/ })
 /******/ ]);

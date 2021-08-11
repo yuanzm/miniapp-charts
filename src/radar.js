@@ -13,21 +13,21 @@ export default class RadarChart extends Base {
   //传入Canvas Node
   constructor(canvasNode, cfg = {}) {
     super();
-    
-    if(canvasNode.node){ //以节点传入
+
+    if (canvasNode.node) { //以节点传入
       this._renderType = 'h5';
       this._canvas = canvasNode.node;
-      
+
       //清晰度调整
       this._canvas.width = canvasNode.width * this._dpr;
       this._canvas.height = canvasNode.height * this._dpr;
       this.ctx = this._canvas.getContext('2d');
-      this.ctx.scale(this._dpr,this._dpr);
-    }else{ //以原生ctx传入
+      this.ctx.scale(this._dpr, this._dpr);
+    } else { //以原生ctx传入
       this._renderType = 'native';
       this._canvas = {
-        width:100,
-        height:100,
+        width: 100,
+        height: 100,
       }
       this.ctx = Native2H5CTX(canvasNode);
     }
@@ -105,10 +105,9 @@ export default class RadarChart extends Base {
         dashOffset: grid.dashOffset,
         points: [],
         r: 0,
-        marginLineColor:
-          this._config.grid.marginLineColor === 'default'
-            ? this._config.grid.color
-            : this._config.grid.marginLineColor,
+        marginLineColor: this._config.grid.marginLineColor === 'default' ?
+          this._config.grid.color :
+          this._config.grid.marginLineColor,
       };
 
       this._render.angelLineData.forEach((angel) => {
@@ -180,7 +179,7 @@ export default class RadarChart extends Base {
   calOneLabelSize(label, style = {}) {
     this.ctx.save();
 
-    this.ctx.font = style.fontSize+'px sans-serif';
+    this.ctx.font = style.fontSize + 'px sans-serif';
     // this.ctx.setFontSize(style.fontSize);
 
     let { width } = this.ctx.measureText(label);
@@ -253,8 +252,7 @@ export default class RadarChart extends Base {
     const { padding } = this._config;
     const size = this._render.labelsSizeData;
 
-    const arr = [
-      {
+    const arr = [{
         value: min - size[left].width - padding.left,
         index: left,
       },
@@ -277,8 +275,8 @@ export default class RadarChart extends Base {
     const minR = arr[0].value;
     const maxR = arr[arr.length - 1].value;
 
-    const minAngel =      this._config.startAngle
-      + (360 / this._render.labels.length) * arr[0].index;
+    const minAngel = this._config.startAngle +
+      (360 / this._render.labels.length) * arr[0].index;
     const tmp = Math.cos((Math.PI * (minAngel % 45)) / 180);
 
     return minR / tmp > maxR ? maxR : minR / tmp;
@@ -348,7 +346,8 @@ export default class RadarChart extends Base {
       const centerX = parseInt(center.x, 10);
       const centerY = parseInt(center.y, 10);
 
-      let startX; let startY;
+      let startX;
+      let startY;
 
       if (baseX === centerX) startX = baseX - width / 2;
       else if (baseX > centerX) startX = baseX;
@@ -427,22 +426,22 @@ export default class RadarChart extends Base {
       const style = dataset.style || this._config.datasetStyle;
       for (let i = 0; i < points.length - 1; i++) {
         const point = points[i];
-        const focus = !this._render.toolTipData
-          ? false
-          : this._render.toolTipData.focusIndex === i;
+        const focus = !this._render.toolTipData ?
+          false :
+          this._render.toolTipData.focusIndex === i;
         circles.push({
           x: point.x,
           y: point.y,
           r: focus ? style.focusStyle.pointRadius || 2 : style.pointRadius || 2,
-          fillColor: focus
-            ? style.focusStyle.pointBackgroundColor || '#FFFFFF'
-            : style.pointBackgroundColor || '#FFFFFF',
-          strokeColor: focus
-            ? style.focusStyle.pointBorderColor || style.pointBorderColor
-            : style.pointBorderColor,
-          lineWidth: focus
-            ? style.focusStyle.pointBorderWidth || style.pointBorderWidth
-            : style.pointBorderWidth,
+          fillColor: focus ?
+            style.focusStyle.pointBackgroundColor || '#FFFFFF' :
+            style.pointBackgroundColor || '#FFFFFF',
+          strokeColor: focus ?
+            style.focusStyle.pointBorderColor || style.pointBorderColor :
+            style.pointBorderColor,
+          lineWidth: focus ?
+            style.focusStyle.pointBorderWidth || style.pointBorderWidth :
+            style.pointBorderWidth,
         });
       }
     });
@@ -504,9 +503,9 @@ export default class RadarChart extends Base {
       const _sub = {
         title: raw.style.label,
         pointStyle: raw.style.focusStyle,
-        dataStr: !rawData.dataStr
-          ? rawData.data[indexMin]
-          : rawData.dataStr[indexMin],
+        dataStr: !rawData.dataStr ?
+          rawData.data[indexMin] :
+          rawData.dataStr[indexMin],
         content: '',
       };
       _sub.content = `${_sub.title}：${_sub.dataStr}`;
@@ -545,7 +544,7 @@ export default class RadarChart extends Base {
     }
     if (titleWidth > maxwidth) maxwidth = titleWidth;
 
-    info.wrapper.width =      maxwidth + _config.padding.left + _config.padding.right;
+    info.wrapper.width = maxwidth + _config.padding.left + _config.padding.right;
     info.wrapper.height = _config.padding.top + _config.padding.bottom;
     const lineHeight = _config.linePadding + _config.fontSize;
     info.wrapper.height += (subTitleWidth.length + 1) * lineHeight;
@@ -735,7 +734,7 @@ export default class RadarChart extends Base {
 
   drawToCanvas(percent = 1) {
     //清空画布
-    this.ctx.clearRect(0, 0, this._canvas.width, this._canvas.height );
+    this.ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
     // 辐射状的线条
     if (this._config.radiationLineStyle.display) {
       this._render.angelLineData.forEach((line) => {
@@ -772,7 +771,7 @@ export default class RadarChart extends Base {
       this.drawToolTip();
     }
 
-    if(this._renderType == 'native')
+    if (this._renderType == 'native')
       this.ctx.draw();
   }
 

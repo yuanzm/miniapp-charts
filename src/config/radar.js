@@ -32,10 +32,10 @@ const radarConfig = {
     stepSize: 20,
     width: 1,
     color: '#e3e3e3',
-    marginLineStyle: 'circle',   // 最外边网格样式  default: 默认蜘蛛网  circle: 圆环
-    marginLineColor: 'rgb(200,200,200)',    // 最外边网格颜色 default: 默认跟随内部颜色  rgb string 自定义颜色
-    marginLinePointRadius: 2,         // 最外边网格与辐射线焦点高亮点半径
-    marginLinePointColor: 'rgb(140,140,140)',         // 最外边网格与辐射线焦点高亮点颜色
+    marginLineStyle: 'circle', // 最外边网格样式  default: 默认蜘蛛网  circle: 圆环
+    marginLineColor: 'rgb(200,200,200)', // 最外边网格颜色 default: 默认跟随内部颜色  rgb string 自定义颜色
+    marginLinePointRadius: 2, // 最外边网格与辐射线焦点高亮点半径
+    marginLinePointColor: 'rgb(140,140,140)', // 最外边网格与辐射线焦点高亮点颜色
     style: 'line',
     // 线条是虚线的默认配置
     dashPattern: [10, 10],
@@ -70,7 +70,7 @@ const radarConfig = {
     backgroundColor: 'rgba(108,132,194,0.5)',
     borderColor: 'rgb(108,132,194)',
     borderWidth: 2,
-    borderLineStyle: 'line',  // line || dash
+    borderLineStyle: 'line', // line || dash
     borderDashPattern: [10, 20], // [ [dashPattern] , dashOffset ]
     borderDashOffset: 5,
     pointShow: true,
@@ -108,4 +108,3 @@ const radarConfig = {
 };
 
 export default extend(radarConfig, common);
-
