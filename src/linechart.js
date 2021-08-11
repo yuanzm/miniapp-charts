@@ -34,7 +34,7 @@ export default class LineChart extends Base {
     super();
 
 
-
+    //只有lineChart很特殊2个ctx所以不采用基类的ctx实例化方法
     let ctx2 = null;
     if (canvasNode.node) { //以节点传入
       this._renderType = 'h5';
@@ -1004,6 +1004,7 @@ export default class LineChart extends Base {
 
   /**
    *  绘制无数据文案
+   *  由于lineChart特殊将重写该函数
    * */
   drawEmptyData() {
     const config = this._config.emptyData;

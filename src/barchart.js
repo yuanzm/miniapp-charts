@@ -26,26 +26,7 @@ export default class BarChart extends Base {
   constructor(canvasNode, cfg = {}) {
     super();
 
-
-    if (canvasNode.node) { //以节点传入
-      this._renderType = 'h5';
-      this._canvas = canvasNode.node;
-
-      //清晰度调整
-      this._canvas.width = canvasNode.width * this._dpr;
-      this._canvas.height = canvasNode.height * this._dpr;
-      this._canvasNode = canvasNode;
-      this.ctx = this._canvas.getContext('2d');
-      this.ctx.scale(this._dpr, this._dpr);
-    } else { //以原生ctx传入
-      this._renderType = 'native';
-      this._canvas = {
-        width: 100,
-        height: 100,
-      }
-      this.ctx = Native2H5CTX(canvasNode);
-    }
-
+    this.initCTX(canvasNode);
 
     this.chartType = 'bar';
 
@@ -472,37 +453,6 @@ export default class BarChart extends Base {
     this.calBarData();
 
     this.log('initData');
-  }
-
-
-  /**
-   *  绘制无数据文案
-   * */
-  drawEmptyData() {
-    const config = this._config.emptyData;
-    //清空画布
-    this.ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
-
-    if (this._renderType == 'h5') {
-      this.drawWord(this.ctx, {
-        text: config.content,
-        fontSize: config.fontSize,
-        textAlign: 'center',
-        color: config.color,
-        x: this._canvasNode.width / 2,
-        y: this._canvasNode.height / 2,
-      });
-    } else {
-      this.drawWord(this.ctx, {
-        text: config.content,
-        fontSize: config.fontSize,
-        textAlign: 'center',
-        color: config.color,
-        x: this._config.width / 2,
-        y: this._config.height / 2,
-      });
-      this.ctx.draw();
-    }
   }
 
   /**

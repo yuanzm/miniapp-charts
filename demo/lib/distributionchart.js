@@ -546,10 +546,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _draw_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6);
 /* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
 /* harmony import */ var _easing_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7);
+/* harmony import */ var _Native2H5CTX_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8);
 // 太老的库，很多变量是下滑线开头的，暂时屏蔽先
 /* eslint no-underscore-dangle: "off"*/
 /* eslint no-param-reassign: ["error", { "props": false }] */
 /* eslint no-restricted-syntax: "off"*/
+
 
 
 
@@ -577,6 +579,32 @@ class Base extends _draw_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
     this._boundary = {};
 
     this.aniTimer = null;
+  }
+
+
+  /**
+   *  通用的CTX实例方法
+   * */
+  initCTX(canvasNode) {
+    if (canvasNode.node) { //以节点传入
+      this._renderType = 'h5';
+      this._canvas = canvasNode.node;
+
+      //清晰度调整
+      this._canvas.width = canvasNode.width * this._dpr;
+      this._canvas.height = canvasNode.height * this._dpr;
+      this._canvasNode = canvasNode;
+      this.ctx = this._canvas.getContext('2d');
+      this.ctx.scale(this._dpr, this._dpr);
+    } else { //以原生ctx传入
+      this._renderType = 'native';
+      this._canvas = {
+        width: 100,
+        height: 100,
+      }
+      this.ctx = Object(_Native2H5CTX_js__WEBPACK_IMPORTED_MODULE_3__["default"])(canvasNode);
+    }
+
   }
 
   /**
@@ -987,6 +1015,36 @@ class ChartBase {
     ctx.closePath();
   }
 
+  /**
+   *  绘制无数据文案
+   * */
+  drawEmptyData() {
+    const config = this._config.emptyData;
+    //清空画布
+    this.ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
+
+    if (this._renderType == 'h5') {
+      this.drawWord(this.ctx, {
+        text: config.content,
+        fontSize: config.fontSize,
+        textAlign: 'center',
+        color: config.color,
+        x: this._canvasNode.width / 2,
+        y: this._canvasNode.height / 2,
+      });
+    } else {
+      this.drawWord(this.ctx, {
+        text: config.content,
+        fontSize: config.fontSize,
+        textAlign: 'center',
+        color: config.color,
+        x: this._config.width / 2,
+        y: this._config.height / 2,
+      });
+      this.ctx.draw();
+    }
+  }
+
   clearCanvas(ctx, width, height) {
     ctx.clearRect(0, 0, width, height);
     // ctx.draw();
@@ -1321,30 +1379,13 @@ class DistributionChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["def
 
     // 本实例配置文件
     this._config = this.getConfig(cfg, Object(_util_js__WEBPACK_IMPORTED_MODULE_0__["deepCopy"])(_config_distribution_js__WEBPACK_IMPORTED_MODULE_1__["default"]));
-    if (canvasNode.node) { //以节点传入
-      this._renderType = 'h5';
-      this._canvas = canvasNode.node;
-      this.canvasNode = canvasNode;
+    this.initCTX(canvasNode);
 
-      //清晰度调整
-      this._canvas.width = canvasNode.width * this._dpr;
-      this._canvas.height = canvasNode.height * this._dpr;
-      this.ctx = this._canvas.getContext('2d');
-      this.ctx.scale(this._dpr, this._dpr);
-      this.totalHeight = this.canvasNode.height;
-    } else { //以原生ctx传入
-      this._renderType = 'native';
-      this._canvas = {
-        width: 100,
-        height: 100,
-      }
-      this.canvasNode = {
-        height: this._config.height
-      }
-      this.ctx = Object(_base_Native2H5CTX_js__WEBPACK_IMPORTED_MODULE_3__["default"])(canvasNode);
+    if(this._renderType === 'h5'){
+      this.totalHeight = this._canvasNode.height;
+    }else{
       this.totalHeight = this._config.height;
     }
-
 
     this.chartType = 'distribution';
 
@@ -1376,7 +1417,7 @@ class DistributionChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["def
     }
 
     //设置高度目前的版本iOS可能存在异步问题，因此这里采用一种延迟渲染方案，确保至少有一帧能够保证画面完成渲染
-    this.autoDrawCanvas();
+    //this.autoDrawCanvas();
 
   }
 
@@ -1385,27 +1426,27 @@ class DistributionChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["def
    *  自动延迟渲染
    *  每秒可绘制3帧
    * */
-  autoDrawCanvas() {
-    this._autoDrawEndTimestamp = new Date().getTime() + 1000;
-    if (this._autoDrawTimer) {
-      //代表已经触发了自动渲染，无需再次触发
-      return;
-    }
-    let that = this;
-    let draw = function() {
-      that.drawToCanvas();
-      that._autoDrawTimer = setTimeout(() => {
-        let now = new Date().getTime();
-        if (now > that._autoDrawEndTimestamp) {
-          that._autoDrawTimer = 0;
-        } else {
-          draw();
-        }
-      }, 300);
+  // autoDrawCanvas() {
+  //   this._autoDrawEndTimestamp = new Date().getTime() + 1000;
+  //   if (this._autoDrawTimer) {
+  //     //代表已经触发了自动渲染，无需再次触发
+  //     return;
+  //   }
+  //   let that = this;
+  //   let draw = function() {
+  //     that.drawToCanvas();
+  //     that._autoDrawTimer = setTimeout(() => {
+  //       let now = new Date().getTime();
+  //       if (now > that._autoDrawEndTimestamp) {
+  //         that._autoDrawTimer = 0;
+  //       } else {
+  //         draw();
+  //       }
+  //     }, 300);
 
-    }
-    draw();
-  }
+  //   }
+  //   draw();
+  // }
 
   calLabelDataForItem(xStartParam, y, barLabel) {
     let xStart = xStartParam;
@@ -1510,7 +1551,7 @@ class DistributionChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["def
     this._render.totalHeight = yStart - barStyle.padding + config.padding.bottom + config.barStyle.topBottomPadding;
     this.totalHeight = this._render.totalHeight;
     if (this.totalHeight == 0) {
-      this.totalHeight = this.canvasNode.height;
+      this.totalHeight = this._canvasNode.height;
       this._config.height = this.totalHeight;
     }
   }
@@ -1635,35 +1676,6 @@ class DistributionChart extends _base_index_js__WEBPACK_IMPORTED_MODULE_2__["def
     this._render.barLabelData.forEach((label) => {
       this.drawWord(this.ctx, label);
     });
-  }
-
-  /**
-   *  绘制无数据文案
-   * */
-  drawEmptyData() {
-    const config = this._config.emptyData;
-    //清空画布
-    this.ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
-    if (this._renderType == 'h5') {
-      this.drawWord(this.ctx, {
-        text: config.content,
-        fontSize: config.fontSize,
-        textAlign: 'center',
-        color: config.color,
-        x: this._canvasNode.width / 2,
-        y: this._canvasNode.height / 2,
-      });
-    } else {
-      this.drawWord(this.ctx, {
-        text: config.content,
-        fontSize: config.fontSize,
-        textAlign: 'center',
-        color: config.color,
-        x: this._config.width / 2,
-        y: this._config.height / 2,
-      });
-      this.ctx.draw();
-    }
   }
 
   /**

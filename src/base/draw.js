@@ -270,6 +270,36 @@ export default class ChartBase {
     ctx.closePath();
   }
 
+  /**
+   *  绘制无数据文案
+   * */
+  drawEmptyData() {
+    const config = this._config.emptyData;
+    //清空画布
+    this.ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
+
+    if (this._renderType == 'h5') {
+      this.drawWord(this.ctx, {
+        text: config.content,
+        fontSize: config.fontSize,
+        textAlign: 'center',
+        color: config.color,
+        x: this._canvasNode.width / 2,
+        y: this._canvasNode.height / 2,
+      });
+    } else {
+      this.drawWord(this.ctx, {
+        text: config.content,
+        fontSize: config.fontSize,
+        textAlign: 'center',
+        color: config.color,
+        x: this._config.width / 2,
+        y: this._config.height / 2,
+      });
+      this.ctx.draw();
+    }
+  }
+
   clearCanvas(ctx, width, height) {
     ctx.clearRect(0, 0, width, height);
     // ctx.draw();
