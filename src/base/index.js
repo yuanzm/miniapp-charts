@@ -1,4 +1,3 @@
-
 // 太老的库，很多变量是下滑线开头的，暂时屏蔽先
 /* eslint no-underscore-dangle: "off"*/
 /* eslint no-param-reassign: ["error", { "props": false }] */
@@ -10,10 +9,15 @@ import {
 } from '../util.js';
 
 import animationOptions from './easing.js';
+import Native2H5CTX from './Native2H5CTX.js';
+
+const dpr = wx.getSystemInfoSync().pixelRatio;
 
 export default class Base extends ChartBase {
   constructor() {
     super();
+
+    this._dpr = dpr;
 
     // 用于性能数据打点
     this._start = 0;
@@ -28,6 +32,32 @@ export default class Base extends ChartBase {
     this._boundary = {};
 
     this.aniTimer = null;
+  }
+
+
+  /**
+   *  通用的CTX实例方法
+   * */
+  initCTX(canvasNode) {
+    if (canvasNode.node) { //以节点传入
+      this._renderType = 'h5';
+      this._canvas = canvasNode.node;
+
+      //清晰度调整
+      this._canvas.width = canvasNode.width * this._dpr;
+      this._canvas.height = canvasNode.height * this._dpr;
+      this._canvasNode = canvasNode;
+      this.ctx = this._canvas.getContext('2d');
+      this.ctx.scale(this._dpr, this._dpr);
+    } else { //以原生ctx传入
+      this._renderType = 'native';
+      this._canvas = {
+        width: 100,
+        height: 100,
+      }
+      this.ctx = Native2H5CTX(canvasNode);
+    }
+
   }
 
   /**
@@ -74,8 +104,8 @@ export default class Base extends ChartBase {
     // 计算实际绘图区域的左下角信息
     this._boundary.leftBottom = {
       x: padding.left,
-      y: (_config.height
-        - padding.bottom),
+      y: (_config.height -
+        padding.bottom),
     };
 
     if (_config.xAxis) {
@@ -83,7 +113,7 @@ export default class Base extends ChartBase {
     }
 
     // 计算实际绘图区域的右上角信息
-    this._boundary.rightTop =  {
+    this._boundary.rightTop = {
       x: _config.width - padding.right,
       y: padding.top,
     };
@@ -126,14 +156,14 @@ export default class Base extends ChartBase {
     const easingFunction = animationOptions[config.animationEasing];
 
     // 动画完成的百分比
-    let percentComplete = (config.animation
-      ? 0
-      : 1);
+    let percentComplete = (config.animation ?
+      0 :
+      1);
 
     const animationFrame = () => {
-      let easeAdjustedAnimationPercent = (config.animation
-        ? easingFunction(percentComplete)
-        : 1);
+      let easeAdjustedAnimationPercent = (config.animation ?
+        easingFunction(percentComplete) :
+        1);
 
       if (easeAdjustedAnimationPercent > 1) {
         easeAdjustedAnimationPercent = 1;
@@ -157,4 +187,3 @@ export default class Base extends ChartBase {
     this.requestAnimFrame(animationLoop);
   }
 }
-

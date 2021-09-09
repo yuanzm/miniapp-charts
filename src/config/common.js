@@ -35,5 +35,12 @@ export default {
     top: 10,
     bottom: 5,
   },
+  /**
+   *  无数据时的文案配置
+   * */
+  emptyData: {
+    content: '暂无数据',
+    color: 'rgb(200,200,200)',
+    fontSize: 16,
+  },
 };
-

@@ -79,4 +79,3 @@ const barchartConfig = {
 };
 
 export default extend(barchartConfig, common);
-

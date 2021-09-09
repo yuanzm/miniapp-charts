@@ -61,15 +61,22 @@ export default class ChartBase {
 
     ctx.beginPath();
 
-    if (word.isbottom) ctx.setTextBaseline('bottom');
-
-    if (word.baseline) {
-      ctx.setTextBaseline(word.baseline);
+    if (word.isbottom) {
+      // ctx.setTextBaseline('bottom');
+      ctx.textBaseline = 'bottom';
     }
 
-    ctx.setFontSize(word.fontSize);
-    ctx.setFillStyle(word.color);
-    ctx.setTextAlign(word.textAlign || 'left');
+    if (word.baseline) {
+      // ctx.setTextBaseline(word.baseline);
+      ctx.textBaseline = word.baseline;
+    }
+
+    // ctx.setFontSize(word.fontSize);
+    ctx.font = `${word.fontSize}px sans-serif`;
+    // ctx.setFillStyle(word.color);
+    ctx.fillStyle = word.color;
+    // ctx.setTextAlign(word.textAlign || 'left');
+    ctx.textAlign = word.textAlign || 'left';
     ctx.fillText(word.text, word.x, word.y);
 
     ctx.stroke();
@@ -113,12 +120,15 @@ export default class ChartBase {
       ctx.lineTo(rect.x + rect.width - rect.r, rect.y);
       ctx.lineTo(rect.x + rect.r, rect.y);
 
-      ctx.setFillStyle(rect.fillColor);
+      // ctx.setFillStyle(rect.fillColor);
+      ctx.fillStyle = rect.fillColor;
       ctx.fill();
     } else {
       ctx.beginPath();
-      ctx.setStrokeStyle(rect.fillColor);
-      ctx.setFillStyle(rect.fillColor);
+      // ctx.setStrokeStyle(rect.fillColor);
+      ctx.strokeStyle = rect.fillColor;
+      // ctx.setFillStyle(rect.fillColor);
+      ctx.fillStyle = rect.fillColor;
       ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
       ctx.closePath();
     }
@@ -129,8 +139,9 @@ export default class ChartBase {
    */
   drawLine(ctx, line) {
     ctx.beginPath();
-    ctx.setLineWidth(line.width || 1);
-    ctx.setStrokeStyle(line.color);
+    // ctx.setLineWidth(line.width || 1);
+    ctx.lineWidth = line.width || 1;
+    ctx.strokeStyle = line.color;
 
     if (line.isDash) ctx.setLineDash(line.dashPattern, line.dashOffset);
 
@@ -145,8 +156,10 @@ export default class ChartBase {
 
   drawLongLine(ctx, line) {
     ctx.beginPath();
-    ctx.setLineWidth(line.width || 1);
-    ctx.setStrokeStyle(line.color);
+    // ctx.setLineWidth(line.width || 1);
+    // ctx.setStrokeStyle(line.color);
+    ctx.lineWidth = line.width || 1;
+    ctx.strokeStyle = line.color;
 
     if (line.isDash) ctx.setLineDash(line.dashPattern, line.dashOffset);
 
@@ -161,7 +174,8 @@ export default class ChartBase {
 
     // 需要填充背景颜色要在stroke之前填充，否则边界线会发虚
     if (line.fill) {
-      ctx.setFillStyle(line.fillColor);
+      // ctx.setFillStyle(line.fillColor);
+      ctx.fillStyle = line.fillColor;
       ctx.fill();
     }
 
@@ -186,12 +200,15 @@ export default class ChartBase {
     ctx.save();
 
     ctx.beginPath();
-    ctx.setFillStyle(opts.fillColor);
-    ctx.setLineWidth(opts.lineWidth);
-    ctx.setStrokeStyle(opts.lineColor);
+    // ctx.setFillStyle(opts.fillColor);
+    ctx.fillStyle = opts.fillColor;
+    // ctx.setLineWidth(opts.lineWidth);
+    ctx.lineWidth = opts.lineWidth;
+    // ctx.setStrokeStyle(opts.lineColor);
+    ctx.strokeStyle = opts.lineColor;
 
     const start = points[0];
-    const end   = points[points.length - 1];
+    const end = points[points.length - 1];
 
     ctx.moveTo(start.x, start.y);
     let prev;
@@ -238,9 +255,14 @@ export default class ChartBase {
   drawCircle(ctx, circle) {
     ctx.beginPath();
 
-    ctx.setStrokeStyle(circle.strokeColor);
-    if (circle.fillColor) ctx.setFillStyle(circle.fillColor);
-    ctx.setLineWidth(circle.lineWidth || 1);
+    // ctx.setStrokeStyle(circle.strokeColor);
+    ctx.strokeStyle = circle.strokeColor;
+    if (circle.fillColor) {
+      // ctx.setFillStyle(circle.fillColor);
+      ctx.fillStyle = circle.fillColor;
+    }
+    // ctx.setLineWidth(circle.lineWidth || 1);
+    ctx.lineWidth = circle.lineWidth || 1;
     ctx.arc(circle.x, circle.y, circle.r, 0, 2 * Math.PI);
 
     ctx.stroke();
@@ -248,9 +270,38 @@ export default class ChartBase {
     ctx.closePath();
   }
 
+  /**
+   *  绘制无数据文案
+   * */
+  drawEmptyData() {
+    const config = this._config.emptyData;
+    //清空画布
+    this.ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
+
+    if (this._renderType == 'h5') {
+      this.drawWord(this.ctx, {
+        text: config.content,
+        fontSize: config.fontSize,
+        textAlign: 'center',
+        color: config.color,
+        x: this._canvasNode.width / 2,
+        y: this._canvasNode.height / 2,
+      });
+    } else {
+      this.drawWord(this.ctx, {
+        text: config.content,
+        fontSize: config.fontSize,
+        textAlign: 'center',
+        color: config.color,
+        x: this._config.width / 2,
+        y: this._config.height / 2,
+      });
+      this.ctx.draw();
+    }
+  }
+
   clearCanvas(ctx, width, height) {
     ctx.clearRect(0, 0, width, height);
-    ctx.draw();
+    // ctx.draw();
   }
 }
-

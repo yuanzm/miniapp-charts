@@ -8,48 +8,105 @@ import {
 } from './util.js';
 
 import config from './config/distribution.js';
-import Base   from './base/index.js';
+import Base from './base/index.js';
+import Native2H5CTX from './base/Native2H5CTX.js';
 
 /**
  * 小程序折线图绘制组件
  */
 export default class DistributionChart extends Base {
   /**
-   * @param { CanvasContext } ctx: 小程序的绘图上下文
+   * @param { canvasNode } canvasNode: canvas节点
    * @param { CanvasContext } ctx2: 小程序的绘图上下文
    * @param { Object } cfg: 组件配置
    */
-  constructor(ctx, cfg = {}) {
+  constructor(canvasNode, cfg = {}) {
     super();
 
+
+    // 本实例配置文件
+    this._config = this.getConfig(cfg, deepCopy(config));
+    this.initCTX(canvasNode);
+
+    if(this._renderType === 'h5'){
+      this.totalHeight = this._canvasNode.height;
+    }else{
+      this.totalHeight = this._config.height;
+    }
+
     this.chartType = 'distribution';
-    this.ctx       = ctx;
 
     /**
      * 约定！所有的内部变量都需要这里先声明
      * 可以大大提高源码阅读性
      */
-    // 本实例配置文件
-    this._config      = this.getConfig(cfg, deepCopy(config));
 
     // 线条数据
-    this._datasets    = [];
+    this._datasets = [];
 
-    this.totalHeight  = 0;
+    this._autoDrawTimer = 0;
+    this._autoDrawEndTimestamp = 0;
   }
+
+  /**
+   *  当容器的高度需要变更时必须手动实现图表的变更从而实现反拉伸保持图表渲染稳定
+   * */
+  setHeight(h) {
+
+    if (this._renderType != 'h5')
+      return;
+
+    this._canvas.height = h * this._dpr;
+    this.ctx.scale(this._dpr, this._dpr);
+    if (!this._datasets.length) {
+      this.drawEmptyData();
+      return;
+    }
+
+    //设置高度目前的版本iOS可能存在异步问题，因此这里采用一种延迟渲染方案，确保至少有一帧能够保证画面完成渲染
+    //this.autoDrawCanvas();
+
+  }
+
+
+  /**
+   *  自动延迟渲染
+   *  每秒可绘制3帧
+   * */
+  // autoDrawCanvas() {
+  //   this._autoDrawEndTimestamp = new Date().getTime() + 1000;
+  //   if (this._autoDrawTimer) {
+  //     //代表已经触发了自动渲染，无需再次触发
+  //     return;
+  //   }
+  //   let that = this;
+  //   let draw = function() {
+  //     that.drawToCanvas();
+  //     that._autoDrawTimer = setTimeout(() => {
+  //       let now = new Date().getTime();
+  //       if (now > that._autoDrawEndTimestamp) {
+  //         that._autoDrawTimer = 0;
+  //       } else {
+  //         draw();
+  //       }
+  //     }, 300);
+
+  //   }
+  //   draw();
+  // }
 
   calLabelDataForItem(xStartParam, y, barLabel) {
     let xStart = xStartParam;
     const labelArr = (isType('array', barLabel) ? barLabel : [barLabel]);
-    let width    = 0;
-    const arr      = [];
+    let width = 0;
+    const arr = [];
 
     labelArr.forEach((item) => {
       const labelConfig = deepCopy(this._config.barLabelStyle);
       const obj = isType('object', item) ? item : { name: item, style: labelConfig };
       obj.style = extend(labelConfig, obj.style || {});
 
-      width  += obj.style.paddingLeft;
+      width += obj.style.paddingLeft;
       xStart += obj.style.paddingLeft;
 
       const word = {
@@ -64,7 +121,7 @@ export default class DistributionChart extends Base {
       arr.push(word);
       const w = this.getWordWidth(word);
       xStart += w;
-      width  += w;
+      width += w;
     });
 
     return { arr, width };
@@ -78,13 +135,13 @@ export default class DistributionChart extends Base {
     let yStart = config.padding.top + config.barStyle.topBottomPadding;
     const xStart = config.padding.left + render.yAxisWidth;
 
-    const first  = this._datasets[0];
+    const first = this._datasets[0];
     const others = this._datasets.slice(1);
 
     const maxItemMap = this.getMaxItem();
 
-    const barData      = [];
-    let barLabelData   = [];
+    const barData = [];
+    let barLabelData = [];
 
     const maxBarWidthMap = [];
 
@@ -129,23 +186,27 @@ export default class DistributionChart extends Base {
         barData.push(rect);
       });
 
-      const centerY = (barArr.length > 1
-        ? yStart - barStyle.padding - barStyle.height - config.barStyle.compareBarMargin / 2
-        : yStart - barStyle.padding - barStyle.height / 2);
+      const centerY = (barArr.length > 1 ?
+        yStart - barStyle.padding - barStyle.height - config.barStyle.compareBarMargin / 2 :
+        yStart - barStyle.padding - barStyle.height / 2);
 
       this._render.yAxisData[index].y = centerY;
     });
 
-    this._render.barData      = barData;
+    this._render.barData = barData;
     this._render.barLabelData = barLabelData;
-    this._render.totalHeight  = yStart - barStyle.padding + config.padding.bottom + config.barStyle.topBottomPadding;
-    this.totalHeight          = this._render.totalHeight;
+    this._render.totalHeight = yStart - barStyle.padding + config.padding.bottom + config.barStyle.topBottomPadding;
+    this.totalHeight = this._render.totalHeight;
+    if (this.totalHeight == 0) {
+      this.totalHeight = this._canvasNode.height;
+      this._config.height = this.totalHeight;
+    }
   }
 
   calYAxisLines() {
-    const config  = this._config;
+    const config = this._config;
     const { padding } = config;
-    const render  = this._render;
+    const render = this._render;
     const { yAxisLine } = config;
 
     // 计算Y轴中轴线数据
@@ -211,10 +272,10 @@ export default class DistributionChart extends Base {
   calYAxis() {
     const { yAxis } = this._config;
     // 用于绘制的数据
-    const yAxisData  = [];
+    const yAxisData = [];
     // Y轴文案所占据的宽度
     let yAxisWidth = 0;
-    const leftStart   = this._boundary.leftTop.x + yAxis.marginLeft;
+    const leftStart = this._boundary.leftTop.x + yAxis.marginLeft;
 
     this._datasets[0].points.forEach((item) => {
       const word = {
@@ -232,11 +293,11 @@ export default class DistributionChart extends Base {
     });
 
     // 考虑Y轴不需要文案的情况
-    yAxisWidth = (yAxis.show
-      ? yAxisWidth + yAxis.marginRight
-      : 0);
+    yAxisWidth = (yAxis.show ?
+      yAxisWidth + yAxis.marginRight :
+      0);
 
-    this._render.yAxisData  = yAxisData;
+    this._render.yAxisData = yAxisData;
     this._render.yAxisWidth = yAxisWidth;
   }
 
@@ -268,6 +329,8 @@ export default class DistributionChart extends Base {
    * 将处理后的合法数据按照配置绘制到canvas上面
    */
   drawToCanvas() {
+    //清空画布
+    this.ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
     this.drawYAxis();
     this.drawYAxisLine();
     this.drawBars();
@@ -283,6 +346,7 @@ export default class DistributionChart extends Base {
     this._datasets = (data.datasets || []).filter(dataset => !!dataset.points && dataset.points.length);
 
     if (!this._datasets.length) {
+      this.drawEmptyData();
       return;
     }
 
@@ -301,11 +365,12 @@ export default class DistributionChart extends Base {
    */
   draw() {
     if (!this._datasets.length) {
+      this.drawEmptyData();
       return;
     }
 
     this.drawToCanvas();
-    this.ctx.draw();
+    if (this._renderType == 'native')
+      this.ctx.draw();
   }
 }
-

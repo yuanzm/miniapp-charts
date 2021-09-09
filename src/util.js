@@ -8,11 +8,12 @@
  * @param {}
  */
 function is(obj, type) {
-  const { toString } = Object.prototype; let undefined;
+  const { toString } = Object.prototype;
+  let undefined;
 
-  return (type === 'Null' && obj === null)
-    || (type === 'Undefined' && obj === undefined)
-    || toString.call(obj).slice(8, -1) === type;
+  return (type === 'Null' && obj === null) ||
+    (type === 'Undefined' && obj === undefined) ||
+    toString.call(obj).slice(8, -1) === type;
 }
 
 /*
@@ -64,7 +65,7 @@ function getRoundForNumber(number) {
   let round;
 
   // 计算出当前数组位数减一的最小数字
-  if (number  >= 100) round = String(number).split('')
+  if (number >= 100) round = String(number).split('')
     .reduce(sum => sum * 10, 0.01);
 
   // 数字介于10-100之间，逢5为整
@@ -193,24 +194,24 @@ function changeUnit(value, fixedParam = 1) {
   // value是非数字的情况，直接返回value
   if (!isNumeric(value)) return value;
 
-  const number  = parseFloat(value);
-  let unit    = '';
+  const number = parseFloat(value);
+  let unit = '';
   let divider = 1;
 
   // 小于1000的值，保留小数点
   if (isFloat(value) && number < 1000) return number.toFixed(fixed);
 
   if (number < 1e3) {
-    unit    = '';
+    unit = '';
     divider = 1;
-  } else if (number >= 1e3 &&  number < 1e4) {
-    unit    = 'k';
+  } else if (number >= 1e3 && number < 1e4) {
+    unit = 'k';
     divider = 1e3;
   } else if (number < 1e7) {
-    unit    = 'w';
+    unit = 'w';
     divider = 1e4;
   } else {
-    unit    = 'kw';
+    unit = 'kw';
     divider = 1e7;
   }
 
@@ -224,11 +225,10 @@ function changeUnit(value, fixedParam = 1) {
   return temp.toFixed(fixed) + unit;
 }
 
-function none() {
-}
+function none() {}
 
 function formatX(length, maxXPoint) {
-  let step  = Math.ceil(length /  maxXPoint);
+  let step = Math.ceil(length / maxXPoint);
   let start = 0;
 
   // 记录原始的step长度
@@ -314,12 +314,14 @@ function capControlPoint(pt, min, max) {
 export function isPointInArea(point, area) {
   const epsilon = 0.5; // margin - to match rounded decimals
 
-  return point.x > area.left - epsilon && point.x < area.right + epsilon
-    && point.y > area.top - epsilon && point.y < area.bottom + epsilon;
+  return point.x > area.left - epsilon && point.x < area.right + epsilon &&
+    point.y > area.top - epsilon && point.y < area.bottom + epsilon;
 }
 
 function capBezierPoints(points, area) {
-  let i; let ilen; let point;
+  let i;
+  let ilen;
+  let point;
   for (i = 0, ilen = points.length; i < ilen; ++i) {
     point = points[i];
     if (!isPointInArea(point, area)) {
@@ -337,7 +339,10 @@ function capBezierPoints(points, area) {
 }
 
 export function updateBezierControlPoints(points, area) {
-  let i; let ilen; let point; let controlPoints;
+  let i;
+  let ilen;
+  let point;
+  let controlPoints;
   const loop = false;
 
   let prev = loop ? points[points.length - 1] : points[0];
@@ -370,4 +375,3 @@ export {
   changeUnit,
   formatX,
 };
-

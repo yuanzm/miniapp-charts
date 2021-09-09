@@ -1,6 +1,8 @@
 {
     "pages": [
-        "simple/simple",
+        "simpleH5/simpleH5",
+        "simpleNative/simpleNative",
+        "perftest/perftest",
         "linechart/linechart",
         "radar/radar"
     ],

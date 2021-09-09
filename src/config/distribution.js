@@ -41,4 +41,3 @@ const distributionConfig = {
 };
 
 export default extend(distributionConfig, common);
-

@@ -142,4 +142,3 @@ const linechartConfig = {
 };
 
 export default extend(linechartConfig, common);
-

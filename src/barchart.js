@@ -12,38 +12,40 @@ import {
 } from './util.js';
 
 import config from './config/barchart.js';
-import Base   from './base/index.js';
+import Base from './base/index.js';
+import Native2H5CTX from './base/Native2H5CTX.js';
 
 /**
  * 小程序折线图绘制组件
  */
 export default class BarChart extends Base {
   /**
-     * @param { CanvasContext } ctx: 小程序的绘图上下文
-     * @param { Object } cfg: 组件配置
-     */
-  constructor(ctx, cfg = {}) {
+   * @param { canvasNode } canvasNode: canvas节点句柄
+   * @param { Object } cfg: 组件配置
+   */
+  constructor(canvasNode, cfg = {}) {
     super();
 
+    this.initCTX(canvasNode);
+
     this.chartType = 'bar';
-    this.ctx       = ctx;
 
     /**
-         * 约定！所有的内部变量都需要这里先声明
-         * 可以大大提高源码阅读性
-         */
+     * 约定！所有的内部变量都需要这里先声明
+     * 可以大大提高源码阅读性
+     */
     // 本实例配置文件
-    this._config      = this.getConfig(cfg, deepCopy(config));
+    this._config = this.getConfig(cfg, deepCopy(config));
 
     // 线条数据
-    this._datasets    = [];
+    this._datasets = [];
   }
 
   calLabelDataForItem(x, yStartParam, barLabel) {
     let yStart = yStartParam;
     const labelArr = (isType('array', barLabel) ? barLabel : [barLabel]);
-    let height   = 0;
-    const arr      = [];
+    let height = 0;
+    const arr = [];
 
     labelArr.forEach((item) => {
       const labelConfig = deepCopy(this._config.barLabelStyle);
@@ -75,11 +77,11 @@ export default class BarChart extends Base {
     const { barWidth } = config.barStyle;
 
     const { xCenterAxis } = render;
-    const first         = this._datasets[0];
-    const second        = this._datasets[1];
-    const count         = first.points.length;
+    const first = this._datasets[0];
+    const second = this._datasets[1];
+    const count = first.points.length;
     const { leftBottom } = this._boundary;
-    let totalBarWidth   = this._datasets.length * count * barWidth;
+    let totalBarWidth = this._datasets.length * count * barWidth;
 
     if (second) {
       totalBarWidth += this._config.barStyle.compareBarMargin * count;
@@ -87,17 +89,17 @@ export default class BarChart extends Base {
 
     // 每组柱子的间距
     const padding = this._config.barStyle.leftRightPadding * 2;
-    const barPadding    = (xCenterAxis.end.x - xCenterAxis.start.x - totalBarWidth - padding) / (count - 1);
+    const barPadding = (xCenterAxis.end.x - xCenterAxis.start.x - totalBarWidth - padding) / (count - 1);
 
     // 柱子的X轴开始位置
     let xStart = xCenterAxis.start.x + this._config.barStyle.leftRightPadding;
 
-    render.bars         = [];
-    render.barLabels    = [];
+    render.bars = [];
+    render.barLabels = [];
     render.topbarLabels = [];
 
     const { xAxis } = config;
-    const bottom   = leftBottom.y + xAxis.marginTop + xAxis.fontSize;
+    const bottom = leftBottom.y + xAxis.marginTop + xAxis.fontSize;
     const { barStyle } = config;
 
     first.points.forEach((point, index) => {
@@ -171,11 +173,11 @@ export default class BarChart extends Base {
   }
 
   calYAxisLines() {
-    const data       = this._render;
+    const data = this._render;
     const { yAxisWidth } = data;
     const { leftTop } = this._boundary;
     const { leftBottom } = this._boundary;
-    const rightTop   = this._boundary.rightBottom;
+    const rightTop = this._boundary.rightBottom;
     const { yAxisLine } = this._config;
 
     // 计算Y轴中轴线数据
@@ -212,8 +214,8 @@ export default class BarChart extends Base {
   }
 
   /**
-     * 计算Y轴的边界和阶梯值
-     */
+   * 计算Y轴的边界和阶梯值
+   */
   calYAxis() {
     const { max, min, yDivider, maxYPoint, longestLine } = this.calYAxisBoundary();
 
@@ -235,33 +237,33 @@ export default class BarChart extends Base {
     const { yAxis } = this._config;
 
     // 用于绘制的数据
-    const yAxisData  = [];
+    const yAxisData = [];
 
     // Y轴文案所占据的宽度
     let yAxisWidth = 0;
 
     const cHeight = this._boundary.leftBottom.y - this._boundary.leftTop.y;
     // 计算Y轴上两个点之间的像素值
-    let unitY =  cHeight / (yDivider * this._render.yMultiple  * this._config.yAxis.yAxisCount);
+    let unitY = cHeight / (yDivider * this._render.yMultiple * this._config.yAxis.yAxisCount);
 
     /**
-         * 计算最长的条加上label之后的高度,如果超过绘图边界，将unitY更改成刚好使得最长的条填充满绘图区
-         * 这里仍然存在一种可能，很短的条有很多label导致超过绘图边界，不予考虑
-         */
+     * 计算最长的条加上label之后的高度,如果超过绘图边界，将unitY更改成刚好使得最长的条填充满绘图区
+     * 这里仍然存在一种可能，很短的条有很多label导致超过绘图边界，不予考虑
+     */
     const maxH = (maxItem.value - min) * unitY * this._render.yMultiple;
     if (maxH + height > cHeight) {
       unitY = (cHeight - height) / (maxItem.value - min) / this._render.yMultiple;
     }
 
-    const leftStart   = this._boundary.leftTop.x + yAxis.marginLeft;
+    const leftStart = this._boundary.leftTop.x + yAxis.marginLeft;
     const bottomStart = this._boundary.leftBottom.y;
 
-    const changeFunc  = (this._config.changeUnit && this._config.changeUnit !== none
-      ? this._config.changeUnit
-      : changeUnit);
-    const toFixed     = ((max < 1 || max > 1e7)
-      ? 2
-      : 1);
+    const changeFunc = (this._config.changeUnit && this._config.changeUnit !== none ?
+      this._config.changeUnit :
+      changeUnit);
+    const toFixed = ((max < 1 || max > 1e7) ?
+      2 :
+      1);
 
     for (let i = 0; i < this._config.yAxis.yAxisCount + 1; i++) {
       const word = {
@@ -278,54 +280,54 @@ export default class BarChart extends Base {
     }
 
     // 考虑Y轴不需要文案的情况
-    yAxisWidth = (yAxis.show
-      ? yAxisWidth + yAxis.marginRight
-      : 0);
+    yAxisWidth = (yAxis.show ?
+      yAxisWidth + yAxis.marginRight :
+      0);
 
-    this._render.unitY               = unitY;
-    this._render.yAxisWidth          = yAxisWidth;
-    this._render.yAxisData           = yAxisData;
+    this._render.unitY = unitY;
+    this._render.yAxisWidth = yAxisWidth;
+    this._render.yAxisData = yAxisData;
     this._render.longestLinePointCnt = maxYPoint;
-    this._render.longestLine         = longestLine;
+    this._render.longestLine = longestLine;
 
     this.log('calYAxis');
   }
 
   getMinY(data) {
     return data.reduce(
-      (min, p) => (p.value < min
-        ? p.value
-        : min),
+      (min, p) => (p.value < min ?
+        p.value :
+        min),
       data[0].value,
     );
   }
 
   getMaxY(data) {
     return data.reduce(
-      (max, p) => (p.value > max
-        ? p.value
-        : max),
+      (max, p) => (p.value > max ?
+        p.value :
+        max),
       data[0].value,
     );
   }
 
   /**
-     * 计算用于Y轴绘制需要的数据
-     * https://codeburst.io/javascript-finding-minimum-and-maximum-values-in-an-array-of-objects-329c5c7e22a2
-     */
+   * 计算用于Y轴绘制需要的数据
+   * https://codeburst.io/javascript-finding-minimum-and-maximum-values-in-an-array-of-objects-329c5c7e22a2
+   */
   calYAxisBoundary() {
-    const datasets    = this._datasets;
-    let maxYPoint   = 0;
+    const datasets = this._datasets;
+    let maxYPoint = 0;
     let longestLine = datasets[0];
     const { yAxisCount } = this._config.yAxis;
-    let max         = -Infinity;
-    let min         = Infinity;
+    let max = -Infinity;
+    let min = Infinity;
 
     datasets.forEach((oneline) => {
       const points = oneline.points || [];
 
       if (points.length > maxYPoint) {
-        maxYPoint   = points.length;
+        maxYPoint = points.length;
         longestLine = oneline;
       }
 
@@ -336,8 +338,8 @@ export default class BarChart extends Base {
     const formatFunc = this._config.formatY || getDataRangeAndStep;
     const range = formatFunc(max, min, yAxisCount);
 
-    this._render.min       = range.min;
-    this._render.max       = range.max;
+    this._render.min = range.min;
+    this._render.max = range.max;
     this._render.yMultiple = range.multiple || 1;
 
     return {
@@ -381,8 +383,8 @@ export default class BarChart extends Base {
   }
 
   /**
-     * 绘制所有的点
-     */
+   * 绘制所有的点
+   */
   drawPoints() {
     this._render.pointData.forEach((oneline) => {
       if (oneline.points.length > 1) this.drawLongLineWithFill(this.ctx, oneline.points, oneline.style);
@@ -406,9 +408,11 @@ export default class BarChart extends Base {
   }
 
   /**
-     * 将处理后的合法数据按照配置绘制到canvas上面
-     */
+   * 将处理后的合法数据按照配置绘制到canvas上面
+   */
   drawToCanvas() {
+    //清空画布
+    this.ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
     this.drawYAxis();
     this.log('drawYAxis');
 
@@ -423,10 +427,10 @@ export default class BarChart extends Base {
   }
 
   /**
-     * 数据清洗和合法性判断
-     * 数据字段比较多，存在后面的函数调用依赖前面的计算结果的情况
-     * 因此不能随便调换initData里面的函数顺序
-     */
+   * 数据清洗和合法性判断
+   * 数据字段比较多，存在后面的函数调用依赖前面的计算结果的情况
+   * 因此不能随便调换initData里面的函数顺序
+   */
   initData(data) {
     this._datasets = (data.datasets || []).filter(dataset => !!dataset.points && dataset.points.length);
 
@@ -452,8 +456,8 @@ export default class BarChart extends Base {
   }
 
   /**
-     * 实际的绘制函数
-     */
+   * 实际的绘制函数
+   */
   draw(data, cfg = {}) {
     this._start = new Date();
 
@@ -462,12 +466,14 @@ export default class BarChart extends Base {
     this.initData(data);
 
     if (!this._datasets.length) {
+      this.drawEmptyData();
       return;
     }
 
     this.drawToCanvas();
 
-    this.ctx.draw();
+    if (this._renderType == 'native')
+      this.ctx.draw();
 
     this.log('realDraw');
 
@@ -476,4 +482,3 @@ export default class BarChart extends Base {
     }
   }
 }
-
