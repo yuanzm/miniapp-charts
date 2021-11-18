@@ -57,11 +57,15 @@ export default class LineChart extends Base {
     } else { //以原生ctx传入
       this._renderType = 'native';
       this._canvas = {
-        width: 100,
-        height: 100,
+        width: cfg.width,
+        height: cfg.width,
       }
       this.ctx1 = Native2H5CTX(canvasNode);
       if (canvasNode2) {
+        this._canvas2 = {
+          width: cfg.width,
+          height: cfg.width,
+        }
         ctx2 = Native2H5CTX(canvasNode2);
       }
     }
@@ -878,6 +882,7 @@ export default class LineChart extends Base {
   drawToCanvas() {
     //清空画布
     this.ctx1.clearRect(0, 0, this._canvas.width, this._canvas.height);
+
     if (this.ctx1 !== this.ctx2) {
       //清空画布
       this.clearCTX2Canvas();
