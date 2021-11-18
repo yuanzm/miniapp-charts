@@ -9,6 +9,23 @@ import config from './config/radar.js';
 import Base from './base/index.js';
 import Native2H5CTX from './base/Native2H5CTX.js';
 
+function normalizeArray(arr = []) {
+  let min = Math.min.apply(null, arr);
+  let max = Math.max.apply(null, arr);
+
+  // 本身数据就在0 - 100的范围内
+  if (min >= 0 && max <= 100) {
+    min = 0;
+    max = 100;
+  }
+
+  const range = max - min;
+
+  return arr.map(item => {
+    return ((item - min) / range) * 100;
+  });
+}
+
 export default class RadarChart extends Base {
   //传入Canvas Node
   constructor(canvasNode, cfg = {}) {
@@ -90,8 +107,8 @@ export default class RadarChart extends Base {
         points: [],
         r: 0,
         marginLineColor: this._config.grid.marginLineColor === 'default' ?
-          this._config.grid.color :
-          this._config.grid.marginLineColor,
+        this._config.grid.color :
+        this._config.grid.marginLineColor,
       };
 
       this._render.angelLineData.forEach((angel) => {
@@ -131,7 +148,9 @@ export default class RadarChart extends Base {
       const lineStyle = this.getConfig(oneset || {}, deepCopy(style));
       oneset.style = lineStyle;
 
-      oneset.data.forEach((point, index) => {
+      const normalizeData = normalizeArray(oneset.data);
+
+      normalizeData.forEach((point, index) => {
         const angel = angelLineData[index];
         const percent = (point * animationPercent) / (grid.max - grid.min);
 
@@ -237,9 +256,9 @@ export default class RadarChart extends Base {
     const size = this._render.labelsSizeData;
 
     const arr = [{
-        value: min - size[left].width - padding.left,
-        index: left,
-      },
+      value: min - size[left].width - padding.left,
+      index: left,
+    },
       {
         value: min - size[right].width - padding.right,
         index: right,
@@ -418,14 +437,14 @@ export default class RadarChart extends Base {
           y: point.y,
           r: focus ? style.focusStyle.pointRadius || 2 : style.pointRadius || 2,
           fillColor: focus ?
-            style.focusStyle.pointBackgroundColor || '#FFFFFF' :
-            style.pointBackgroundColor || '#FFFFFF',
+          style.focusStyle.pointBackgroundColor || '#FFFFFF' :
+          style.pointBackgroundColor || '#FFFFFF',
           strokeColor: focus ?
-            style.focusStyle.pointBorderColor || style.pointBorderColor :
-            style.pointBorderColor,
+          style.focusStyle.pointBorderColor || style.pointBorderColor :
+          style.pointBorderColor,
           lineWidth: focus ?
-            style.focusStyle.pointBorderWidth || style.pointBorderWidth :
-            style.pointBorderWidth,
+          style.focusStyle.pointBorderWidth || style.pointBorderWidth :
+          style.pointBorderWidth,
         });
       }
     });
@@ -471,7 +490,7 @@ export default class RadarChart extends Base {
                         pointStyle : {}, //来源与 数据图层 焦点样式
                         dataStr : '', //数据文本
                     }
-                */
+                    */
       ],
       width: 0, // 尺寸与定位
       height: 0,
@@ -488,8 +507,8 @@ export default class RadarChart extends Base {
         title: raw.style.label,
         pointStyle: raw.style.focusStyle,
         dataStr: !rawData.dataStr ?
-          rawData.data[indexMin] :
-          rawData.dataStr[indexMin],
+        rawData.data[indexMin] :
+        rawData.dataStr[indexMin],
         content: '',
       };
       _sub.content = `${_sub.title}：${_sub.dataStr}`;
@@ -559,11 +578,11 @@ export default class RadarChart extends Base {
       // 数据涂层对应的小圆点颜色 （颜色为焦点状态颜色）
       info.icons.push({
         pointBackgroundColor: this._render.datasetsData[i].style.focusStyle
-          .pointBackgroundColor,
+        .pointBackgroundColor,
         pointBorderColor: this._render.datasetsData[i].style.focusStyle
-          .pointBackgroundColor,
+        .pointBackgroundColor,
         pointBorderWidth: this._render.datasetsData[i].style.focusStyle
-          .pointBorderWidth,
+        .pointBorderWidth,
         pointRadius: _config.fontSize / 2,
         left: _config.padding.left + _config.fontSize / 2,
         top: _top,
@@ -776,8 +795,8 @@ export default class RadarChart extends Base {
   }
 
   /**
-   *  用户Touch事件 / 焦点产生事件
-   *  节流器
+   * 用户Touch事件 / 焦点产生事件
+   * 节流器
    */
   touch(e) {
     if (!this._touchTimer) {
@@ -789,7 +808,7 @@ export default class RadarChart extends Base {
   }
 
   /**
-   *  用户TouchEnd事件 / 娇嗲你移除事件
+   * 用户TouchEnd事件 / 娇嗲你移除事件
    */
   touchEnd() {
     // 取消信息框
