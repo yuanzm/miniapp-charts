@@ -303,5 +303,9 @@ export default class ChartBase {
   clearCanvas(ctx, width, height) {
     ctx.clearRect(0, 0, width, height);
     // ctx.draw();
+
+    if (this._renderType === 'native') {
+      ctx.draw();
+    }
   }
 }
