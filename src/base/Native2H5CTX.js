@@ -15,6 +15,8 @@
  *
  * */
 
+const useSetLineDash = wx.getSystemInfoSync().platform.toLowerCase() !== "windows";
+
 /**
  *  转化管理器
  * */
@@ -81,8 +83,20 @@ class CONVERT {
 
 const convert = new CONVERT();
 
-
 export default function Native2H5CTX(nativeCtx) {
+  /**
+   * 兼容 WindowsPC 旧版本支持库对 setLineDash API异常问题
+  */
+  const HandlerSetLineDash = nativeCtx.setLineDash;
+  Object.defineProperty(nativeCtx, 'setLineDash',{
+    get(){
+      if(useSetLineDash)
+        return HandlerSetLineDash;
+      else
+        return function(){};
+    }
+  });
+
   Object.defineProperty(nativeCtx, 'font', {
     set(v) {
       convert.font.apply(null, [nativeCtx, v]);
